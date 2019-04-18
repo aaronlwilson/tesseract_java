@@ -1,7 +1,7 @@
 # tesseract_java
 Processing-based control system for Kinetic LED sculptures
 
-This project was created for IntelliJ Idea IDA
+This project was created for IntelliJ Idea IDE
 Install and run Idea. 
 File --> Open --> root directory of this repo.
 
