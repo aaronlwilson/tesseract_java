@@ -1,5 +1,5 @@
 # tesseract_java
-Processing-based control system for Kinetic LED sculptures
+Processing-based control system for interactive Kinetic LED and Flame FX sculptures
 
 This project was created for IntelliJ Idea IDE
 Install and run Idea. 
