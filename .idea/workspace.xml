@@ -2,30 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1c58256-200e-4a5f-baca-9523e4b36559" name="Default Changelist" comment="building Processing app in IntelliJ Idea IDE. MUST USE JAVA SDK 1.8! Anything newer is not supported by Processing.">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/aaronwilson.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/core.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tesseract.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/core.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-aarch64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-armv6hf.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-macosx-universal.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-windows-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-windows-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-aarch64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-armv6hf.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-macosx-universal.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-windows-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-windows-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/TesseractMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TesseractMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TesseractMain.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -42,18 +19,55 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+            <state relative-caret-position="19">
+              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
               <folding>
-                <element signature="e#115#116#0" expanded="true" />
-                <element signature="e#166#167#0" expanded="true" />
                 <element signature="e#212#213#0" expanded="true" />
                 <element signature="e#242#243#0" expanded="true" />
-                <element signature="e#337#338#0" expanded="true" />
-                <element signature="e#360#361#0" expanded="true" />
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/WsServer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1861">
+              <caret line="98" selection-start-line="98" selection-end-line="98" />
+              <folding>
+                <element signature="e#0#3057#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#1776#1777#0" expanded="true" />
+                <element signature="e#1806#1807#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="133">
+              <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="209">
+                <caret line="11" selection-start-line="11" selection-end-line="11" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -71,15 +85,26 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/src/WsServer.java" />
         <option value="$PROJECT_DIR$/src/TesseractMain.java" />
       </list>
     </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand />
+      <select />
+    </treeState>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="36" />
     <option name="y" value="23" />
     <option name="width" value="1404" />
     <option name="height" value="877" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -93,6 +118,11 @@
               <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
               <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -104,7 +134,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
   </component>
@@ -147,7 +177,7 @@
     </task>
     <servers />
   </component>
-  <component name="TodoView" selected-index="4">
+  <component name="TodoView">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -157,10 +187,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="36" y="23" width="1404" height="877" extended-state="6" />
+    <frame x="0" y="23" width="2560" height="1417" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24082232" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2426529" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -170,11 +200,11 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3299363" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32981133" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info active="true" anchor="bottom" id="TODO" order="6" visible="true" weight="0.3299363" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3299363" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
@@ -194,17 +224,33 @@
     <option name="LAST_COMMIT_MESSAGE" value="building Processing app in IntelliJ Idea IDE. MUST USE JAVA SDK 1.8! Anything newer is not supported by Processing." />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/WsServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1861">
+          <caret line="98" selection-start-line="98" selection-end-line="98" />
+          <folding>
+            <element signature="e#0#3057#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1776#1777#0" expanded="true" />
+            <element signature="e#1806#1807#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+        <state relative-caret-position="19">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
           <folding>
-            <element signature="e#115#116#0" expanded="true" />
-            <element signature="e#166#167#0" expanded="true" />
             <element signature="e#212#213#0" expanded="true" />
             <element signature="e#242#243#0" expanded="true" />
-            <element signature="e#337#338#0" expanded="true" />
-            <element signature="e#360#361#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -238,6 +284,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
+          <last-edited>groovy-2.5.4</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -266,7 +313,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>

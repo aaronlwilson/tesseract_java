@@ -4,6 +4,8 @@ public class TesseractMain extends PApplet {
 
     public static void main(String [] args) {
         PApplet.main("TesseractMain", args);
+
+        WsServer.startServer();
     }
 
     @Override
