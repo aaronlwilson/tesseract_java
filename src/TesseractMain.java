@@ -46,7 +46,7 @@ public class TesseractMain extends PApplet {
         for (int i = 0; i < stripes.length; i++) {
             stripes[i] = new Stripe(this);
         }
-         */
+        */
 
 
     }
@@ -65,7 +65,7 @@ public class TesseractMain extends PApplet {
             stripes[i].move();
             stripes[i].display();
         }
-         */
+        */
 
 
     }

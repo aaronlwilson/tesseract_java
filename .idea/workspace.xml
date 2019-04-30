@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1c58256-200e-4a5f-baca-9523e4b36559" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/clip/SolidColorClip.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TesseractMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TesseractMain.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="5" column="2" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
+            <state relative-caret-position="335">
+              <caret line="67" column="8" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -41,7 +40,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/clip/SolidColorClip.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="135">
@@ -106,14 +105,14 @@
         <option value="$PROJECT_DIR$/src/hardware/Tile.java" />
         <option value="$PROJECT_DIR$/src/hardware/Teensy.java" />
         <option value="$PROJECT_DIR$/src/environment/OnScreen.java" />
-        <option value="$PROJECT_DIR$/src/TesseractMain.java" />
         <option value="$PROJECT_DIR$/src/OnScreen.java" />
         <option value="$PROJECT_DIR$/src/output/UDPModel.java" />
         <option value="$PROJECT_DIR$/src/clip/SolidColorClip.java" />
+        <option value="$PROJECT_DIR$/src/TesseractMain.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="1">
     <option name="x" value="36" />
     <option name="y" value="23" />
     <option name="width" value="1404" />
@@ -231,7 +230,7 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3485868" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3485868" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -239,7 +238,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="10" visible="true" weight="0.48183042" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.48183042" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -318,16 +317,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/environment/OnScreen.java" />
-    <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="5" column="2" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -370,6 +359,16 @@
           <folding>
             <element signature="e#142#143#0" expanded="true" />
             <element signature="e#188#189#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="335">
+          <caret line="67" column="8" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
