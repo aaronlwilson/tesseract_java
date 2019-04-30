@@ -1,31 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c1c58256-200e-4a5f-baca-9523e4b36559" name="Default Changelist" comment="building Processing app in IntelliJ Idea IDE. MUST USE JAVA SDK 1.8! Anything newer is not supported by Processing.">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/aaronwilson.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/core.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tesseract.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/core.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-aarch64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-armv6hf.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-linux-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-macosx-universal.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-windows-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt-natives-windows-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/gluegen-rt.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-aarch64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-armv6hf.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-linux-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-macosx-universal.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-windows-amd64.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all-natives-windows-i586.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/jogl-all.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/TesseractMain.java" afterDir="false" />
+    <list default="true" id="c1c58256-200e-4a5f-baca-9523e4b36559" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/udp.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hardware/Controller.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hardware/Fixture.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hardware/PixelPusher.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hardware/Teensy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/hardware/Tile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tesseract.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Tesseract.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Tesseract/TesseractMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Tesseract/TesseractMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TesseractMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TesseractMain.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -39,19 +25,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+            <state relative-caret-position="67">
+              <caret line="5" column="2" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
               <folding>
-                <element signature="e#115#116#0" expanded="true" />
-                <element signature="e#166#167#0" expanded="true" />
-                <element signature="e#212#213#0" expanded="true" />
-                <element signature="e#242#243#0" expanded="true" />
-                <element signature="e#337#338#0" expanded="true" />
-                <element signature="e#360#361#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#318#319#0" expanded="true" />
+                <element signature="e#369#370#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/output/UDPModel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="23">
+              <caret line="36" column="5" lean-forward="true" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="188">
+              <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
             </state>
           </provider>
         </entry>
@@ -71,7 +75,24 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/src/Stripe.java" />
+        <option value="$PROJECT_DIR$/src/UDPModel.java" />
+        <option value="$PROJECT_DIR$/src/clip/ClipColorWash.java" />
+        <option value="$PROJECT_DIR$/src/Utils.java" />
+        <option value="$PROJECT_DIR$/src/abstract/Node.java" />
+        <option value="$PROJECT_DIR$/src/clip/AbstractClip.java" />
+        <option value="$PROJECT_DIR$/src/model/Node.java" />
+        <option value="$PROJECT_DIR$/src/clip/Stripe.java" />
+        <option value="$PROJECT_DIR$/src/environment/Previz.java" />
+        <option value="$PROJECT_DIR$/src/hardware/Controller.java" />
+        <option value="$PROJECT_DIR$/src/hardware/Rabbit.java" />
+        <option value="$PROJECT_DIR$/src/hardware/PixelPusher.java" />
+        <option value="$PROJECT_DIR$/src/hardware/Tile.java" />
+        <option value="$PROJECT_DIR$/src/hardware/Teensy.java" />
+        <option value="$PROJECT_DIR$/src/environment/OnScreen.java" />
         <option value="$PROJECT_DIR$/src/TesseractMain.java" />
+        <option value="$PROJECT_DIR$/src/OnScreen.java" />
+        <option value="$PROJECT_DIR$/src/output/UDPModel.java" />
       </list>
     </option>
   </component>
@@ -79,13 +100,17 @@
     <option name="x" value="36" />
     <option name="y" value="23" />
     <option name="width" value="1404" />
-    <option name="height" value="877" />
+    <option name="height" value="835" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -93,20 +118,49 @@
               <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
               <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="clip" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="hardware" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="tesseract_java" type="b2602c69:ProjectViewProjectNode" />
+              <item name="tesseract_java" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="output" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.spelling" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -145,6 +199,14 @@
       <option name="presentableId" value="Default" />
       <updated>1555615578871</updated>
     </task>
+    <task id="LOCAL-00001" summary="building Processing app in IntelliJ Idea IDE. MUST USE JAVA SDK 1.8! Anything newer is not supported by Processing.">
+      <created>1555617339011</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1555617339011</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -157,10 +219,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="36" y="23" width="1404" height="877" extended-state="6" />
+    <frame x="36" y="23" width="1404" height="835" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24082232" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24743025" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -170,15 +232,15 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3299363" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3485868" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info active="true" anchor="bottom" id="TODO" order="6" visible="true" weight="0.3299363" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3299363" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.3299363" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.24076433" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -194,17 +256,141 @@
     <option name="LAST_COMMIT_MESSAGE" value="building Processing app in IntelliJ Idea IDE. MUST USE JAVA SDK 1.8! Anything newer is not supported by Processing." />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/UDPModel.java" />
+    <entry file="file://$PROJECT_DIR$/src/Stripe.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="18" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clip/ClipColorWash.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1110">
+          <caret line="76" column="28" selection-start-line="76" selection-start-column="28" selection-end-line="76" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/abstract/Node.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clip/AbstractClip.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="51" column="24" selection-start-line="51" selection-start-column="24" selection-end-line="51" selection-end-column="24" />
+          <folding>
+            <element signature="e#1009#1010#0" expanded="true" />
+            <element signature="e#1094#1095#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clip/Stripe.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/environment/Previz.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hardware/Fixture.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/Node.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="15" lean-forward="true" selection-start-line="11" selection-start-column="15" selection-end-line="11" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hardware/PixelPusher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hardware/Rabbit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hardware/Controller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hardware/Tile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/hardware/Teensy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/environment/OnScreen.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+        <state relative-caret-position="67">
+          <caret line="5" column="2" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
           <folding>
-            <element signature="e#115#116#0" expanded="true" />
-            <element signature="e#166#167#0" expanded="true" />
-            <element signature="e#212#213#0" expanded="true" />
-            <element signature="e#242#243#0" expanded="true" />
-            <element signature="e#337#338#0" expanded="true" />
-            <element signature="e#360#361#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#318#319#0" expanded="true" />
+            <element signature="e#369#370#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/output/UDPModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="36" column="5" lean-forward="true" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -266,7 +452,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
@@ -274,7 +459,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>core</last-edited>
+          <last-edited>udp</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
