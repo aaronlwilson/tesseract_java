@@ -1,0 +1,27 @@
+// This allows us to compile either groovy or java from the same set of directories
+apply plugin: 'groovy'
+
+repositories {
+  jcenter()
+  mavenCentral()
+}
+
+sourceSets {
+  main {
+    java { srcDirs = ['src'] }
+  }
+}
+
+dependencies {
+  // Declare dependencies here
+  compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
+  compile group: 'org.processing', name: 'core', version: '3.3.7'
+  compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.6'
+
+//  compile 'org.slf4j:slf4j-api:1.7.12'
+//  testCompile 'junit:junit:4.12'
+
+  // Include all jar files in 'lib' automatically
+  compile fileTree(dir: 'lib', include: ['**/*.jar'])
+}
+
