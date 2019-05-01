@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c1c58256-200e-4a5f-baca-9523e4b36559" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/environment/Stage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/model/Channel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/show/Playlist.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/show/Scene.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Tesseract/OnScreen.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Tesseract/OnScreen.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Tesseract/TesseractMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Tesseract/TesseractMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Tesseract/clip/AbstractClip.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Tesseract/clip/AbstractClip.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Tesseract/clip/SolidColorClip.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Tesseract/clip/SolidColorClip.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Tesseract/model/Node.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/OnScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/OnScreen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TesseractMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TesseractMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/clip/AbstractClip.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/clip/AbstractClip.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/environment/Node.java" afterDir="false" />
-    </list>
+    <list default="true" id="c1c58256-200e-4a5f-baca-9523e4b36559" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -92,8 +77,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="98" column="55" lean-forward="true" selection-start-line="98" selection-start-column="55" selection-end-line="98" selection-end-column="55" />
+            <state relative-caret-position="343">
+              <caret line="110" lean-forward="true" selection-start-line="110" selection-end-line="110" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -285,7 +270,7 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.34765625" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34765625" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -307,6 +292,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="building Processing app in IntelliJ Idea IDE. MUST USE JAVA SDK 1.8! Anything newer is not supported by Processing." />
     <option name="LAST_COMMIT_MESSAGE" value="building Processing app in IntelliJ Idea IDE. MUST USE JAVA SDK 1.8! Anything newer is not supported by Processing." />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/UDPModel.java" />
@@ -459,8 +448,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="98" column="55" lean-forward="true" selection-start-line="98" selection-start-column="55" selection-end-line="98" selection-end-column="55" />
+        <state relative-caret-position="343">
+          <caret line="110" lean-forward="true" selection-start-line="110" selection-end-line="110" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
