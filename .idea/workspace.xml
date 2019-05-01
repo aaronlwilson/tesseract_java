@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c1c58256-200e-4a5f-baca-9523e4b36559" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/OnScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/OnScreen.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TesseractMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TesseractMain.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -16,13 +17,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="335">
-              <caret line="67" column="8" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="8" />
+            <state relative-caret-position="412">
+              <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#1229#1230#0" expanded="true" />
+                <element signature="e#1252#1253#0" expanded="true" />
+                <element signature="e#1317#1318#0" expanded="true" />
+                <element signature="e#1356#1357#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -66,11 +71,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="28" selection-start-line="28" selection-end-line="28" />
+            <state relative-caret-position="126">
+              <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
             </state>
           </provider>
         </entry>
@@ -105,14 +110,14 @@
         <option value="$PROJECT_DIR$/src/hardware/Tile.java" />
         <option value="$PROJECT_DIR$/src/hardware/Teensy.java" />
         <option value="$PROJECT_DIR$/src/environment/OnScreen.java" />
-        <option value="$PROJECT_DIR$/src/OnScreen.java" />
         <option value="$PROJECT_DIR$/src/output/UDPModel.java" />
         <option value="$PROJECT_DIR$/src/clip/SolidColorClip.java" />
         <option value="$PROJECT_DIR$/src/TesseractMain.java" />
+        <option value="$PROJECT_DIR$/src/OnScreen.java" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds">
     <option name="x" value="36" />
     <option name="y" value="23" />
     <option name="width" value="1404" />
@@ -158,6 +163,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.spelling" />
   </component>
   <component name="RunDashboard">
@@ -220,7 +226,7 @@
     <frame x="36" y="23" width="1404" height="835" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25110132" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25110132" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -230,7 +236,7 @@
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3485868" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3485868" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -317,13 +323,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/environment/OnScreen.java" />
-    <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/output/UDPModel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="810">
@@ -365,11 +364,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/TesseractMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="335">
-          <caret line="67" column="8" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="8" />
+        <state relative-caret-position="412">
+          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1229#1230#0" expanded="true" />
+            <element signature="e#1252#1253#0" expanded="true" />
+            <element signature="e#1317#1318#0" expanded="true" />
+            <element signature="e#1356#1357#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/OnScreen.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
         </state>
       </provider>
     </entry>
