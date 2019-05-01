@@ -1,25 +1,31 @@
 
 import processing.core.*;
 
-import clip.*;
 import output.*;
-//import environment.*;
+import environment.*;
 
 
 public class TesseractMain extends PApplet {
 
     //single global instance
-    public static PApplet processing;
+    private static TesseractMain _main;
 
-    //	An array of stripes
-    //Stripe[] stripes = new Stripe[50];
+    //public static PApplet processing;
 
-    UDPModel udpModel;
-    OnScreen onScreen;
+
+    private UDPModel udpModel;
+    private OnScreen onScreen;
+
+
+    public Stage stage;
 
 
     public static void main(String[] args) {
         PApplet.main("TesseractMain", args);
+    }
+
+    public static TesseractMain getMain() {
+        return _main;
     }
 
     @Override
@@ -27,13 +33,15 @@ public class TesseractMain extends PApplet {
 
         size(1100, 800, P3D);
 
-        //pixelDensity(displayDensity());
-        pixelDensity(2);
+        pixelDensity(displayDensity());
+        //pixelDensity(2);
     }
 
     @Override
     public void setup() {
-        processing = this;
+        _main = this;
+        //processing = this;
+
 
         clear();
 
@@ -41,14 +49,15 @@ public class TesseractMain extends PApplet {
 
         onScreen = new OnScreen(this);
 
-        /*
-        // Initialize all "stripes"
-        for (int i = 0; i < stripes.length; i++) {
-            stripes[i] = new Stripe(this);
-        }
-        */
+        stage = new Stage(this);
+
+        //pass in an XML stage definition, eventually we might load a saved project which is a playlist and environment together
+        stage.buildStage();
+
+        //create channels
 
 
+        //load a default playlist file. We need to make shit happen on boot in case the power goes out.
     }
 
     @Override
@@ -58,15 +67,9 @@ public class TesseractMain extends PApplet {
         onScreen.draw();
 
 
+        //call run() on the current scene loaded into channel 1
 
-        /*
-        // Move and display all "stripes"
-        for (int i = 0; i < stripes.length; i++) {
-            stripes[i].move();
-            stripes[i].display();
-        }
-        */
-
+        //call run() on the current scene loaded into channel 1
 
     }
 
@@ -79,4 +82,8 @@ public class TesseractMain extends PApplet {
     public void mouseReleased() {
         onScreen.mouseReleased();
     }
+
+
+
+
 }

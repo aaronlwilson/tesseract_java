@@ -1,6 +1,6 @@
 package clip;
 
-import model.*;
+import environment.Node;
 
 class AbstractClip  {
   
