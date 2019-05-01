@@ -1,5 +1,5 @@
-
 import processing.core.PApplet;
+import environment.*;
 
 
 public class OnScreen {
@@ -83,9 +83,10 @@ public class OnScreen {
 
 
         //draw nodes
-        p.strokeWeight (3);
+        p.strokeWeight(3);
         p.stroke (255, 0, 0);
 
+        /*
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
                 for (int k = 0; k < 20; k++) {
@@ -93,6 +94,21 @@ public class OnScreen {
                 }
             }
         }
+        */
+
+        TesseractMain myMain = TesseractMain.getMain();
+
+        if(myMain.stage.nodes == null) {
+            return;
+
+        }else{
+            for (int i = 0; i < myMain.stage.nodes.length; i++) {
+
+                Node node = myMain.stage.nodes[i];
+                p.point(node.x, node.y, node.z);
+            }
+        }
+
 
     }
 
