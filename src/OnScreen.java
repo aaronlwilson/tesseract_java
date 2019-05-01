@@ -6,45 +6,85 @@ public class OnScreen {
 
     private PApplet p;
 
-    private float _xmag;
-    private float _ymag;
-    private float _newXmag;
-    private float _newYmag;
+    private float _xrot;
+    private float _yrot;
+    private float _newXrot;
+    private float _newYrot;
+    private float _xStart;
+    private float _yStart;
+    private float _xDelta;
+    private float _yDelta;
+    private float _xMove;
+    private float _yMove;
+
 
     public OnScreen(PApplet pApplet) {
         p = pApplet;
 
-        _xmag = 0;
-        _ymag = 0;
-        _newXmag = 0;
-        _newYmag = 0;
+        _xrot = 0;
+        _yrot = 0;
+        _newXrot = 0;
+        _newYrot = 0;
+
+        _xStart = 0;
+        _yStart = 0;
+
+        _xDelta = 0;
+        _yDelta = 0;
+
+        _xMove = 0;
+        _yMove = 0;
+    }
+
+    private void drawAxes(float size){
+        p.strokeWeight (1);
+        //X  - red
+        p.stroke(192,0,0);
+        p.line(0,0,0,size,0,0);
+        //Y - green
+        p.stroke(0,192,0);
+        p.line(0,0,0,0,size,0);
+        //Z - blue
+        p.stroke(0,0,192);
+        p.line(0,0,0,0,0,size);
     }
 
     public void draw() {
 
         p.noFill();
-        p.strokeWeight (3);
-        p.stroke (255, 0, 0);
+
+        p.translate(p.width/2, p.height/2, -300);
 
 
-
-        p.translate(p.width/2, p.height/2, 0);
-
-        float diff = _xmag-_newXmag;
-        if (Math.abs(diff) >  0.01) { _xmag -= diff/5.0; }
-
-        diff = _ymag-_newYmag;
-        if (Math.abs(diff) >  0.01) { _ymag -= diff/5.0; }
-
-        if(p.mousePressed){
-            _newXmag = ((p.mouseX*.5f) /p.width) * p.TWO_PI;
-            _newYmag = ((p.mouseY*.5f) /p.height) * p.TWO_PI;
+        if(p.mousePressed) {
+            _xDelta = _xStart - p.mouseX;
+            _yDelta = _yStart - p.mouseY;
+        }else{
+            _xDelta = 0;
+            _yDelta = 0;
         }
 
-        p.rotateX(-_ymag);
-        p.rotateY(-_xmag);
+        _newXrot = _xMove - _xDelta;
+        _newYrot = _yMove - _yDelta;
 
-        //println(width);
+        //easing
+        float diff = _xrot-_newXrot;
+        if (Math.abs(diff) >  0.01) { _xrot -= diff/6.0; }
+
+        diff = _yrot-_newYrot;
+        if (Math.abs(diff) >  0.01) { _yrot -= diff/6.0; }
+
+        p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI));
+        p.rotateY(p.map(_xrot,0, p.width, p.PI, -p.PI));
+
+
+
+        drawAxes(500);
+
+
+        //draw nodes
+        p.strokeWeight (3);
+        p.stroke (255, 0, 0);
 
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 20; j++) {
@@ -54,6 +94,18 @@ public class OnScreen {
             }
         }
 
+    }
 
+
+    public void mousePressed() {
+        _xStart = p.mouseX;
+        _yStart = p.mouseY;
+
+        //p.println(_xStart);
+    }
+
+    public void mouseReleased() {
+        _xMove = _xMove - _xDelta;
+        _yMove = _yMove - _yDelta;
     }
 }

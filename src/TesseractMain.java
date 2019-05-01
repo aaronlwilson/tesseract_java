@@ -69,4 +69,14 @@ public class TesseractMain extends PApplet {
 
 
     }
+
+    @Override
+    public void mousePressed() {
+        onScreen.mousePressed();
+    }
+
+    @Override
+    public void mouseReleased() {
+        onScreen.mouseReleased();
+    }
 }
