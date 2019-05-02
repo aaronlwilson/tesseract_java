@@ -14,15 +14,36 @@ import org.java_websocket.server.WebSocketServer
  */
 class WebsocketInterface extends WebSocketServer {
 
-  private static TesseractMain _main;
+  private static WebsocketInterface instance;
+
+  private static TesseractMain mainApp;
 
   WebsocketInterface(int port) {
     super(new InetSocketAddress(port))
-    this._main = TesseractMain.getMain()
+    this.mainApp = TesseractMain.getMain()
   }
 
   WebsocketInterface(InetSocketAddress address) {
     super(address)
+  }
+
+  public static WebsocketInterface get() {
+    if (instance == null) {
+      instance = createInterface()
+    }
+
+    return instance
+  }
+
+  static WebsocketInterface createInterface() {
+    int port = 8883
+
+    WebsocketInterface s = new WebsocketInterface(port)
+    s.start()
+    println("WebsocketInterface started on port: ${s.getPort()}")
+
+    // groovy functions (or blocks) always return the last expression, so you will often see omitted return statements
+    s
   }
 
   @Override
@@ -64,17 +85,6 @@ class WebsocketInterface extends WebSocketServer {
     println("Got message external (bytebuffer): ${conn}: ${message}")
   }
 
-  static WebsocketInterface createInterface() {
-    int port = 8883
-
-    WebsocketInterface s = new WebsocketInterface(port)
-    s.start()
-    println("WebsocketInterface started on port: ${s.getPort()}")
-
-    // groovy functions (or blocks) always return the last expression, so you will often see omitted return statements
-    s
-  }
-
   @Override
   void onError(WebSocket conn, Exception ex) {
     ex.printStackTrace()
@@ -88,5 +98,16 @@ class WebsocketInterface extends WebSocketServer {
     println("Websocket server started")
     setConnectionLostTimeout(0)
     setConnectionLostTimeout(100)
+  }
+
+  void shutdownServer() {
+    try {
+      println("Trying to kill the websocket server");
+      WebsocketInterface.get().stop();
+      println("The server is shut down");
+    } catch (IOException | InterruptedException e) {
+      println("Error!  Could not shut down the websocket server");
+      e.printStackTrace();
+    }
   }
 }
