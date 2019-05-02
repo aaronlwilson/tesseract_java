@@ -1,3 +1,5 @@
+package app;
+
 import processing.core.PApplet;
 import environment.*;
 
