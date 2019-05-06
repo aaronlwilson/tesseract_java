@@ -99,7 +99,8 @@ fabric.properties
 # Gradle
 .gradle/
 build/
-.idea/compiler.xml
+
+##
 .idea/compiler.xml
 .idea/dictionaries/aaronwilson.xml
 .idea/misc.xml
