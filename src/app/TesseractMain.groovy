@@ -3,7 +3,10 @@ package app;
 import processing.core.*;
 
 import output.*;
-import environment.*;
+import environment.*
+import show.PlaylistManager
+import state.StateManager
+import util.Util;
 import websocket.WebsocketInterface;
 
 import java.io.IOException;
@@ -23,7 +26,9 @@ public class TesseractMain extends PApplet {
 
   public Stage stage;
 
-  public WebsocketInterface ws;
+  public WebsocketInterface ws
+  public PlaylistManager playlistManager
+  public StateManager stateManager
 
 
   public static void main(String[] args) {
@@ -45,10 +50,14 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
+    Util.enableColorization()
+
     _main = this;
     //processing = this;
 
-    ws = WebsocketInterface.get();
+    ws = WebsocketInterface.get()
+    stateManager = new StateManager()
+    playlistManager = new PlaylistManager()
 
     clear();
 
