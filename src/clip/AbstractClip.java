@@ -9,11 +9,10 @@ public class AbstractClip  {
  
   public String clipName;
   public int channel;
- 
-  protected int[] nodestate = new int[5]; // RGBXY
-  protected int r, g, b, x, y;
-  
+
+
   // Params
+  // all parameters should be normalized to a range 0.00 - 1.00
   public float p1, p2, p3, p4, p5, p6, p7; // p 1-3 knobs, p 4-7 sliders
   protected float[] paramDefaults = new float[7];
   
@@ -21,13 +20,7 @@ public class AbstractClip  {
   public AbstractClip(String theClipName, int theChannel) {
     clipName = theClipName;
     channel = theChannel;
-    
-    //init mem for array to be passed back
-    nodestate[0] = 0;
-    nodestate[1] = 0;
-    nodestate[2] = 0;
-    nodestate[3] = 0;
-    nodestate[4] = 0;
+
   }   
 
  
@@ -50,7 +43,8 @@ public class AbstractClip  {
   }
 
   public int[] drawNode(Node node) {// apply the animation logic calculated above to each node
-    return nodestate; 
+
+    return new int[3];
   }   
 
   public boolean setParamDefault(int param, int value) {
@@ -59,6 +53,18 @@ public class AbstractClip  {
     }
     paramDefaults[param-1] = value;
     return true;
+  }
+
+  //COLOR utility methods
+  //c in this case is a processing type "color" which is really just a 32 bit integer
+  static public int getR(int c) {
+    return c >> 16 & 0xFF;
+  }
+  static public int getG(int c) {
+    return c >> 8 & 0xFF;
+  }
+  static public int getB(int c) {
+    return c & 0xFF;
   }
   
 } 
