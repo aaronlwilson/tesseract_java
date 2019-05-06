@@ -4,6 +4,9 @@ package clip;
 import processing.core.PApplet;
 
 public class Stripe {
+    String clipId = "stripe";
+    String displayName = "Stripe";
+
     float x;       // horizontal location of stripe
     float speed;   // speed of stripe
     float w;       // width of stripe

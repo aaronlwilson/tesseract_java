@@ -55,8 +55,8 @@ class WebsocketInterface extends WebSocketServer {
   // Sends a websocket message in the format the front end expects:
   // [ action: 'action-name', data: [arbitrary: 'data'] ]
   void sendMessage(WebSocket conn, String action, data) {
-    println "Sending websocket message: ${action}".cyan()
-    println new JsonBuilder(data).toPrettyString().cyan()
+//    println "Sending websocket message: ${action}".cyan()
+//    println new JsonBuilder(data).toPrettyString().cyan()
 
     Map message = [
         action: action,
@@ -89,7 +89,7 @@ class WebsocketInterface extends WebSocketServer {
 //    println("Got message external: ${conn}: ${message}")
 
     // Benefit of groovy: Json parsing is built in and easy, unlike Java
-    def jsonSlurper = new JsonSlurper()
+    JsonSlurper jsonSlurper = new JsonSlurper()
 
     def jsonObj
     try {
@@ -150,7 +150,7 @@ class WebsocketInterface extends WebSocketServer {
   // This will register a handler for a message coming from the front end over the websocket
   // For example, the UI will send a message with action 'requestInitialState', and the handler will send the initial state back in another message
   void registerActionHandler(String actionType, Closure handler) {
-    println "Registering action handler: ${actionType}".cyan()
+//    println "Registering action handler: ${actionType}".cyan()
     if (this.actionHandlers[actionType]) {
       this.actionHandlers[actionType].push(handler)
     } else {
