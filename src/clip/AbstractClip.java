@@ -2,13 +2,13 @@ package clip;
 
 import environment.Node;
 
-class AbstractClip  {
+public class AbstractClip  {
   
   //CLASS VARS
   protected int nodeSpacing = 6;
  
   public String clipName;
-  public String channel;
+  public int channel;
  
   protected int[] nodestate = new int[5]; // RGBXY
   protected int r, g, b, x, y;
@@ -18,7 +18,7 @@ class AbstractClip  {
   protected float[] paramDefaults = new float[7];
   
   //constructor
-  AbstractClip(String theClipName, String theChannel) {
+  public AbstractClip(String theClipName, int theChannel) {
     clipName = theClipName;
     channel = theChannel;
     

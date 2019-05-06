@@ -4,6 +4,7 @@ import processing.core.*;
 
 import output.*;
 import environment.*;
+import model.*;
 import websocket.WebsocketInterface;
 
 import java.io.IOException;
@@ -14,7 +15,21 @@ public class TesseractMain extends PApplet {
   //single global instance
   private static TesseractMain _main;
 
-  //public static PApplet processing;
+
+  //CLIP CLASS ENUM
+  public static final int NODESCAN = 0;
+  public static final int SOLID = 1;
+  public static final int COLORWASH = 2;
+
+
+  public static String[] clipNames = {
+    "nodescan",
+    "solid",
+    "colorwash"
+  };
+
+
+
 
 
   private UDPModel udpModel;
@@ -22,6 +37,10 @@ public class TesseractMain extends PApplet {
 
 
   public Stage stage;
+
+  public Channel channel1;
+  public Channel channel2;
+
 
   public WebsocketInterface ws;
 
@@ -39,14 +58,13 @@ public class TesseractMain extends PApplet {
 
     size(1100, 800, P3D);
 
-    pixelDensity(displayDensity());
+    //pixelDensity(displayDensity()); //for mac retna displays
     //pixelDensity(2);
   }
 
   @Override
   public void setup() {
     _main = this;
-    //processing = this;
 
     ws = WebsocketInterface.get();
 
@@ -66,19 +84,19 @@ public class TesseractMain extends PApplet {
     //load a default playlist file. We need to make shit happen on boot in case the power goes out.
 
     // The shutdown hook will let us clean up when the application is killed
-    createShutdownHook()
+    //createShutdownHook()
   }
 
   @Override
   public void draw() {
     clear();
 
+
+    //call run() on the current scene loaded into channel 1
+
+    //call run() on the current scene loaded into channel 1
+
     onScreen.draw();
-
-
-    //call run() on the current scene loaded into channel 1
-
-    //call run() on the current scene loaded into channel 1
 
   }
 
@@ -92,6 +110,9 @@ public class TesseractMain extends PApplet {
     onScreen.mouseReleased();
   }
 
+
+  /*
+  //TODO switch to java
   private void createShutdownHook() {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       public void run() {
@@ -99,4 +120,7 @@ public class TesseractMain extends PApplet {
       }
     });
   }
+  */
+
+
 }

@@ -27,13 +27,10 @@ public class OnScreen {
         _yrot = 0;
         _newXrot = 0;
         _newYrot = 0;
-
         _xStart = 0;
         _yStart = 0;
-
         _xDelta = 0;
         _yDelta = 0;
-
         _xMove = 0;
         _yMove = 0;
     }
@@ -53,9 +50,11 @@ public class OnScreen {
 
     public void draw() {
 
+        drawFramerate();
+
         p.noFill();
 
-        p.translate(p.width/2, p.height/2, -300);
+        p.translate(p.width/2, p.height/2, -200);
 
 
         if(p.mousePressed) {
@@ -85,7 +84,7 @@ public class OnScreen {
 
 
         //draw nodes
-        p.strokeWeight(3);
+        p.strokeWeight(2);
         p.stroke (255, 0, 0);
 
         /*
@@ -112,7 +111,18 @@ public class OnScreen {
         }
 
 
+
+
     }
+
+    private void drawFramerate()
+    {
+        //show framerate, upper right corner
+        p.textSize (14);
+        p.fill(160);
+        p.text("FPS " + p.str(p.floor(p.frameRate)), p.width-60, 20);
+    }
+
 
 
     public void mousePressed() {

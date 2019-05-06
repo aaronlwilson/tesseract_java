@@ -3,7 +3,9 @@ package clip;
 public class SolidColorClip extends AbstractClip{
 
     //constructor
-    SolidColorClip(String theClipName, String theChannel) {
+    public SolidColorClip(String theClipName, int theChannel) {
         super(theClipName, theChannel);
     }
+
+
 }
