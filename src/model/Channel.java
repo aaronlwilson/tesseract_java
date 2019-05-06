@@ -1,6 +1,7 @@
 package model;
 
 import clip.*;
+import environment.Node;
 import processing.core.PApplet;
 import show.Scene;
 import app.*;
@@ -12,7 +13,9 @@ public class Channel {
 
 
     private Scene _currentScene; //use getter setter
-    private AbstractClip _clip;
+
+    public AbstractClip currentClip;
+
 
     //CONSTRUCTOR
     public Channel(int theChannelNumber) {
@@ -20,7 +23,7 @@ public class Channel {
 
     }
 
-    private void constructNewClip(int clipClass) {
+    public void constructNewClip(int clipClass) {
 
         AbstractClip clip = new AbstractClip("Abstract Clip", channelNumber);
         switch (clipClass) {
@@ -34,13 +37,45 @@ public class Channel {
                 clip = new ColorWashClip(TesseractMain.clipNames[clipClass], channelNumber);
                 break;
 
+            default:
+                throw new IllegalStateException("Unexpected value: " + clipClass);
         }
 
         if (clip != null) {
             clip.init();
-            _clip = clip;
+            currentClip = clip;
+
+            //temp purple
+            currentClip.p4 = 1;
+            currentClip.p6 = 1;
+        }
+    }
+
+    public void run() {// animation logic that runs per frame
+        if(currentClip != null) {
+            currentClip.run();
+
+        }else if(_currentScene != null) {
+            if(_currentScene.clip != null) {
+                _currentScene.clip.run();
+                //System.out.printf("scene run\n");
+            }
+        }
+    }
+
+    //this is just a generic call that reaches down into clips to perform drawing unique to each clip
+    public int[] drawNode(Node node) {
+        if(currentClip != null) {
+            return currentClip.drawNode(node);
+
+        }else if(_currentScene != null) {
+            if(_currentScene.clip != null) {
+                return _currentScene.clip.drawNode(node);
+                //System.out.printf("scene run\n");
+            }
         }
 
+        return new int[3];
     }
 
 
@@ -50,6 +85,7 @@ public class Channel {
 
     public boolean setScene(Scene theScene){
         _currentScene = theScene;
+
         return true;
     }
 

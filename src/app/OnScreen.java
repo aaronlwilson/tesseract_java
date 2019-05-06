@@ -50,11 +50,13 @@ public class OnScreen {
 
     public void draw() {
 
+        p.background(20);
+
         drawFramerate();
 
         p.noFill();
 
-        p.translate(p.width/2, p.height/2, -200);
+        p.translate(p.width/2, p.height/2, -100);
 
 
         if(p.mousePressed) {
@@ -85,17 +87,7 @@ public class OnScreen {
 
         //draw nodes
         p.strokeWeight(2);
-        p.stroke (255, 0, 0);
 
-        /*
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
-                for (int k = 0; k < 20; k++) {
-                    p.point(20 * i, 20 * j, 20 * k);
-                }
-            }
-        }
-        */
 
         TesseractMain myMain = TesseractMain.getMain();
 
@@ -103,9 +95,10 @@ public class OnScreen {
             return;
 
         }else{
-            for (int i = 0; i < myMain.stage.nodes.length; i++) {
-
+            int l = myMain.stage.nodes.length;
+            for (int i = 0; i < l; i++) {
                 Node node = myMain.stage.nodes[i];
+                p.stroke (node.r, node.g, node.b);
                 p.point(node.x, node.y, node.z);
             }
         }

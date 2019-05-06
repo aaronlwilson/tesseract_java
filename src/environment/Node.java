@@ -15,6 +15,7 @@ public class Node  {
   public int g;
   public int b;
 
+
   //constructor
   Node(int theX, int theY, int theZ, int theIndex, Tile theFixture) {
     x = theX;
