@@ -1,10 +1,14 @@
 package app;
 
+import model.Channel;
 import processing.core.*;
 
 import output.*;
 import environment.*;
 import model.*;
+import show.PlaylistManager;
+import state.StateManager;
+import util.Util;
 import websocket.WebsocketInterface;
 
 import java.io.IOException;
@@ -41,9 +45,9 @@ public class TesseractMain extends PApplet {
   public Channel channel1;
   public Channel channel2;
 
-
   public WebsocketInterface ws;
-
+  public PlaylistManager playlistManager;
+  public StateManager stateManager;
 
   public static void main(String[] args) {
     PApplet.main("app.TesseractMain", args);
@@ -64,9 +68,13 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
+    Util.enableColorization();
+
     _main = this;
 
     ws = WebsocketInterface.get();
+    stateManager = new StateManager();
+    playlistManager = new PlaylistManager();
 
     clear();
 
@@ -84,7 +92,7 @@ public class TesseractMain extends PApplet {
     //load a default playlist file. We need to make shit happen on boot in case the power goes out.
 
     // The shutdown hook will let us clean up when the application is killed
-    //createShutdownHook()
+    createShutdownHook();
   }
 
   @Override
@@ -110,17 +118,12 @@ public class TesseractMain extends PApplet {
     onScreen.mouseReleased();
   }
 
-
-  /*
-  //TODO switch to java
   private void createShutdownHook() {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       public void run() {
-        WebsocketInterface.get().shutdownServer()
+        WebsocketInterface.get().shutdownServer();
       }
     });
   }
-  */
-
 
 }
