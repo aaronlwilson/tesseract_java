@@ -25,16 +25,16 @@ public class Channel {
 
     public void constructNewClip(int clipClass) {
 
-        AbstractClip clip = new AbstractClip("Abstract Clip", channelNumber);
+        AbstractClip clip = new AbstractClip("Abstract Clip");
         switch (clipClass) {
             case TesseractMain.NODESCAN:
-                clip = new NodeScanClip(TesseractMain.clipNames[clipClass], channelNumber);
+                clip = new NodeScanClip(TesseractMain.clipNames[clipClass]);
                 break;
             case TesseractMain.SOLID:
-                clip = new SolidColorClip(TesseractMain.clipNames[clipClass], channelNumber);
+                clip = new SolidColorClip(TesseractMain.clipNames[clipClass]);
                 break;
             case TesseractMain.COLORWASH:
-                clip = new ColorWashClip(TesseractMain.clipNames[clipClass], channelNumber);
+                clip = new ColorWashClip(TesseractMain.clipNames[clipClass]);
                 break;
 
             default:

@@ -22,16 +22,16 @@ public class Scene {
 
     public void constructNewClip(int clipClass) {
 
-        AbstractClip newClip = new AbstractClip("Abstract Clip", 0);
+        AbstractClip newClip = new AbstractClip("Abstract Clip");
         switch (clipClass) {
             case TesseractMain.NODESCAN:
-                newClip = new NodeScanClip(TesseractMain.clipNames[clipClass], 0);
+                newClip = new NodeScanClip(TesseractMain.clipNames[clipClass]);
                 break;
             case TesseractMain.SOLID:
-                newClip = new SolidColorClip(TesseractMain.clipNames[clipClass], 0);
+                newClip = new SolidColorClip(TesseractMain.clipNames[clipClass]);
                 break;
             case TesseractMain.COLORWASH:
-                newClip = new ColorWashClip(TesseractMain.clipNames[clipClass], 0);
+                newClip = new ColorWashClip(TesseractMain.clipNames[clipClass]);
                 break;
 
             default:
