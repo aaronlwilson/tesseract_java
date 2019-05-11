@@ -15,8 +15,8 @@ public class ColorWashClip extends AbstractClip {
     float brightness = 100;
 
     //constructor
-    public ColorWashClip(String theClipName, int theChannel) {
-        super(theClipName, theChannel);
+    public ColorWashClip(String theClipName) {
+        super(theClipName);
     }
 
 
