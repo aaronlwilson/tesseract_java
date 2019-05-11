@@ -8,7 +8,6 @@ public class AbstractClip  {
   protected int nodeSpacing = 6;
  
   public String clipName;
-  public int channel;
 
 
   // Params
@@ -17,10 +16,8 @@ public class AbstractClip  {
   protected float[] paramDefaults = new float[7];
   
   //constructor
-  public AbstractClip(String theClipName, int theChannel) {
+  public AbstractClip(String theClipName) {
     clipName = theClipName;
-    channel = theChannel;
-
   }   
 
  
