@@ -1,6 +1,7 @@
 package websocket
 
 import app.TesseractMain
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
 import java.nio.ByteBuffer
@@ -14,9 +15,14 @@ import org.java_websocket.server.WebSocketServer
  */
 class WebsocketInterface extends WebSocketServer {
 
-  private static WebsocketInterface instance;
+  private static WebsocketInterface instance
 
-  private static TesseractMain mainApp;
+  private static TesseractMain mainApp
+
+  List<WebSocket> connections = []
+
+  // map has a String key and the value is a list of closures (functions)
+  Map<String, List<Closure>> actionHandlers = [:]
 
   WebsocketInterface(int port) {
     super(new InetSocketAddress(port))
@@ -32,7 +38,7 @@ class WebsocketInterface extends WebSocketServer {
       instance = createInterface()
     }
 
-    return instance
+    instance
   }
 
   static WebsocketInterface createInterface() {
@@ -40,73 +46,126 @@ class WebsocketInterface extends WebSocketServer {
 
     WebsocketInterface s = new WebsocketInterface(port)
     s.start()
-    println("WebsocketInterface started on port: ${s.getPort()}")
+    println("WebsocketInterface started on port: ${s.getPort()}".cyan())
 
     // groovy functions (or blocks) always return the last expression, so you will often see omitted return statements
     s
   }
 
+  // Sends a websocket message in the format the front end expects:
+  // [ action: 'action-name', data: [arbitrary: 'data'] ]
+  void sendMessage(WebSocket conn, String action, data) {
+    println "Sending websocket message: ${action}".cyan()
+    println new JsonBuilder(data).toPrettyString().cyan()
+
+    Map message = [
+        action: action,
+        data  : data
+    ]
+
+    String jsonStr = new JsonBuilder(message).toPrettyString()
+    conn.send(jsonStr)
+  }
+
   @Override
   void onOpen(WebSocket conn, ClientHandshake handshake) {
-    conn.send("You have connected to the Tesseract Backend") //This method sends a message to the new client
+    this.sendMessage(conn, 'logMessage', "You have connected to the Tesseract Backend")
 
-    broadcast("new connection: " + handshake.getResourceDescriptor())
+//    broadcast("new connection: " + handshake.getResourceDescriptor())
 
     println("New websocketed opened from: ${conn.getRemoteSocketAddress().getAddress().getHostAddress()}")
+
+    this.connections.push(conn)
   }
 
   @Override
   void onClose(WebSocket conn, int code, String reason, boolean remote) {
     println("${conn} has disconnected")
+    this.connections.remove(conn)
   }
 
   @Override
   void onMessage(WebSocket conn, String message) {
-//    broadcast(message)
-    println("Got message external: ${conn}: ${message}")
+//    println("Got message external: ${conn}: ${message}")
 
     // Benefit of groovy: Json parsing is built in and easy, unlike Java
     def jsonSlurper = new JsonSlurper()
-    def jsonObj = jsonSlurper.parseText(message)
 
-    println jsonObj
+    def jsonObj
+    try {
+      jsonObj = jsonSlurper.parseText(message)
+    } catch (Exception e) {
+      e.printStackTrace()
+      throw new RuntimeException("Error: Could not parse json message: ${message}")
+    }
 
-    // example of what our API can look like for sending commands to the backend
-    if (jsonObj['action'] == 'rotate_left') {
-//      this.rotateLeft()
-    } else {
-      throw new Exception("Error: Unhandled action specified in websocket message: ${jsonObj['action']}")
+//    println "Received JSON object on socket".yellow()
+//    println jsonObj
+
+    if (!jsonObj['action'] || !jsonObj['action'] instanceof String || jsonObj['data'] == null) {
+      println "Error: Invalid websocket format".cyan()
+      println jsonObj
+      throw new RuntimeException("Error: JSON object from websocket must have 'action' and 'data' fields, and 'action' must be a string")
+    }
+
+    List<Closure> handlers = this.actionHandlers[jsonObj['action'] as String]
+
+    if (!handlers) {
+      println "Error: No handlers for action ${jsonObj['action']}"
+      println "Handlers registered for actions:"
+      this.actionHandlers.each { k, v -> println "${k}: ${v}" }
+
+      throw new RuntimeException("Error: No handlers for action ${jsonObj['action']}")
+    }
+
+
+    // Call all handlers with the payload
+    handlers.each { Closure handler ->
+      handler(conn, jsonObj['data'])
     }
   }
 
   @Override
+  // I think this is unused in our case
   void onMessage(WebSocket conn, ByteBuffer message) {
-//    broadcast(message.array())
-    println("Got message external (bytebuffer): ${conn}: ${message}")
+    println("onMessage (bytebuffer): ${conn}: ${message}")
   }
 
   @Override
   void onError(WebSocket conn, Exception ex) {
     ex.printStackTrace()
     if (conn != null) {
+      throw new RuntimeException("Error: Websocket had an error")
       // some errors like port binding failed may not be assignable to a specific websocket
     }
   }
 
   @Override
   void onStart() {
-    println("Websocket server started")
+    println "Websocket server started".yellow()
     setConnectionLostTimeout(0)
     setConnectionLostTimeout(100)
   }
 
+  // This will register a handler for a message coming from the front end over the websocket
+  // For example, the UI will send a message with action 'requestInitialState', and the handler will send the initial state back in another message
+  void registerActionHandler(String actionType, Closure handler) {
+    println "Registering action handler: ${actionType}".cyan()
+    if (this.actionHandlers[actionType]) {
+      this.actionHandlers[actionType].push(handler)
+    } else {
+      this.actionHandlers[actionType] = [handler]
+    }
+  }
+
+  // Shutdown server properly so we don't leave the port open when we hard kill the Processing app
   void shutdownServer() {
     try {
-      println("Trying to kill the websocket server");
+      println("Trying to kill the websocket server".yellow());
       WebsocketInterface.get().stop();
-      println("The server is shut down");
+      println("The server is shut down".green());
     } catch (IOException | InterruptedException e) {
-      println("Error!  Could not shut down the websocket server");
+      println("Error!  Could not shut down the websocket server".red());
       e.printStackTrace();
     }
   }
