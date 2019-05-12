@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "displayName": "Show Some Color",
+        "channel1Clip": {
+            "clipId": "solid_color",
+            "controlSetId": 999
+        },
+        "channel2Clip": {
+            "clipId": "color_wash",
+            "controlSetId": 999
+        }
+    },
+    {
+        "id": 2,
+        "displayName": "Text Scroll",
+        "channel1Clip": {
+            "clipId": "solid_color",
+            "controlSetId": 999
+        },
+        "channel2Clip": {
+            "clipId": "text_scroll",
+            "controlSetId": 999
+        }
+    },
+    {
+        "id": 3,
+        "displayName": "Colored Image Scroll",
+        "channel1Clip": {
+            "clipId": "image_scroll",
+            "controlSetId": 999
+        },
+        "channel2Clip": {
+            "clipId": "color_wash",
+            "controlSetId": 999
+        }
+    },
+    {
+        "id": 4,
+        "displayName": "Color Gif",
+        "channel1Clip": {
+            "clipId": "solid_color",
+            "controlSetId": 999
+        },
+        "channel2Clip": {
+            "clipId": "animated_gif",
+            "controlSetId": 999
+        }
+    }
+]

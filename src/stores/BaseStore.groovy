@@ -1,0 +1,5 @@
+package stores
+
+class BaseStore {
+
+}
