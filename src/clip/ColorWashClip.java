@@ -14,6 +14,8 @@ public class ColorWashClip extends AbstractClip {
     float saturation = 100;
     float brightness = 100;
 
+    String clipId = "color_wash";
+
     //constructor
     public ColorWashClip(String theClipName) {
         super(theClipName);

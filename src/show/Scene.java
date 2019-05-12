@@ -2,10 +2,9 @@ package show;
 
 import app.TesseractMain;
 import clip.*;
+import stores.SceneStore;
 
 public class Scene {
-
-
 
     public AbstractClip clip; //use getter setter
 
@@ -13,11 +12,59 @@ public class Scene {
     // all parameters should be normalized to a range 0.00 - 1.00
     public float p1, p2, p3, p4, p5, p6, p7; // p 1-3 knobs, p 4-7 sliders
 
+    public String displayName;
+    public int id;
 
-    //CONSTRUCTOR
-    public Scene() {
+    // CONSTRUCTORS
+    // Use this constructor if you don't want to set clip values right away
+    public Scene(String displayName, int clipClass) {
+        this(displayName, clipClass, new float[]{0, 0, 0, 0, 0, 0, 0});
+    }
 
+    // Use this constructor when creating a new clip w/o an existing ID
+    public Scene(String displayName, int clipClass, float[] clipValues) {
+        this(SceneStore.get().getNextId(), displayName, clipClass, clipValues);
+    }
 
+    // Use this constructor when rehydrating from json
+    public Scene(int id, String displayName, int clipClass, float[] clipValues) {
+        this.id = id;
+        this.displayName = displayName;
+        this.setSceneValues(clipValues);
+        this.constructNewClip(clipClass);
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setSceneValues(float[] clipValues) {
+        p1 = clipValues[0];
+        p2 = clipValues[1];
+        p3 = clipValues[2];
+        p4 = clipValues[3];
+        p5 = clipValues[4];
+        p6 = clipValues[5];
+        p7 = clipValues[6];
+    }
+
+    public float[] getSceneValues() {
+        return new float[]{p1, p2, p3, p4, p5, p6, p7};
+    }
+
+    // set the values on the clip
+    public void setClipValues(float[] clipValues) {
+        this.clip.p1 = clipValues[0];
+        this.clip.p2 = clipValues[1];
+        this.clip.p3 = clipValues[2];
+        this.clip.p4 = clipValues[3];
+        this.clip.p5 = clipValues[4];
+        this.clip.p6 = clipValues[5];
+        this.clip.p7 = clipValues[6];
     }
 
     public void constructNewClip(int clipClass) {
@@ -41,14 +88,7 @@ public class Scene {
         if (newClip != null) {
             newClip.init();
             clip = newClip;
-
-            //apply the saved values on this scene to the clip
-            clip.p1 = p1;
-            clip.p2 = p2;
-            clip.p3 = p3;
-            clip.p4 = p4;
-            clip.p5 = p5;
-            clip.p6 = p6;
+            this.setClipValues(this.getSceneValues());
         }
     }
 
