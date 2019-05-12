@@ -1,21 +1,12 @@
 package stores
 
-import clip.AbstractClip
-import clip.SolidColorClip
-import clip.Stripe
+import app.TesseractMain
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
-import mock.AnimatedGifClip
-import mock.ColorWashClip
-import mock.ImageScrollClip
 import mock.MockData
-import mock.TextScrollClip
-import show.Playlist
 import show.Scene
 import state.IJsonPersistable
 import util.Util
-
-import static util.Util.pp
 
 class SceneStore extends BaseStore implements IJsonPersistable {
   private static SceneStore instance
@@ -38,6 +29,25 @@ class SceneStore extends BaseStore implements IJsonPersistable {
     instance
   }
 
+  // Add a scene to the store
+  public add(Scene scene) {
+    if (this.items.find { Scene s -> s.id == scene.id }) {
+      throw new RuntimeException("Error: Scene with ID ${scene.id} already exists in store")
+    }
+    this.items.push(scene)
+  }
+
+  // Add or update a scene in the store.  If the ID of the scene already exists, it will update the values
+  public addOrUpdate(Scene scene) {
+    Scene existingScene = this.find("id", scene.id)
+    if (existingScene) {
+      existingScene.setDisplayName(scene.getDisplayName())
+      existingScene.setSceneValues(scene.getSceneValues())
+    } else {
+      this.items.push(scene)
+    }
+  }
+
   Scene find(String property, value) {
     Scene item = items.find { item -> item."${property}" == value }
     if (!item) {
@@ -46,25 +56,28 @@ class SceneStore extends BaseStore implements IJsonPersistable {
     item
   }
 
+  // Find the next ID if we are creating a scene and not providing an ID
+  int getNextId() {
+    this.items.size() == 0 ? 1 : this.items.max { Scene s -> s.id }.id + 1
+  }
+
   // This probably isn't the best spot for this but it will work for now
-  AbstractClip createClipById(String clipId) {
-    // map of clipId to class
+  int getClipEnumValue(String clipId) {
+    // map of clipId to ENUM value
     Map clipIdMap = [
-        animated_gif: AnimatedGifClip,
-        color_wash  : ColorWashClip,
-        image_scroll: ImageScrollClip,
-        text_scroll : TextScrollClip,
-        solid_color : SolidColorClip,
-        stripe      : Stripe,
+        color_wash  : TesseractMain.COLORWASH,
+        node_scan: TesseractMain.NODESCAN,
+        solid_color : TesseractMain.SOLID,
+        stripe      : TesseractMain.STRIPE,
     ]
 
-    def clazz = clipIdMap[clipId]
+    int enumVal = clipIdMap[clipId]
 
-    if (!clazz) {
+    if (!enumVal) {
       throw new RuntimeException("Error: No matching class for clipId: ${clipId}")
     }
 
-    clazz.newInstance('my-clip-name', 1) as AbstractClip
+    enumVal
   }
 
   // Creates a Scene object from the JSON representation
@@ -75,11 +88,10 @@ class SceneStore extends BaseStore implements IJsonPersistable {
 //    println "createSceneFromJSON!!!".cyan()
 //    pp jsonObj
 
-    // Match Scenes with Clips and instantiate (need to set the control values as well eventually)
-    AbstractClip channel1Clip = this.createClipById(jsonObj.channel1Clip.clipId)
-    AbstractClip channel2Clip = this.createClipById(jsonObj.channel2Clip.clipId)
+    // find the correct clipClass for the clipId
+    int clipClass = this.getClipEnumValue(jsonObj.clipId)
 
-    new Scene(jsonObj.id, jsonObj.displayName, channel1Clip, channel2Clip)
+    new Scene(jsonObj.id, jsonObj.displayName, clipClass, jsonObj.clipValues as float[])
   }
 
   // Takes an array of parsed JSON and sets the 'items' property
@@ -120,9 +132,9 @@ class SceneStore extends BaseStore implements IJsonPersistable {
     this.items.collect { Scene item ->
       [
           id          : item.id,
-          displayName : item.displayName,
-          channel1Clip: [clipId: item.channel1Clip.clipId, controlSetId: 999],
-          channel2Clip: [clipId: item.channel2Clip.clipId, controlSetId: 999],
+          displayName : item.getDisplayName(),
+          clipId: item.clip.clipId,
+          clipValues: item.getSceneValues(),
       ]
     }
   }
