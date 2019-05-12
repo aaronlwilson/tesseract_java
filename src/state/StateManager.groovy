@@ -1,6 +1,8 @@
 package state
 
 import mock.MockData
+import stores.PlaylistStore
+import stores.SceneStore
 import websocket.WebsocketInterface
 
 // State manager is responsible for managing application state and synchronizing state
@@ -27,8 +29,8 @@ class StateManager {
     println "Sending initial state".cyan()
 
     def data = [
-        sceneData: MockData.getSceneStoreData(),
-        playlistData: MockData.getPlaylistStoreData(),
+        sceneData: SceneStore.get().asJsonObj(),
+        playlistData: PlaylistStore.get().asJsonObj(),
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
