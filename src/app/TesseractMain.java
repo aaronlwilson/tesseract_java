@@ -7,6 +7,7 @@ import output.*;
 import environment.*;
 import model.*;
 import state.StateManager;
+import stores.PlaylistStore;
 import stores.SceneStore;
 import util.Util;
 import show.*;
@@ -59,6 +60,7 @@ public class TesseractMain extends PApplet {
   public PlaylistManager playlistManager;
   public StateManager stateManager;
   public SceneStore sceneStore;
+  public PlaylistStore playlistStore;
 
 
   //Click the arrow on the line below to run the program in .idea
@@ -86,10 +88,13 @@ public class TesseractMain extends PApplet {
 
     _main = this;
 
+    // Persistence / state update stuff
     ws = WebsocketInterface.get();
     stateManager = new StateManager();
     playlistManager = new PlaylistManager();
     sceneStore = SceneStore.get();
+    // Doesn't make sense to fully implement this until we know more about how playlists are gonna work
+    playlistStore = PlaylistStore.get();
 
     clear();
 
@@ -112,6 +117,7 @@ public class TesseractMain extends PApplet {
     // Make some dummy scenes in the store
 
     // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
+    // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
     Scene sYellow =  new Scene(1,"Yellow", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 1, 0, 0});
     this.sceneStore.addOrUpdate(sYellow);
 

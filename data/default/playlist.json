@@ -1,61 +1,49 @@
 [
     {
         "id": 1,
-        "displayName": "Rad Playlist",
+        "displayName": "Color Cube",
         "items": [
             {
                 "sceneId": 1,
-                "duration": 234
+                "duration": 10
             },
             {
                 "sceneId": 2,
-                "duration": 53
-            },
-            {
-                "sceneId": 1,
-                "duration": 123
+                "duration": 10
             },
             {
                 "sceneId": 3,
-                "duration": 533
-            },
-            {
-                "sceneId": 1,
-                "duration": 132
-            },
-            {
-                "sceneId": 4,
-                "duration": 54
+                "duration": 10
             }
         ]
     },
     {
         "id": 2,
-        "displayName": "Image Playlist",
+        "displayName": "Color Cube 2",
         "items": [
             {
-                "sceneId": 3,
-                "duration": 56
+                "sceneId": 1,
+                "duration": 2
             },
             {
-                "sceneId": 4,
-                "duration": 234
+                "sceneId": 2,
+                "duration": 3
             },
             {
-                "sceneId": 3,
-                "duration": 111
-            },
-            {
-                "sceneId": 4,
-                "duration": 564
+                "sceneId": 1,
+                "duration": 4
             },
             {
                 "sceneId": 3,
-                "duration": 755
+                "duration": 5
             },
             {
-                "sceneId": 4,
-                "duration": 554
+                "sceneId": 1,
+                "duration": 6
+            },
+            {
+                "sceneId": 2,
+                "duration": 7
             }
         ]
     }
