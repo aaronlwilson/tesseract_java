@@ -3,24 +3,26 @@ package clip;
 import environment.Node;
 
 public class AbstractClip  {
-  
+
   //CLASS VARS
   protected int nodeSpacing = 6;
- 
+
   public String clipName;
 
+  // Pretty string 'id' that is implemented by subclasses.  e.g., 'color_wash'.  Used for persistence / rehydration of data
+  public String clipId;
 
   // Params
   // all parameters should be normalized to a range 0.00 - 1.00
   public float p1, p2, p3, p4, p5, p6, p7; // p 1-3 knobs, p 4-7 sliders
   protected float[] paramDefaults = new float[7];
-  
+
   //constructor
   public AbstractClip(String theClipName) {
     clipName = theClipName;
-  }   
+  }
 
- 
+
   // ---- TO BE OVERWRITTEN by Clip Class ------
   public void init() {
 
@@ -28,9 +30,9 @@ public class AbstractClip  {
   }
 
   public void run() {// animation logic that runs per frame
-    
+
   }
-  
+
   public void loadFile(String filePath) {
 
   }
@@ -42,7 +44,7 @@ public class AbstractClip  {
   public int[] drawNode(Node node) {// apply the animation logic calculated above to each node
 
     return new int[3];
-  }   
+  }
 
   public boolean setParamDefault(int param, int value) {
     if(param < 1 || param > 6){
@@ -63,5 +65,5 @@ public class AbstractClip  {
   static public int getB(int c) {
     return c & 0xFF;
   }
-  
-} 
+
+}

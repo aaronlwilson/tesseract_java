@@ -10,6 +10,8 @@ public class Stripe {
     boolean mouse; // state of stripe (mouse is over or not?)
     PApplet p; // The parent PApplet that we will render ourselves onto
 
+    String clipId = "stripe";
+
     public Stripe(PApplet pApplet) {
         p = pApplet;
         x = 0;              // All stripes start at 0
