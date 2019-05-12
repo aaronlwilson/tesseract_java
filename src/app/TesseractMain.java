@@ -7,6 +7,7 @@ import output.*;
 import environment.*;
 import model.*;
 import state.StateManager;
+import stores.SceneStore;
 import util.Util;
 import show.*;
 import websocket.WebsocketInterface;
@@ -29,6 +30,7 @@ public class TesseractMain extends PApplet {
   public static final int NODESCAN = 0;
   public static final int SOLID = 1;
   public static final int COLORWASH = 2;
+  public static final int STRIPE = 3;
 
 
   public static String[] clipNames = {
@@ -56,6 +58,7 @@ public class TesseractMain extends PApplet {
   public WebsocketInterface ws;
   public PlaylistManager playlistManager;
   public StateManager stateManager;
+  public SceneStore sceneStore;
 
 
   //Click the arrow on the line below to run the program in .idea
@@ -86,6 +89,7 @@ public class TesseractMain extends PApplet {
     ws = WebsocketInterface.get();
     stateManager = new StateManager();
     playlistManager = new PlaylistManager();
+    sceneStore = SceneStore.get();
 
     clear();
 
@@ -105,24 +109,26 @@ public class TesseractMain extends PApplet {
     //make a dummy clip, one way to use direct control and load a clip directly into a channel, no scene neccessary
     //channel1.constructNewClip(SOLID);
 
-    //or make some dummy scenes
+    // Make some dummy scenes in the store
+
+    // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
+    Scene sYellow =  new Scene(1,"Yellow", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 1, 0, 0});
+    this.sceneStore.addOrUpdate(sYellow);
+
+    Scene sPurple =  new Scene(2, "Purple", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 0, 1, 0});
+    this.sceneStore.addOrUpdate(sPurple);
+
+    Scene sRed =  new Scene(3,"Red", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 0, 0, 0});
+    this.sceneStore.addOrUpdate(sRed);
+
+    // Set temp scenes from store data
     tempScenes = new Scene[3];
-    Scene s =  new Scene();
-    s.p4 = 1;
-    s.p5 = 1;
-    s.constructNewClip(SOLID);
-    tempScenes[0] = s;
+    tempScenes[0] = this.sceneStore.find("displayName", "Yellow");
+    tempScenes[1] = this.sceneStore.find("displayName", "Purple");
+    tempScenes[2] = this.sceneStore.find("displayName", "Red");
 
-    s =  new Scene();
-    s.p4 = 1;
-    s.p6 = 1;
-    s.constructNewClip(SOLID);
-    tempScenes[1] = s;
-
-    s =  new Scene();
-    s.p4 = 1;
-    s.constructNewClip(SOLID);
-    tempScenes[2] = s;
+    // Save the created scenes to disk, this will eventually happen whenever state changes in the store(s)
+    this.sceneStore.saveDataToDisk();
 
     //load first scene into a channel
     //nextScene();
@@ -150,13 +156,15 @@ public class TesseractMain extends PApplet {
 
   public void nextScene(){
     //load next scene into a channel
-    channel1.setScene(tempScenes[sceneIndex]);
+    Scene nextScene = tempScenes[sceneIndex];
+
+    channel1.setScene(nextScene);
     sceneIndex++;
 
     if(sceneIndex > tempScenes.length - 1)
       sceneIndex = 0;
 
-    System.out.println("nextScene");
+    System.out.println("nextScene: " + nextScene.getDisplayName());
   }
 
   @Override

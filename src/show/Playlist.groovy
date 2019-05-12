@@ -1,9 +1,9 @@
 package show;
 
-class Playlist {
+public class Playlist {
 
   // Playlist item: One scene + one duration.  and any other fields we decide we want
-  class PlaylistItem {
+  public class PlaylistItem {
     Scene scene
     Integer duration
 
@@ -19,7 +19,7 @@ class Playlist {
 
   Integer defaultDuration
 
-  Playlist(String displayName, Integer defaultDuration = 60, List<PlaylistItem> items = []) {
+  public Playlist(String displayName, Integer defaultDuration = 60, List<PlaylistItem> items = []) {
     this.displayName = displayName
     this.defaultDuration = defaultDuration
     this.items = items
