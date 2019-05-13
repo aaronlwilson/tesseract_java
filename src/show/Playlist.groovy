@@ -4,24 +4,24 @@ public class Playlist {
 
   // Playlist item: One scene + one duration.  and any other fields we decide we want
   public class PlaylistItem {
-    Scene scene
-    Integer duration
+    Scene scene;
+    Integer duration;
 
     PlaylistItem(Scene scene, Integer duration) {
-      this.scene = scene
-      this.duration = duration
+      this.scene = scene;
+      this.duration = duration;
     }
   }
 
-  String displayName
+  int id;
+  String displayName;
+  Integer defaultDuration;
+  List<PlaylistItem> items;
 
-  List<PlaylistItem> items
-
-  Integer defaultDuration
-
-  public Playlist(String displayName, Integer defaultDuration = 60, List<PlaylistItem> items = []) {
-    this.displayName = displayName
-    this.defaultDuration = defaultDuration
-    this.items = items
+  public Playlist(int id, String displayName, Integer defaultDuration = 60, List<PlaylistItem> items = []) {
+    this.id = id;
+    this.displayName = displayName;
+    this.defaultDuration = defaultDuration;
+    this.items = items;
   }
 }
