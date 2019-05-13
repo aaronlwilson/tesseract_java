@@ -2,7 +2,6 @@ package stores
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
-import mock.MockData
 import show.Playlist
 import show.PlaylistItem
 import show.Scene
