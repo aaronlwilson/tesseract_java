@@ -104,9 +104,9 @@ public class TesseractMain extends PApplet {
 
     //create channels
     channel1 = new Channel(1);
-    channel2 = new Channel(2);
+    //channel2 = new Channel(2);
 
-    //make a dummy clip, one way to use direct control and load a clip directly into a channel, no scene neccessary
+    //make a dummy clip, one way to use direct control and load a clip directly into a channel, no scene necessary
     //channel1.constructNewClip(SOLID);
 
     // Make some dummy scenes in the store
@@ -145,7 +145,7 @@ public class TesseractMain extends PApplet {
     Timer timer = new Timer("NextScene");
     //long delay = 4000L;
     //timer.schedule(task, delay); //run once
-    timer.scheduleAtFixedRate(task, 0, 2000L);
+    timer.scheduleAtFixedRate(task, 0, 7000L);
 
 
     //load a default playlist file. We need to make shit happen on boot in case the power goes out.
@@ -158,7 +158,7 @@ public class TesseractMain extends PApplet {
     //load next scene into a channel
     Scene nextScene = tempScenes[sceneIndex];
 
-    channel1.setScene(nextScene);
+    channel1.setScene(nextScene, false, 10);
     sceneIndex++;
 
     if(sceneIndex > tempScenes.length - 1)
@@ -174,13 +174,14 @@ public class TesseractMain extends PApplet {
 
     //call run() on the current clips inside channels
     channel1.run();
-    channel2.run();
+    //channel2.run();
 
 
     //get the full list of hardware nodes
     int l= stage.nodes.length;
 
     Node[] nextNodes = stage.nodes;
+    stage.prevNodes = stage.nodes;
 
     for(int i=0; i<l; i++) {
       Node n = nextNodes[i];
@@ -195,8 +196,6 @@ public class TesseractMain extends PApplet {
     }
 
     stage.nodes = nextNodes;
-
-
 
     onScreen.draw();
   }

@@ -9,6 +9,7 @@ public class Stage {
 
     //	An array of all the LEDs, used for render
     public Node[] nodes;
+    public Node[] prevNodes; //last frames data
 
     public Stage(PApplet pApplet) {
         p = pApplet;
