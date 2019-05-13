@@ -19,8 +19,6 @@ class WebsocketInterface extends WebSocketServer {
 
   private static TesseractMain mainApp
 
-  List<WebSocket> connections = []
-
   // map has a String key and the value is a list of closures (functions)
   Map<String, List<Closure>> actionHandlers = [:]
 
@@ -55,8 +53,8 @@ class WebsocketInterface extends WebSocketServer {
   // Sends a websocket message in the format the front end expects:
   // [ action: 'action-name', data: [arbitrary: 'data'] ]
   void sendMessage(WebSocket conn, String action, data) {
-    println "Sending websocket message: ${action}".cyan()
-    println new JsonBuilder(data).toPrettyString().cyan()
+//    println "Sending websocket message: ${action}".cyan()
+//    println new JsonBuilder(data).toPrettyString().cyan()
 
     Map message = [
         action: action,
@@ -67,21 +65,31 @@ class WebsocketInterface extends WebSocketServer {
     conn.send(jsonStr)
   }
 
+  // Sends a websocket message in the format the front end expects:
+  // [ action: 'action-name', data: [arbitrary: 'data'] ]
+  // Sends the message to all clients
+  void broadcastMessage(String action, data) {
+//    println "Broadcasting websocket message: ${action}".cyan()
+//    println new JsonBuilder(data).toPrettyString().cyan()
+
+    Map message = [
+        action: action,
+        data  : data
+    ]
+
+    String jsonStr = new JsonBuilder(message).toPrettyString()
+    this.broadcast(jsonStr)
+  }
+
   @Override
   void onOpen(WebSocket conn, ClientHandshake handshake) {
     this.sendMessage(conn, 'logMessage', "You have connected to the Tesseract Backend")
-
-//    broadcast("new connection: " + handshake.getResourceDescriptor())
-
     println("New websocketed opened from: ${conn.getRemoteSocketAddress().getAddress().getHostAddress()}")
-
-    this.connections.push(conn)
   }
 
   @Override
   void onClose(WebSocket conn, int code, String reason, boolean remote) {
     println("${conn} has disconnected")
-    this.connections.remove(conn)
   }
 
   @Override

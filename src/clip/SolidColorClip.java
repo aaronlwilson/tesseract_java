@@ -54,9 +54,9 @@ public class SolidColorClip extends AbstractClip{
         saturation = p2;
         brightness = p3;
 
-        red =   (int)p4*255;
-        green = (int)p5*255;
-        blue =  (int)p6*255;
+        red =   (int)(p4*255);
+        green = (int)(p5*255);
+        blue =  (int)(p6*255);
     }
 
     public void die() {
