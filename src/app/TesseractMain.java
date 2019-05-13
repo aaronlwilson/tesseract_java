@@ -151,7 +151,9 @@ public class TesseractMain extends PApplet {
     Timer timer = new Timer("NextScene");
     //long delay = 4000L;
     //timer.schedule(task, delay); //run once
-    timer.scheduleAtFixedRate(task, 0, 2000L);
+
+    // I needed this to be a bit longer to test my stuff, feel free to change it back
+    timer.scheduleAtFixedRate(task, 0, 20000L);
 
 
     //load a default playlist file. We need to make shit happen on boot in case the power goes out.
@@ -169,6 +171,10 @@ public class TesseractMain extends PApplet {
 
     if(sceneIndex > tempScenes.length - 1)
       sceneIndex = 0;
+
+    // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
+    // for now this is a one-off that sets the activeScene on the 'controls' panel of the UI
+    stateManager.sendStateUpdate("activeScene", nextScene.id);
 
     System.out.println("nextScene: " + nextScene.getDisplayName());
   }
