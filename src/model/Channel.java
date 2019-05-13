@@ -23,33 +23,34 @@ public class Channel {
 
     }
 
-    public void constructNewClip(int clipClass) {
-
-        AbstractClip clip = new AbstractClip("Abstract Clip");
-        switch (clipClass) {
-            case TesseractMain.NODESCAN:
-                clip = new NodeScanClip(TesseractMain.clipNames[clipClass]);
-                break;
-            case TesseractMain.SOLID:
-                clip = new SolidColorClip(TesseractMain.clipNames[clipClass]);
-                break;
-            case TesseractMain.COLORWASH:
-                clip = new ColorWashClip(TesseractMain.clipNames[clipClass]);
-                break;
-
-            default:
-                throw new IllegalStateException("Unexpected value: " + clipClass);
-        }
-
-        if (clip != null) {
-            clip.init();
-            currentClip = clip;
-
-            //temp purple
-            currentClip.p4 = 1;
-            currentClip.p6 = 1;
-        }
-    }
+    // commented this out just to make sure it wasn't affecting anything
+//    public void constructNewClip(int clipClass) {
+//
+//        AbstractClip clip = new AbstractClip("Abstract Clip");
+//        switch (clipClass) {
+//            case TesseractMain.NODESCAN:
+//                clip = new NodeScanClip(TesseractMain.clipNames[clipClass]);
+//                break;
+//            case TesseractMain.SOLID:
+//                clip = new SolidColorClip(TesseractMain.clipNames[clipClass]);
+//                break;
+//            case TesseractMain.COLORWASH:
+//                clip = new ColorWashClip(TesseractMain.clipNames[clipClass]);
+//                break;
+//
+//            default:
+//                throw new IllegalStateException("Unexpected value: " + clipClass);
+//        }
+//
+//        if (clip != null) {
+//            clip.init();
+//            currentClip = clip;
+//
+//            //temp purple
+//            currentClip.p4 = 1;
+//            currentClip.p6 = 1;
+//        }
+//    }
 
     public void run() {// animation logic that runs per frame
         if(currentClip != null) {
