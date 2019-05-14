@@ -13,8 +13,12 @@ public class Channel {
 
 
     private Scene _currentScene; //use getter setter
+    private Scene _nextScene; //use getter setter
+    private float _mix = 0.0f;
 
-    public AbstractClip currentClip;
+
+    public AbstractClip currentClip; //used for direct control
+
 
 
     //CONSTRUCTOR
@@ -23,45 +27,65 @@ public class Channel {
 
     }
 
-    // commented this out just to make sure it wasn't affecting anything
-//    public void constructNewClip(int clipClass) {
-//
-//        AbstractClip clip = new AbstractClip("Abstract Clip");
-//        switch (clipClass) {
-//            case TesseractMain.NODESCAN:
-//                clip = new NodeScanClip(TesseractMain.clipNames[clipClass]);
-//                break;
-//            case TesseractMain.SOLID:
-//                clip = new SolidColorClip(TesseractMain.clipNames[clipClass]);
-//                break;
-//            case TesseractMain.COLORWASH:
-//                clip = new ColorWashClip(TesseractMain.clipNames[clipClass]);
-//                break;
-//
-//            default:
-//                throw new IllegalStateException("Unexpected value: " + clipClass);
-//        }
-//
-//        if (clip != null) {
-//            clip.init();
-//            currentClip = clip;
-//
-//            //temp purple
-//            currentClip.p4 = 1;
-//            currentClip.p6 = 1;
-//        }
-//    }
+    public void constructNewClip(int clipClass) {
+
+        AbstractClip clip = new AbstractClip("Abstract Clip");
+        switch (clipClass) {
+            case TesseractMain.NODESCAN:
+                clip = new NodeScanClip(TesseractMain.clipNames[clipClass]);
+                break;
+            case TesseractMain.SOLID:
+                clip = new SolidColorClip(TesseractMain.clipNames[clipClass]);
+                break;
+            case TesseractMain.COLORWASH:
+                clip = new ColorWashClip(TesseractMain.clipNames[clipClass]);
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + clipClass);
+        }
+
+        if (clip != null) {
+            clip.init();
+            currentClip = clip;
+
+            //temp purple
+            //currentClip.p4 = 1;
+            //currentClip.p6 = 1;
+        }
+    }
 
     public void run() {// animation logic that runs per frame
         if(currentClip != null) {
             currentClip.run();
+        }
 
-        }else if(_currentScene != null) {
+        if(_currentScene != null) {
             if(_currentScene.clip != null) {
                 _currentScene.clip.run();
-                //System.out.printf("scene run\n");
             }
         }
+
+        if(_nextScene != null) {
+            if(_nextScene.clip != null) {
+                _nextScene.clip.run();
+            }
+        }
+
+        if(_mix < 0){
+            _mix = 0;
+            _currentScene = _nextScene;
+            _nextScene = null;
+            System.out.printf("fade over\n");
+        }
+
+        if(_mix > 0) {
+            _mix -= .02f;
+            //System.out.printf("%.3f ", _mix);
+        }
+
+
+        //System.out.printf("channel -> scene run\n");
     }
 
     //this is just a generic call that reaches down into clips to perform drawing unique to each clip
@@ -69,24 +93,65 @@ public class Channel {
         if(currentClip != null) {
             return currentClip.drawNode(node);
 
-        }else if(_currentScene != null) {
+        }else if(_currentScene != null && _nextScene == null) {
             if(_currentScene.clip != null) {
                 return _currentScene.clip.drawNode(node);
-                //System.out.printf("scene run\n");
             }
+
+
+        }else if(_currentScene != null && _nextScene != null) {// this the the transition between scenes
+
+            int[] currentRgb = new int[3];
+            int[] nextRgb = new int[3];
+            int[] sceneMix = new int[3];
+
+            if(_currentScene.clip != null) {
+                currentRgb = _currentScene.clip.drawNode(node);
+            }
+
+            if(_nextScene.clip != null) {
+                nextRgb = _nextScene.clip.drawNode(node);
+            }
+
+
+            for(int i=0; i<3; i++){
+                //apply mix ratios to each scene and add them together for a generic output format
+                sceneMix[i] = (int)(currentRgb[i] * _mix) + (int)(nextRgb[i] * Math.abs(_mix-1) );
+
+                //sceneMix[i] = nextRgb[i] /2;
+                //System.out.printf("%d ", sceneMix[i]);
+                //sceneMix[i] = (int)(currentRgb[i] * _mix) ;
+            }
+
+            return sceneMix;
         }
+
+
 
         return new int[3];
     }
 
 
     public void drawUI(PApplet p, int x, int y){
-
+        //draw the state of this channel to processing
     }
 
-    public boolean setScene(Scene theScene){
-        _currentScene = theScene;
+    public boolean setScene(Scene theScene, boolean instant, int transition){
 
+        if(instant){
+            _currentScene = theScene;
+
+        }else{
+            //if there is no current scene, skip the transition, like when a scene is loaded into this channel for the first time
+            if(_currentScene == null){
+                _currentScene = theScene;
+                return false;
+            }
+            _nextScene = theScene;
+            _mix = 1.0f;
+        }
+
+        //will mix
         return true;
     }
 
@@ -95,4 +160,3 @@ public class Channel {
     }
 
 }
-
