@@ -14,7 +14,7 @@ public class Stage {
     public Stage(PApplet pApplet) {
         p = pApplet;
 
-        nodes = new Node[30*30*30];
+        nodes = new Node[10*10*10];
     }
 
 
@@ -23,9 +23,9 @@ public class Stage {
         int counter = 0;
 
         // Initialize all nodes
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 30; j++) {
-                for (int k = 0; k < 30; k++) {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k < 10; k++) {
 
                     nodes[counter] = new Node(10 * i, 10 * j, 10 * k, counter, null);
 
