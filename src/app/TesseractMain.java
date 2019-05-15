@@ -57,7 +57,6 @@ public class TesseractMain extends PApplet {
   public Channel channel2;
 
   public WebsocketInterface ws;
-  public PlaylistManager playlistManager;
   public StateManager stateManager;
   public SceneStore sceneStore;
   public PlaylistStore playlistStore;
@@ -91,7 +90,6 @@ public class TesseractMain extends PApplet {
     // Persistence / state update stuff
     ws = WebsocketInterface.get();
     stateManager = new StateManager();
-    playlistManager = new PlaylistManager();
     sceneStore = SceneStore.get();
     // Doesn't make sense to fully implement this until we know more about how playlists are gonna work
     playlistStore = PlaylistStore.get();
