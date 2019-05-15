@@ -55,4 +55,19 @@ public class Util {
   public static pp(o) {
     println new JsonBuilder(o).toPrettyString()
   }
+
+  //COLOR utility methods
+  public static int getR(int c) {
+    return c >> 16 & 0xFF;
+  }
+  public static int getG(int c) {
+    return c >> 8 & 0xFF;
+  }
+  public static int getB(int c) {
+    return c & 0xFF;
+  }
+
+  public static float getPercent(int loaded, int total){
+    return ((float)loaded/total) * 100;
+  }
 }

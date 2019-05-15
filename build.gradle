@@ -27,4 +27,7 @@ dependencies {
 
   // Include all jar files in 'lib' automatically
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
+
+  // https://mvnrepository.com/artifact/org.processing/video
+  compile group: 'org.processing', name: 'video', version: '3.3.7'
 }

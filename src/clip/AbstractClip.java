@@ -7,6 +7,7 @@ public class AbstractClip  {
   //CLASS VARS
   protected int nodeSpacing = 6;
 
+  //display name
   public String clipName;
 
   // Pretty string 'id' that is implemented by subclasses.  e.g., 'color_wash'.  Used for persistence / rehydration of data
