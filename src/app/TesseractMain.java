@@ -114,7 +114,7 @@ public class TesseractMain extends PApplet {
 
     // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
     // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
-    Scene sWash =  new Scene(4,"Color Wash", TesseractMain.COLORWASH, new float[] {0, 0, 0, 0, 0, 0, 0});
+    Scene sWash =  new Scene(4,"Color Wash", TesseractMain.COLORWASH, new float[] {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
     this.sceneStore.addOrUpdate(sWash);
 
     Scene sYellow =  new Scene(1,"Yellow", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 1, 0, 0});
@@ -151,7 +151,8 @@ public class TesseractMain extends PApplet {
     //timer.schedule(task, delay); //run once
 
     // I needed this to be a bit longer to test my stuff, feel free to change it back
-    timer.scheduleAtFixedRate(task, 0, 20000L);
+    //TODO implement scene duration
+    timer.scheduleAtFixedRate(task, 0, 100000L);
 
 
     //load a default playlist file. We need to make shit happen on boot in case the power goes out.
