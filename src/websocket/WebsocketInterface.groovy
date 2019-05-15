@@ -22,8 +22,8 @@ class WebsocketInterface extends WebSocketServer {
   // map has a String key and the value is a list of closures (functions)
   Map<String, List<Closure>> actionHandlers = [:]
 
-  WebsocketInterface(int port) {
-    super(new InetSocketAddress(port))
+  WebsocketInterface(String addr, int port) {
+    super(new InetSocketAddress(addr, port))
     this.mainApp = TesseractMain.getMain()
   }
 
@@ -40,9 +40,10 @@ class WebsocketInterface extends WebSocketServer {
   }
 
   static WebsocketInterface createInterface() {
+    String addr = "0.0.0.0"
     int port = 8883
 
-    WebsocketInterface s = new WebsocketInterface(port)
+    WebsocketInterface s = new WebsocketInterface(addr, port)
     s.start()
     println("WebsocketInterface started on port: ${s.getPort()}".cyan())
 
