@@ -153,7 +153,7 @@ public class TesseractMain extends PApplet {
     //timer.schedule(task, delay); //run once
 
     // I needed this to be a bit longer to test my stuff, feel free to change it back
-    timer.scheduleAtFixedRate(task, 0, 2000L);
+    timer.scheduleAtFixedRate(task, 0, 20000L);
 
 
     //load a default playlist file. We need to make shit happen on boot in case the power goes out.

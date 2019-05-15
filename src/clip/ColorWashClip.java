@@ -27,7 +27,7 @@ public class ColorWashClip extends AbstractClip {
 
     public void init() {
         clipId = "color_wash";
-        TesseractMain _myMain = app.TesseractMain.getMain();
+        _myMain = app.TesseractMain.getMain();
 
         super.init();
     }
@@ -66,10 +66,14 @@ public class ColorWashClip extends AbstractClip {
 
         int[] nodestate = new int[3];
 
+
+        /*
         //int values 0-255 for R G and B
         nodestate[0] = Util.getR(_color);
         nodestate[1] = Util.getG(_color);
         nodestate[2] = Util.getB(_color);
+
+         */
 
         return nodestate; // RGB
     }
