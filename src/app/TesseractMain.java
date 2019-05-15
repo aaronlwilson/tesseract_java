@@ -1,6 +1,6 @@
 package app;
 
-import model.Channel;
+
 import processing.core.*;
 
 import output.*;
@@ -33,13 +33,11 @@ public class TesseractMain extends PApplet {
   public static final int COLORWASH = 2;
   public static final int STRIPE = 3;
 
-
   public static String[] clipNames = {
     "nodescan",
     "solid",
     "colorwash"
   };
-
 
 
   public Scene[] tempScenes; //just for demo until Playlists are working
@@ -118,6 +116,9 @@ public class TesseractMain extends PApplet {
 
     // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
     // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
+    Scene sWash =  new Scene(4,"Color Wash", TesseractMain.COLORWASH, new float[] {0, 0, 0, 0, 0, 0, 0});
+    this.sceneStore.addOrUpdate(sWash);
+
     Scene sYellow =  new Scene(1,"Yellow", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 1, 0, 0});
     this.sceneStore.addOrUpdate(sYellow);
 
@@ -128,18 +129,17 @@ public class TesseractMain extends PApplet {
     this.sceneStore.addOrUpdate(sRed);
 
     // Set temp scenes from store data
-    tempScenes = new Scene[3];
-    tempScenes[0] = this.sceneStore.find("displayName", "Yellow");
-    tempScenes[1] = this.sceneStore.find("displayName", "Purple");
-    tempScenes[2] = this.sceneStore.find("displayName", "Red");
+    tempScenes = new Scene[4];
+    tempScenes[0] = this.sceneStore.find("displayName", "Color Wash");
+    tempScenes[1] = this.sceneStore.find("displayName", "Yellow");
+    tempScenes[2] = this.sceneStore.find("displayName", "Purple");
+    tempScenes[3] = this.sceneStore.find("displayName", "Red");
 
     // Save the created scenes to disk, this will eventually happen whenever state changes in the store(s)
     this.sceneStore.saveDataToDisk();
 
     //load first scene into a channel
     //nextScene();
-
-
 
     TimerTask task = new TimerTask() {
       public void run() {
@@ -153,7 +153,7 @@ public class TesseractMain extends PApplet {
     //timer.schedule(task, delay); //run once
 
     // I needed this to be a bit longer to test my stuff, feel free to change it back
-    timer.scheduleAtFixedRate(task, 0, 20000L);
+    timer.scheduleAtFixedRate(task, 0, 2000L);
 
 
     //load a default playlist file. We need to make shit happen on boot in case the power goes out.

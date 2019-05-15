@@ -59,10 +59,6 @@ public class SolidColorClip extends AbstractClip{
         blue =  (int)(p6*255);
     }
 
-    public void die() {
-
-    }
-
     public int[] drawNode(Node node) {
 
         int[] nodestate = new int[3];
@@ -92,5 +88,7 @@ public class SolidColorClip extends AbstractClip{
         return nodestate;
     }
 
+    public void die() {
 
+    }
 }

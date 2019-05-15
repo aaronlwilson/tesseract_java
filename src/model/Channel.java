@@ -48,10 +48,6 @@ public class Channel {
         if (clip != null) {
             clip.init();
             currentClip = clip;
-
-            //temp purple
-            //currentClip.p4 = 1;
-            //currentClip.p6 = 1;
         }
     }
 
