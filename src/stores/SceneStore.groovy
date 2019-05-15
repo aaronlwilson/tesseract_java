@@ -48,11 +48,7 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   }
 
   Scene find(String property, value) {
-    Scene item = items.find { item -> item."${property}" == value }
-    if (!item) {
-      throw new RuntimeException("Error: could not find scene matching '${property}: ${value}'")
-    }
-    item
+    items.find { item -> item."${property}" == value }
   }
 
   // Find the next ID if we are creating a scene and not providing an ID
@@ -64,10 +60,10 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   int getClipEnumValue(String clipId) {
     // map of clipId to ENUM value
     Map clipIdMap = [
-        color_wash  : TesseractMain.COLORWASH,
-        node_scan: TesseractMain.NODESCAN,
-        solid_color : TesseractMain.SOLID,
-        stripe      : TesseractMain.STRIPE,
+        color_wash : TesseractMain.COLORWASH,
+        node_scan  : TesseractMain.NODESCAN,
+        solid_color: TesseractMain.SOLID,
+        stripe     : TesseractMain.STRIPE,
     ]
 
     int enumVal = clipIdMap[clipId]
@@ -130,10 +126,10 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   List<Map> asJsonObj() {
     this.items.collect { Scene item ->
       [
-          id          : item.id,
-          displayName : item.getDisplayName(),
-          clipId: item.clip.clipId,
-          clipValues: item.getSceneValues(),
+          id         : item.id,
+          displayName: item.getDisplayName(),
+          clipId     : item.clip.clipId,
+          clipValues : item.getSceneValues(),
       ]
     }
   }
