@@ -1,8 +1,10 @@
 package clip;
 
+import app.TesseractMain;
 import processing.video.*;
 
 import environment.Node;
+import util.Util;
 
 
 
@@ -17,6 +19,12 @@ public class VideoClip extends AbstractClip{
     // Step 1. Declare a Movie object.
     private Movie _movie;
 
+    private int _videoW = 640;
+    private int _videoH = 360;
+
+    private TesseractMain _myMain;
+
+
 
     //constructor
     public VideoClip(String theClipName) {
@@ -24,15 +32,31 @@ public class VideoClip extends AbstractClip{
     }
 
     public void init() {
+
+        clipId = "video";
+        _myMain = app.TesseractMain.getMain();
         super.init();
 
-        //load a video
+        // Initialize columns and rows
+        _cols = _videoW/_videoScale;
+        _rows = _videoH/_videoScale;
+
+        // Step 2. Initialize Movie object. The file "testmovie.mov" should live in the data folder.
+        _movie = new Movie(_myMain, "videos/24K_loop-nosound.mp4");
+
+        // Step 3. Start playing movie. To play just once play() can be used instead.
+        _movie.loop();
+    }
+
+    public void run() {
+        _movie.loadPixels();
 
 
     }
 
-    public void run() {
-
+    // Step 4. Read new frames from the movie.
+    void movieEvent(Movie movie) {
+        movie.read();
     }
 
 
@@ -40,9 +64,12 @@ public class VideoClip extends AbstractClip{
 
         int[] nodestate = new int[3];
 
-        //nodestate[0] = red;
-        //nodestate[1] = green;
-        //nodestate[2] = blue;
+        int c = _movie.pixels[0];
+
+        //int values 0-255 for R G and B
+        nodestate[0] = Util.getR(c);
+        nodestate[1] = Util.getG(c);
+        nodestate[2] = Util.getB(c);
 
         return nodestate;
     }

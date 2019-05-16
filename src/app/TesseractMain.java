@@ -16,7 +16,6 @@ import websocket.WebsocketInterface;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Date;
 
 import java.io.IOException;
 

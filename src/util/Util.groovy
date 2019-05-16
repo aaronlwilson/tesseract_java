@@ -57,6 +57,7 @@ public class Util {
   }
 
   //COLOR utility methods
+  //c in this case is a processing type "color" which is really just a 32 bit integer
   public static int getR(int c) {
     return c >> 16 & 0xFF;
   }

@@ -23,9 +23,9 @@ class ClipMetadata {
             displayName: 'Color Wash',
             clipId     : 'color_wash',
             controls   : [
-                [displayName: 'Angle', type: 'knob', defaultValue:  1.0, fieldName: 'p1'],
-                [displayName: 'Speed', type: 'knob', defaultValue:  1.0, fieldName: 'p2'],
-                [displayName: 'Spread', type: 'knob', defaultValue:  1.0, fieldName: 'p3'],
+                [displayName: 'Angle', type: 'knob', defaultValue:  0.5, fieldName: 'p1'],
+                [displayName: 'Speed', type: 'knob', defaultValue:  0.5, fieldName: 'p2'],
+                [displayName: 'Spread', type: 'knob', defaultValue:  0.5, fieldName: 'p3'],
                 [displayName: 'Red Cut', type: 'knob', defaultValue:  1.0, fieldName: 'p4'],
                 [displayName: 'Green Cut', type: 'knob', defaultValue:  1.0, fieldName: 'p5'],
                 [displayName: 'Blue Cut', type: 'knob', defaultValue:  1.0, fieldName: 'p6'],
@@ -35,8 +35,8 @@ class ClipMetadata {
             displayName: 'Node Scan',
             clipId     : 'node_scan',
             controls   : [
-                [displayName: 'Hue', type: 'knob', defaultValue:  1.0, fieldName: 'p1'],
-                [displayName: 'Saturation', type: 'knob', defaultValue:  1.0, fieldName: 'p2'],
+                [displayName: 'Speed', type: 'knob', defaultValue:  1.0, fieldName: 'p1'],
+                [displayName: 'Length', type: 'knob', defaultValue:  1.0, fieldName: 'p2'],
                 [displayName: 'Brightness', type: 'knob', defaultValue:  1.0, fieldName: 'p3'],
                 [displayName: 'Red', type: 'knob', defaultValue:  1.0, fieldName: 'p4'],
                 [displayName: 'Green', type: 'knob', defaultValue:  1.0, fieldName: 'p5'],
