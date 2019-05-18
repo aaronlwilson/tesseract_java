@@ -34,6 +34,29 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
     instance
   }
 
+  List<Playlist> getItems() {
+    return this.items;
+  }
+
+  void setItems(List<Playlist> items) {
+    this.items = items;
+  }
+
+  // Add or update a playlist in the store.  If the ID of the scene already exists, it will update the values
+  public addOrUpdate(Playlist playlist) {
+    Playlist existingPlaylist = this.find("id", playlist.id)
+    if (existingPlaylist) {
+      existingPlaylist.setDisplayName(playlist.getDisplayName())
+      existingPlaylist.setItems(playlist.getItems())
+    } else {
+      this.items.push(playlist)
+    }
+  }
+
+  Playlist find(String property, value) {
+    items.find { item -> item."${property}" == value }
+  }
+
   // Creates a Playlist object from the JSON representation
   // Steps:
   // - Match keys on json object to constructor parameters
@@ -46,7 +69,11 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
     List<PlaylistItem> playlistItems = jsonObj.items.collect { Map playlistItem ->
       // Find scene in scene store
       Scene scene = this.sceneStore.find 'id', playlistItem.sceneId
-      new PlaylistItem(scene, playlistItem.duration)
+
+      // create new id for playlist item if one doesn't exist
+      String playlistItemId = playlistItem.id ?: UUID.randomUUID();
+
+      new PlaylistItem(playlistItemId, scene, playlistItem.duration)
     }
 
     new Playlist(jsonObj.id, jsonObj.displayName, 60, playlistItems)
@@ -87,9 +114,9 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
   List<Map> asJsonObj() {
     this.items.collect { Playlist item ->
       [
-          id: item.id,
+          id         : item.id,
           displayName: item.displayName,
-          items: item.items.collect { i -> [sceneId: i.scene.id, duration: i.duration ] },
+          items      : item.items.collect { i -> [id: i.id, sceneId: i.scene.id, duration: i.duration] },
       ]
     }
   }
