@@ -28,7 +28,6 @@ public class Stage {
                 for (int k = 0; k < 30; k++) {
 
                     nodes[counter] = new Node(10 * i, 10 * j, 10 * k, counter, null);
-
                     counter++;
                 }
             }

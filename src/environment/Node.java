@@ -8,7 +8,9 @@ public class Node  {
   public int z;
 
   public int index; //0-143 usually relative to the fixture
+  public int port;  //1-8 on pixel pusher
   public Fixture fixture;
+
   public int nodeType;
   
   public int r;
