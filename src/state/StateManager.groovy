@@ -3,6 +3,7 @@ package state
 import app.TesseractMain
 import clip.AbstractClip
 import clip.ClipMetadata
+import show.Playlist
 import stores.PlaylistStore
 import stores.SceneStore
 import websocket.WebsocketInterface
@@ -41,11 +42,16 @@ class StateManager {
 
     println "Sending initial state to Client".cyan()
 
+    def activeState = [
+        playlistItemId: TesseractMain.getMain().currentPlaylist.getCurrentItem().id,
+        playlistId    : TesseractMain.getMain().currentPlaylist.id,
+    ]
+
     def data = [
-        clipData: ClipMetadata.getClipMetadata(),
-        sceneData: SceneStore.get().asJsonObj(),
+        clipData    : ClipMetadata.getClipMetadata(),
+        sceneData   : SceneStore.get().asJsonObj(),
         playlistData: PlaylistStore.get().asJsonObj(),
-        activeScene: TesseractMain.getMain().channel1.getScene().id, // Send the active scene ID on initial load
+        activeState : activeState, // Send the active scene ID on initial load
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
@@ -59,7 +65,7 @@ class StateManager {
     println "Sending stateUpdate event: ${stateKey} ${value}".cyan()
 
     def data = [
-        key: stateKey,
+        key  : stateKey,
         value: value,
     ]
 
@@ -68,11 +74,13 @@ class StateManager {
 
   // Handle receiving a stateUpdate event from a client
   public void handleStateUpdate(conn, inData) {
-    println "Got a state update event!!!"
-    println inData
+//    println "Got a state update event!!!"
+//    println inData
 
     if (inData.stateKey == "activeControls") {
-      this.handleActiveControlsUpdate(inData);
+      this.handleActiveControlsUpdate(inData.value);
+    } else if (inData.stateKey == "playlist") {
+      this.handlePlaylistUpdate(inData.value);
     } else {
       // The reason I use RuntimeException is because they can't be caught (by Processing), so you are always guaranteed to see the stack trace
       throw new RuntimeException("Error: No handler for state key '${inData.stateKey}'")
@@ -86,14 +94,21 @@ class StateManager {
     // find the active clip.  this is gonna be kinda hacky for now
     AbstractClip clip = TesseractMain.getMain().channel1.getScene().clip
 
-    String fieldName = inData.value.fieldName
-    float newValue = inData.value.newValue
+    String fieldName = inData.fieldName
+    float newValue = inData.newValue
 
     // Set the field in 'fieldName' to the value in 'newValue'
     // e.g., this will set 'p1' to '0.589378' or whatever the Control on the frontend is set to do
     // Groovy is cool because we can do stuff like this: obj."${variableHoldingFieldName}" to dynamically set a property on an object
     clip."${fieldName}" = newValue
 
-    println "Set clip field '${fieldName}' to value '${newValue}'"
+//    println "Set clip field '${fieldName}' to value '${newValue}'"
+  }
+
+  // Create a new playlist object and shove it into the store, then write data to disk
+  public void handlePlaylistUpdate(Map inData) {
+    Playlist p = PlaylistStore.get().createPlaylistFromJson(inData)
+    PlaylistStore.get().addOrUpdate(p)
+    PlaylistStore.get().saveDataToDisk()
   }
 }
