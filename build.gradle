@@ -25,6 +25,12 @@ dependencies {
   // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
   compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.26'
 
+  // https://mvnrepository.com/artifact/org.processing/core
+  compile group: 'org.processing', name: 'core', version: '3.3.6'
+
   // Include all jar files in 'lib' automatically
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
+
+  // https://mvnrepository.com/artifact/org.processing/video
+  compile group: 'org.processing', name: 'video', version: '3.3.7'
 }
