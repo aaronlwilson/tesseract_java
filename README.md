@@ -49,3 +49,13 @@ If you've created the project from scratch, you can create the 'run configuratio
 - In the Run Configurations dropdown (to the left of the play/debug buttons at the top of the screen), choose 'Save TesseractMain'
 
 Now every time you open the project, you can run it easily by pressing the 'play' button at the top of the screen.
+
+## Building a fat jar
+
+A fat jar file is a jar (compiled java application) that contains all necessary dependencies to be run independently.
+
+To build a far jar, run the command `./gradlew fatJar` in the repo directory.
+
+The jar will be created in the `./build/libs` directory.
+
+To run the resulting jar: `java -jar ./build/libs TesseractFatJar`.
