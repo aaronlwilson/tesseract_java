@@ -10,11 +10,21 @@ import websocket.WebsocketInterface
 // State manager is responsible for managing application state and synchronizing state
 // between client(s) and server
 class StateManager {
+  public static StateManager instance;
 
   WebsocketInterface ws = WebsocketInterface.get()
 
   public StateManager() {
     this.registerHandlers()
+  }
+
+  // Singleton
+  public static StateManager get() {
+    if (instance == null) {
+      instance = new StateManager()
+    }
+
+    instance
   }
 
   public registerHandlers() {

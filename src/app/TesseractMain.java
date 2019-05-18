@@ -14,8 +14,7 @@ import show.*;
 import websocket.WebsocketInterface;
 
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import java.io.IOException;
 
@@ -33,16 +32,10 @@ public class TesseractMain extends PApplet {
   public static final int STRIPE = 3;
 
   public static String[] clipNames = {
-    "nodescan",
-    "solid",
-    "colorwash"
+      "nodescan",
+      "solid",
+      "colorwash"
   };
-
-
-  public Scene[] tempScenes; //just for demo until Playlists are working
-  public int sceneIndex = 0;
-
-
 
   private UDPModel udpModel;
   private OnScreen onScreen;
@@ -86,7 +79,7 @@ public class TesseractMain extends PApplet {
 
     // Persistence / state update stuff
     ws = WebsocketInterface.get();
-    stateManager = new StateManager();
+    stateManager = StateManager.get();
     sceneStore = SceneStore.get();
     // Doesn't make sense to fully implement this until we know more about how playlists are gonna work
     playlistStore = PlaylistStore.get();
@@ -109,72 +102,22 @@ public class TesseractMain extends PApplet {
     //make a dummy clip, one way to use direct control and load a clip directly into a channel, no scene necessary
     //channel1.constructNewClip(SOLID);
 
-    // Make some dummy scenes in the store
-
-    // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
-    // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
-    Scene sWash =  new Scene(4,"Color Wash", TesseractMain.COLORWASH, new float[] {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
-    this.sceneStore.addOrUpdate(sWash);
-
-    Scene sYellow =  new Scene(1,"Yellow", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 1, 0, 0});
-    this.sceneStore.addOrUpdate(sYellow);
-
-    Scene sPurple =  new Scene(2, "Purple", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 0, 1, 0});
-    this.sceneStore.addOrUpdate(sPurple);
-
-    Scene sRed =  new Scene(3,"Red", TesseractMain.SOLID, new float[] {0, 0, 0, 1, 0, 0, 0});
-    this.sceneStore.addOrUpdate(sRed);
-
-    // Set temp scenes from store data
-    tempScenes = new Scene[4];
-    tempScenes[0] = this.sceneStore.find("displayName", "Color Wash");
-    tempScenes[1] = this.sceneStore.find("displayName", "Yellow");
-    tempScenes[2] = this.sceneStore.find("displayName", "Purple");
-    tempScenes[3] = this.sceneStore.find("displayName", "Red");
+    // Make some dummy data in the stores
+    this.createBuiltInScenes();
+    this.createBuiltInPlaylists();
 
     // Save the created scenes to disk, this will eventually happen whenever state changes in the store(s)
     this.sceneStore.saveDataToDisk();
 
-    //load first scene into a channel
-    //nextScene();
-
-    TimerTask task = new TimerTask() {
-      public void run() {
-        nextScene();
-
-        //System.out.println("Task performed on: " + new Date() + "n" + "Thread's name: " + Thread.currentThread().getName());
-      }
-    };
-    Timer timer = new Timer("NextScene");
-    //long delay = 4000L;
-    //timer.schedule(task, delay); //run once
-
-    // I needed this to be a bit longer to test my stuff, feel free to change it back
-    //TODO implement scene duration
-    timer.scheduleAtFixedRate(task, 0, 100000L);
-
-
-    //load a default playlist file. We need to make shit happen on boot in case the power goes out.
+    // Play the first playlist
+    List<Playlist> playlists = this.playlistStore.getItems();
+    Playlist currentPlaylist = playlists.get(0);
+    currentPlaylist.setChannel(channel1);
+    // false will make the playlist play the first item w/o ever continuing to the next item
+    currentPlaylist.play(false);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
-  }
-
-  public void nextScene(){
-    //load next scene into a channel
-    Scene nextScene = tempScenes[sceneIndex];
-
-    channel1.setScene(nextScene, false, 10);
-    sceneIndex++;
-
-    if(sceneIndex > tempScenes.length - 1)
-      sceneIndex = 0;
-
-    // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
-    // for now this is a one-off that sets the activeScene on the 'controls' panel of the UI
-    stateManager.sendStateUpdate("activeScene", nextScene.id);
-
-    System.out.println("nextScene: " + nextScene.getDisplayName());
   }
 
   @Override
@@ -188,12 +131,12 @@ public class TesseractMain extends PApplet {
 
 
     //get the full list of hardware nodes
-    int l= stage.nodes.length;
+    int l = stage.nodes.length;
 
     Node[] nextNodes = stage.nodes;
     stage.prevNodes = stage.nodes;
 
-    for(int i=0; i<l; i++) {
+    for (int i = 0; i < l; i++) {
       Node n = nextNodes[i];
       int[] rgb = renderNode(n); //does the blending between the channels, apply master FX
 
@@ -221,7 +164,7 @@ public class TesseractMain extends PApplet {
   }
 
   //determine final color for each node each frame
-  public int[] renderNode(Node node){
+  public int[] renderNode(Node node) {
     //return
     int[] rgb1 = channel1.drawNode(node);
 
@@ -237,6 +180,36 @@ public class TesseractMain extends PApplet {
 
   }//end render node
 
+  private void createBuiltInScenes() {
+    // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
+    // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
+    Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
+    this.sceneStore.addOrUpdate(sWash);
+
+    Scene sYellow = new Scene(1, "Yellow", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 1, 0, 0});
+    this.sceneStore.addOrUpdate(sYellow);
+
+    Scene sPurple = new Scene(2, "Purple", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 1, 0});
+    this.sceneStore.addOrUpdate(sPurple);
+
+    Scene sRed = new Scene(3, "Red", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 0, 0});
+    this.sceneStore.addOrUpdate(sRed);
+  }
+
+  private void createBuiltInPlaylists() {
+    List<PlaylistItem> playlistItems1 = Arrays.asList(
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10)
+    );
+
+    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlistItems1);
+
+    this.playlistStore.addOrUpdate(playlist1);
+  }
 
   private void createShutdownHook() {
     Runtime.getRuntime().addShutdownHook(new Thread() {
