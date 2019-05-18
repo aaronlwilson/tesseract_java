@@ -25,6 +25,10 @@ public class Playlist {
     this.channel = channel;
   }
 
+  public PlaylistItem getCurrentItem() {
+    this.items[this.currentIdx];
+  }
+
   // Plays a scene
   public void playItem(PlaylistItem item) {
     this.channel.setScene(item.scene, false, 10);
@@ -44,6 +48,12 @@ public class Playlist {
   private void scheduleNextScene(long delay) {
     TimerTask task = new TimerTask() {
       public void run() {
+        // always repeat for now
+        currentIdx++;
+        if (currentIdx >= items.size()) {
+          currentIdx = 0;
+        }
+
         play();
 
         //System.out.println("Task performed on: " + new Date() + "n" + "Thread's name: " + Thread.currentThread().getName());
@@ -67,12 +77,6 @@ public class Playlist {
       PlaylistItem nextItem = this.items[this.currentIdx];
       long delay = nextItem.duration * 1000 as long;
       this.scheduleNextScene(delay);
-    }
-
-    // always repeat for now
-    this.currentIdx++;
-    if (this.currentIdx >= this.items.size()) {
-      this.currentIdx = 0;
     }
   }
 
