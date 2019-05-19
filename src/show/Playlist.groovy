@@ -13,6 +13,9 @@ public class Playlist {
   // The index of the current playlist item
   private int currentIdx;
 
+  private Timer currentTimer;
+  private long currentTimerStartTime;
+
   public Playlist(int id, String displayName, Integer defaultDuration = 60, List<PlaylistItem> items = []) {
     this.id = id;
     this.displayName = displayName;
@@ -30,17 +33,8 @@ public class Playlist {
   }
 
   // Plays a scene
-  public void playItem(PlaylistItem item) {
+  private void playItem(PlaylistItem item) {
     this.channel.setScene(item.scene, false, 10);
-
-    // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
-    // for now this is a one-off that sets the activeScene on the 'controls' panel of the UI
-
-    // Send the active state to the client (e.g., current playlist and playlist item)
-    StateManager.get().sendStateUpdate("activeState", [
-        playlistItemId: item.id,
-        playlistId: this.id,
-    ]);
 
     System.out.println("Playing scene '${item.scene.getDisplayName()}' on playlist '${this.displayName}'");
   }
@@ -61,8 +55,27 @@ public class Playlist {
     };
 
     Timer timer = new Timer("Playlist.play()");
+
+    // Keep track of when we started the timer
+    this.currentTimerStartTime = System.currentTimeMillis()
     timer.schedule(task, delay);
+
+    // Keep track of the timer itself
+    this.currentTimer = timer;
   }
+
+  // figure out how long we have until our timer expires
+  public long getCurrentSceneDurationRemaining() {
+    if (!this.currentTimer) {
+      return -1; // infinity
+    }
+
+    // Time thats elapsed since we started the timer
+    long elapsedTime = System.currentTimeMillis() - this.currentTimerStartTime
+    long timeLeft = (this.getCurrentItem().getDuration() * 1000) - elapsedTime
+    timeLeft
+  }
+
 
   public void unsetChannel() {
     this.channel = null;
@@ -79,6 +92,9 @@ public class Playlist {
       long delay = nextItem.duration * 1000 as long;
       this.scheduleNextScene(delay);
     }
+
+    // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
+    StateManager.get().sendActiveState()
   }
 
   public void stop() {

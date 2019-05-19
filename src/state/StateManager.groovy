@@ -42,9 +42,14 @@ class StateManager {
     Map activeState = [
         playlistItemId: PlaylistManager.get().getCurrentPlaylist().getCurrentItem().getId(),
         playlistId    : PlaylistManager.get().getCurrentPlaylist().getId(),
+        currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
     ]
 
     return activeState
+  }
+
+  public void sendActiveState() {
+    this.sendStateUpdate("activeState", this.getActiveState());
   }
 
   // Sends the state of the relevant objects to the front end for initial hydration
