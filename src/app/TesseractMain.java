@@ -16,8 +16,6 @@ import websocket.WebsocketInterface;
 
 import java.util.*;
 
-import java.io.IOException;
-
 
 public class TesseractMain extends PApplet {
 
@@ -112,9 +110,11 @@ public class TesseractMain extends PApplet {
     this.sceneStore.saveDataToDisk();
     this.playlistStore.saveDataToDisk();
 
-    // Play the first playlist
+    // Set the channel on the playlist manager
     PlaylistManager.get().setChannel(this.channel1);
-    PlaylistManager.get().playPlaylist();
+
+    // Play the playlist with id = 1, play the first item in the playlist, and start in the 'paused' state
+    PlaylistManager.get().play(1, 0, Playlist.PlayState.PAUSED);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();

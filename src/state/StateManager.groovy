@@ -43,6 +43,7 @@ class StateManager {
         playlistItemId: PlaylistManager.get().getCurrentPlaylist().getCurrentItem().getId(),
         playlistId    : PlaylistManager.get().getCurrentPlaylist().getId(),
         currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
+        playlistPlayState: PlaylistManager.get().getCurrentPlaylist().getCurrentPlayState().name(),
     ]
 
     return activeState
@@ -95,6 +96,8 @@ class StateManager {
       this.handleActiveControlsUpdate(inData.value);
     } else if (inData.stateKey == "playlist") {
       this.handlePlaylistUpdate(inData.value);
+    } else if (inData.stateKey == "playState") {
+      this.handlePlayStateUpdate(inData.value);
     } else {
       // The reason I use RuntimeException is because they can't be caught (by Processing), so you are always guaranteed to see the stack trace
       throw new RuntimeException("Error: No handler for state key '${inData.stateKey}'")
@@ -124,5 +127,19 @@ class StateManager {
     Playlist p = PlaylistStore.get().createPlaylistFromJson(inData)
     PlaylistStore.get().addOrUpdate(p)
     PlaylistStore.get().saveDataToDisk()
+  }
+
+  // Create a new playlist object and shove it into the store, then write data to disk
+  public void handlePlayStateUpdate(Map inData) {
+    println "[StateManager] playState updated to: ${inData.playState}"
+
+    // handle logic around playing / pausing playlist
+    if (Playlist.PlayState.PLAYING == inData.playState as Playlist.PlayState) {
+      PlaylistManager.get().play()
+    } else if (Playlist.PlayState.PAUSED == inData.playState as Playlist.PlayState) {
+      PlaylistManager.get().pause()
+    } else { // stop
+      PlaylistManager.get().stop()
+    }
   }
 }
