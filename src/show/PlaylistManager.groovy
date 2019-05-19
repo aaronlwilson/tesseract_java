@@ -39,6 +39,11 @@ public class PlaylistManager {
     return this.currentPlaylist;
   }
 
+  // figure out how long we have until our timer expires
+  public long getCurrentSceneDurationRemaining() {
+    this.currentPlaylist.getCurrentSceneDurationRemaining()
+  }
+
   // this will have to cancel the timer on the playlist
   public pauseCurrentPlaylist() {
 
@@ -61,7 +66,7 @@ public class PlaylistManager {
 
       this.currentPlaylist = p;
       p.setChannel(this.channel);
-      p.play();
+      p.play(false);
     }
   }
 
