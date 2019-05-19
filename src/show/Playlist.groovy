@@ -64,11 +64,12 @@ public class Playlist {
     timer.schedule(task, delay);
   }
 
-  public void play() {
-    this.play(true);
+  public void unsetChannel() {
+    this.channel = null;
   }
 
-  public void play(boolean shouldScheduleNextItem) {
+  // todo: add ability to play a specific playlist
+  public void play(boolean shouldScheduleNextItem = true) {
     PlaylistItem currentItem = this.items[this.currentIdx];
     this.playItem(currentItem);
 

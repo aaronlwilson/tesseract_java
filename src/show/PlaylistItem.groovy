@@ -6,6 +6,9 @@ public class PlaylistItem {
   // There can be more than one of the same scene per playlist, so we can't use the scene id
   // This doesn't need to be persistent, but it needs to be unique per instance of the backend
   String id;
+
+  // apparently omitting a visibility declaration (public/private) tells groovy to automatically create a private field
+  // w/ getters and setters. whodathunkit. props to you groovy. http://groovy-lang.org/style-guide.html#_getters_and_setters
   Scene scene;
   Integer duration;
 
@@ -14,4 +17,5 @@ public class PlaylistItem {
     this.scene = scene;
     this.duration = duration;
   }
+
 }

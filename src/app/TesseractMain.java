@@ -108,15 +108,13 @@ public class TesseractMain extends PApplet {
     this.createBuiltInPlaylists();
 
     // Save the created data to disk so we persist our manually created scenes/playlists
+    // This also has the effect of resetting any changes we make to them in the UI once we start the backend
     this.sceneStore.saveDataToDisk();
     this.playlistStore.saveDataToDisk();
 
     // Play the first playlist
-    List<Playlist> playlists = this.playlistStore.getItems();
-    this.currentPlaylist = playlists.get(0);
-    this.currentPlaylist.setChannel(channel1);
-    // false will make the playlist play the first item w/o ever continuing to the next item
-    this.currentPlaylist.play(false);
+    PlaylistManager.get().setChannel(this.channel1);
+    PlaylistManager.get().playPlaylist();
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
@@ -198,7 +196,9 @@ public class TesseractMain extends PApplet {
   }
 
   private void createBuiltInPlaylists() {
-    List<PlaylistItem> playlistItems1 = Arrays.asList(
+    // have to be a bit smarter about how we create the initial playlist so these uuids don't change all the time, its annoying
+
+    List<PlaylistItem> playlistItems = Arrays.asList(
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 1),
@@ -208,7 +208,17 @@ public class TesseractMain extends PApplet {
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 1)
     );
 
-    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlistItems1);
+    // Kinda hacky but what we do here is see if we've already got a playlist w/ the id we want to create, and if so, we
+    // loop through the existing playlist items and use those UUIDs on the PlaylistItems we're using in 'addOrUpdate'
+    // This prevents the playlist.json file from changing every time we launch the application
+    Playlist existingPlaylist = PlaylistStore.get().find("id", 1);
+    if (existingPlaylist != null) {
+      for (int i = 0; i < existingPlaylist.getItems().size() && i < playlistItems.size(); i++) {
+        playlistItems.get(i).setId(existingPlaylist.getItems().get(i).getId());
+      }
+    }
+
+    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlistItems);
 
     this.playlistStore.addOrUpdate(playlist1);
   }
