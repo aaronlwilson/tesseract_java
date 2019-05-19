@@ -7,6 +7,11 @@ public class Stage {
 
     private PApplet p;
 
+    //used to automatically define bounding box
+    public int maxW;
+    public int maxH;
+    public int maxD;
+
     //	An array of all the LEDs, used for render
     public Node[] nodes;
     public Node[] prevNodes; //last frames data
