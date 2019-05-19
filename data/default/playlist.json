@@ -1,19 +1,42 @@
 [
     {
         "id": 1,
-        "displayName": "Color Cube",
+        "displayName": "Cubotron",
         "items": [
             {
+                "id": "966b07e9-1b52-4367-86f1-76251cc792e0",
+                "sceneId": 4,
+                "duration": 1
+            },
+            {
+                "id": "c7de37d0-646b-4c49-bad0-8247b96d1b13",
                 "sceneId": 1,
-                "duration": 10
+                "duration": 1
             },
             {
+                "id": "5651bd75-e33b-47bd-a25a-a13b41c4273a",
+                "sceneId": 4,
+                "duration": 1
+            },
+            {
+                "id": "4c6f90ca-674e-4b6e-a05d-b0f87267dbfe",
                 "sceneId": 2,
-                "duration": 10
+                "duration": 4
             },
             {
+                "id": "e5df7624-3876-4f55-b232-63a491a73524",
                 "sceneId": 3,
-                "duration": 10
+                "duration": 3
+            },
+            {
+                "id": "e81919af-7710-4a4d-b8bc-717d9d17280a",
+                "sceneId": 4,
+                "duration": 5
+            },
+            {
+                "id": "91b24ab4-3072-45ce-8545-4465917b9677",
+                "sceneId": 1,
+                "duration": 1
             }
         ]
     },
@@ -22,26 +45,32 @@
         "displayName": "Color Cube 2",
         "items": [
             {
+                "id": "72f2d59a-dc96-41ab-9a23-07c7e878d951",
                 "sceneId": 1,
                 "duration": 2
             },
             {
+                "id": "8a250c28-0a42-4c08-827d-b54d627b0bea",
                 "sceneId": 2,
                 "duration": 3
             },
             {
+                "id": "99b1352e-e544-4ed5-a1fe-f26a1a6a82ab",
                 "sceneId": 1,
                 "duration": 4
             },
             {
+                "id": "a9c698ec-5c16-411e-8558-533795bc2688",
                 "sceneId": 3,
                 "duration": 5
             },
             {
+                "id": "7432b40c-18ee-481f-b574-70f7087e5917",
                 "sceneId": 1,
                 "duration": 6
             },
             {
+                "id": "cfdc3702-70ac-498f-a7b8-b64c67d21825",
                 "sceneId": 2,
                 "duration": 7
             }

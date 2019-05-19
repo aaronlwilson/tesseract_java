@@ -51,6 +51,7 @@ public class TesseractMain extends PApplet {
   public SceneStore sceneStore;
   public PlaylistStore playlistStore;
 
+  public Playlist currentPlaylist;
 
   //Click the arrow on the line below to run the program in .idea
   public static void main(String[] args) {
@@ -106,15 +107,16 @@ public class TesseractMain extends PApplet {
     this.createBuiltInScenes();
     this.createBuiltInPlaylists();
 
-    // Save the created scenes to disk, this will eventually happen whenever state changes in the store(s)
+    // Save the created data to disk so we persist our manually created scenes/playlists
     this.sceneStore.saveDataToDisk();
+    this.playlistStore.saveDataToDisk();
 
     // Play the first playlist
     List<Playlist> playlists = this.playlistStore.getItems();
-    Playlist currentPlaylist = playlists.get(0);
-    currentPlaylist.setChannel(channel1);
+    this.currentPlaylist = playlists.get(0);
+    this.currentPlaylist.setChannel(channel1);
     // false will make the playlist play the first item w/o ever continuing to the next item
-    currentPlaylist.play(false);
+    this.currentPlaylist.play(false);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
@@ -123,7 +125,6 @@ public class TesseractMain extends PApplet {
   @Override
   public void draw() {
     clear();
-
 
     //call run() on the current clips inside channels
     channel1.run();
@@ -198,12 +199,13 @@ public class TesseractMain extends PApplet {
 
   private void createBuiltInPlaylists() {
     List<PlaylistItem> playlistItems1 = Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10)
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 1),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 1)
     );
 
     Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlistItems1);
