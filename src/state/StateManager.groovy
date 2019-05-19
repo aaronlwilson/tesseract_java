@@ -3,9 +3,11 @@ package state
 import app.TesseractMain
 import clip.AbstractClip
 import clip.ClipMetadata
+import org.java_websocket.WebSocketImpl
 import show.Playlist
 import stores.PlaylistStore
 import stores.SceneStore
+import show.PlaylistManager
 import websocket.WebsocketInterface
 
 // State manager is responsible for managing application state and synchronizing state
@@ -33,8 +35,20 @@ class StateManager {
     ws.registerActionHandler('stateUpdate', this.&handleStateUpdate)
   }
 
+  // it would be get to get the current values of the controls here too
+  // This gets the 'active state' of the application
+  // Things like which playlist / scene are we playing, stuff like that
+  public Map getActiveState() {
+    Map activeState = [
+        playlistItemId: PlaylistManager.get().getCurrentPlaylist().getCurrentItem().getId(),
+        playlistId    : PlaylistManager.get().getCurrentPlaylist().getId(),
+    ]
+
+    return activeState
+  }
+
   // Sends the state of the relevant objects to the front end for initial hydration
-  public sendInitialState(conn, inData) {
+  public void sendInitialState(WebSocketImpl conn, Map inData) {
     // Send objects in this order:
     // clips (clips I'll leave hardcoded for now)
     // scenes
@@ -42,16 +56,11 @@ class StateManager {
 
     println "Sending initial state to Client".cyan()
 
-    def activeState = [
-        playlistItemId: TesseractMain.getMain().currentPlaylist.getCurrentItem().id,
-        playlistId    : TesseractMain.getMain().currentPlaylist.id,
-    ]
-
-    def data = [
+    Map data = [
         clipData    : ClipMetadata.getClipMetadata(),
         sceneData   : SceneStore.get().asJsonObj(),
         playlistData: PlaylistStore.get().asJsonObj(),
-        activeState : activeState, // Send the active scene ID on initial load
+        activeState : this.getActiveState(),
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
