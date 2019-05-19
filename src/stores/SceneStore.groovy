@@ -103,15 +103,13 @@ class SceneStore extends BaseStore implements IJsonPersistable {
       return MockData.getSceneStoreData()
     }
 
-    println "Loading scene data from Disk!".yellow()
+    println "Loading scene data from Disk".yellow()
     // this could use better protection around bad data
     new JsonSlurper().parseText(dataFile.text) as List<Map>
   }
 
   // Save current state to disk as JSON
   void saveDataToDisk() {
-    println "Writing Scene Data to Disk".yellow()
-
     String filename = Util.getDataFilePath('scene')
 
     List<Map> jsonObj = this.asJsonObj()

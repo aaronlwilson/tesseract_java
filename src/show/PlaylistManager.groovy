@@ -1,7 +1,6 @@
 package show
 
 import model.Channel
-import show.Playlist
 import stores.PlaylistStore
 import websocket.WebsocketInterface
 
@@ -44,31 +43,46 @@ public class PlaylistManager {
     this.currentPlaylist.getCurrentSceneDurationRemaining()
   }
 
-  // this will have to cancel the timer on the playlist
-  public pauseCurrentPlaylist() {
-
+  public void loopScene() {
+    this.currentPlaylist.loopScene()
   }
 
-  public resumeCurrentPlaylist() {
-
+  public void stop() {
+    this.currentPlaylist.stop()
   }
 
   // Play a specific playlist
-  public playPlaylist(Integer playlistId = null, int itemIdx = 0) {
+  // This API will probably change
+  public play(Integer playlistId = null, int itemIdx = 0, Playlist.PlayState initialPlayState = Playlist.PlayState.PLAYING) {
+    Playlist p;
+
     // for now, just handle playing the first playlist and the first scene
     if (!playlistId) {
-      Playlist p = this.playlistStore.getItems().first()
+      p = this.playlistStore.getItems().first()
       if (!p) throw new RuntimeException("Error: PlaylistManager: PlaylistStore is empty!")
+    } else {
+      p = this.playlistStore.find('id', playlistId)
+    }
 
-      if (this.currentPlaylist) {
-        this.currentPlaylist.unsetChannel()
-      }
+    println "[PlaylistManager] Playing playlist '${p.getDisplayName()}'. PlayState: ${p.getCurrentPlayState()}"
 
+    // will implement when getting playlist switching working
+//    if (this.currentPlaylist) {
+//      this.currentPlaylist.unsetChannel()
+//    }
+
+    if (this.currentPlaylist != p) {
       this.currentPlaylist = p;
+      this.channel.unsetScene()
       p.setChannel(this.channel);
-      p.play(false);
+    }
+
+    if (initialPlayState == Playlist.PlayState.PLAYING) {
+      p.play();
+    } else if (initialPlayState == Playlist.PlayState.LOOP_SCENE) {
+      p.loopScene();
+    } else {
+      p.stop();
     }
   }
-
-
 }
