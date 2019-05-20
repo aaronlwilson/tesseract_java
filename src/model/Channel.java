@@ -132,6 +132,13 @@ public class Channel {
         //draw the state of this channel to processing
     }
 
+    // this is not safe and caused an NPE exception at one point
+    // need to have a proper way to 'stop' the scene, but this works for now
+    public void unsetScene() {
+        this._currentScene = null;
+        this._nextScene = null;
+    }
+
     public boolean setScene(Scene theScene, boolean instant, int transition){
 
         if(instant){

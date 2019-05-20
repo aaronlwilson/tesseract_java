@@ -105,7 +105,7 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
 
     List<Map> jsonObj = this.asJsonObj()
 
-    new File(filename).write new JsonBuilder(jsonObj).toPrettyString()
+    new File(filename).write "${new JsonBuilder(jsonObj).toPrettyString()}\n"
     println "Wrote Playlist Data to Disk".green()
   }
 
