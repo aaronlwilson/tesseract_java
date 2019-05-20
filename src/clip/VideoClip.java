@@ -1,6 +1,6 @@
 package clip;
 
-import app.TesseractMain;
+
 import processing.video.*;
 
 import environment.Node;
@@ -22,9 +22,6 @@ public class VideoClip extends AbstractClip{
     private int _videoW = 640;
     private int _videoH = 360;
 
-    private TesseractMain _myMain;
-
-
 
     //constructor
     public VideoClip(String theClipName) {
@@ -34,15 +31,15 @@ public class VideoClip extends AbstractClip{
     public void init() {
 
         clipId = "video";
-        _myMain = app.TesseractMain.getMain();
+
         super.init();
 
         // Initialize columns and rows
         _cols = _videoW/_videoScale;
         _rows = _videoH/_videoScale;
 
-        // Step 2. Initialize Movie object. The file "testmovie.mov" should live in the data folder.
-        _movie = new Movie(_myMain, "videos/24K_loop-nosound.mp4");
+        // Step 2. Initialize Movie object. The file should live in the data/videos folder.
+        _movie = new Movie(_myMain, "videos/BOKK_loop-nosound.mp4");
 
         // Step 3. Start playing movie. To play just once play() can be used instead.
         _movie.loop();
@@ -51,20 +48,17 @@ public class VideoClip extends AbstractClip{
     public void run() {
         _movie.loadPixels();
 
-
     }
-
-    // Step 4. Read new frames from the movie.
-    void movieEvent(Movie movie) {
-        movie.read();
-    }
-
 
     public int[] drawNode(Node node) {
 
         int[] nodestate = new int[3];
 
-        int c = _movie.pixels[0];
+        int vidX = (int) _myMain.map(node.x, 0, _myMain.stage.maxW, 0, _videoW-1);
+        int vidY = (int) _myMain.map(node.y,0, _myMain.stage.maxH, 0, _videoH-1);
+
+        int loc = vidX + vidY * _videoW;
+        int c = _movie.pixels[loc];
 
         //int values 0-255 for R G and B
         nodestate[0] = Util.getR(c);

@@ -1,11 +1,12 @@
 package clip;
 
+import app.TesseractMain;
 import environment.Node;
 
 public class AbstractClip  {
 
   //CLASS VARS
-  protected int nodeSpacing = 6;
+  protected TesseractMain _myMain;
 
   //display name
   public String clipName;
@@ -28,7 +29,7 @@ public class AbstractClip  {
 
   // ---- TO BE OVERWRITTEN by Clip Class ------
   public void init() {
-
+    _myMain = app.TesseractMain.getMain();
     //animationCanvas.getChannelCanvas(channel).resetAllControllers();
   }
 

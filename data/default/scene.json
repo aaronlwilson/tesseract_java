@@ -1,5 +1,19 @@
 [
     {
+        "id": 5,
+        "displayName": "First Video",
+        "clipId": "video",
+        "clipValues": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    {
         "id": 4,
         "displayName": "Color Wash",
         "clipId": "color_wash",

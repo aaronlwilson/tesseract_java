@@ -51,8 +51,7 @@ public class Channel {
             currentClip = clip;
         }
     }
-
-     */
+    */
 
     public void run() {// animation logic that runs per frame
         if(currentClip != null) {
@@ -124,7 +123,6 @@ public class Channel {
 
             return sceneMix;
         }
-
 
 
         return new int[3];
