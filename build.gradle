@@ -32,6 +32,8 @@ dependencies {
 
   // https://mvnrepository.com/artifact/org.processing/video
   compile group: 'org.processing', name: 'video', version: '3.3.7'
+
+
 }
 
 // To do this, I googled 'gradle build fat jar' and copied this from the first link (with a couple modifications)

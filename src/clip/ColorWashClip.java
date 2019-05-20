@@ -1,6 +1,5 @@
 package clip;
 
-import app.TesseractMain;
 import environment.Node;
 import util.Util;
 
@@ -17,7 +16,6 @@ public class ColorWashClip extends AbstractClip {
     private float _angleCalc;
     private float _spreadCalc;
 
-    private TesseractMain _myMain;
 
     //constructor
     public ColorWashClip(String theClipName) {
@@ -26,8 +24,6 @@ public class ColorWashClip extends AbstractClip {
 
     public void init() {
         clipId = "color_wash";
-        _myMain = app.TesseractMain.getMain();
-
         super.init();
     }
 

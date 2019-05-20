@@ -32,13 +32,19 @@ public class Stage {
             for (int j = 0; j < 30; j++) {
                 for (int k = 0; k < 30; k++) {
 
-                    nodes[counter] = new Node(10 * i, 10 * j, 10 * k, counter, null);
+                    int x = 10*i;
+                    int y = 10*j;
+                    int z = 10*k;
+
+                    if(x>maxW) maxW = x;
+                    if(y>maxH) maxH = y;
+                    if(z>maxD) maxD = z;
+
+                    nodes[counter] = new Node(x, y, z, counter, null);
                     counter++;
                 }
             }
         }
-
-
     }
 
 
