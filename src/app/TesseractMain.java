@@ -116,7 +116,7 @@ public class TesseractMain extends PApplet {
     this.currentPlaylist = playlists.get(0);
     this.currentPlaylist.setChannel(channel1);
     // false will make the playlist play the first item w/o ever continuing to the next item
-    this.currentPlaylist.play(false);
+    this.currentPlaylist.play(true);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
@@ -199,13 +199,12 @@ public class TesseractMain extends PApplet {
 
   private void createBuiltInPlaylists() {
     List<PlaylistItem> playlistItems1 = Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 1),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 6),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 5),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 1)
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 7)
     );
 
     Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlistItems1);
