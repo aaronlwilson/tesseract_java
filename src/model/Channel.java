@@ -27,6 +27,7 @@ public class Channel {
 
     }
 
+    /*
     public void constructNewClip(int clipClass) {
 
         AbstractClip clip = new AbstractClip("Abstract Clip");
@@ -50,6 +51,8 @@ public class Channel {
             currentClip = clip;
         }
     }
+
+     */
 
     public void run() {// animation logic that runs per frame
         if(currentClip != null) {

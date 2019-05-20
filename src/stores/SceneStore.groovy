@@ -63,7 +63,7 @@ class SceneStore extends BaseStore implements IJsonPersistable {
         color_wash : TesseractMain.COLORWASH,
         node_scan  : TesseractMain.NODESCAN,
         solid_color: TesseractMain.SOLID,
-        stripe     : TesseractMain.STRIPE,
+        video     : TesseractMain.VIDEO,
     ]
 
     int enumVal = clipIdMap[clipId]
