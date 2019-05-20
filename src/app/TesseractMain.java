@@ -27,12 +27,11 @@ public class TesseractMain extends PApplet {
   public static final int NODESCAN = 0;
   public static final int SOLID = 1;
   public static final int COLORWASH = 2;
-  public static final int STRIPE = 3;
+  public static final int VIDEO = 3;
+
 
   public static String[] clipNames = {
-      "nodescan",
-      "solid",
-      "colorwash"
+      "nodescan", "solid", "colorwash", "video"
   };
 
   private UDPModel udpModel;
