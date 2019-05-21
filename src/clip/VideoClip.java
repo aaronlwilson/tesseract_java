@@ -39,7 +39,7 @@ public class VideoClip extends AbstractClip{
         _rows = _videoH/_videoScale;
 
         // Step 2. Initialize Movie object. The file should live in the data/videos folder.
-        _movie = new Movie(_myMain, "videos/BOKK_loop-nosound.mp4");
+        _movie = new Movie(_myMain, "videos/24K_loop-nosound.mp4");
 
         // Step 3. Start playing movie. To play just once play() can be used instead.
         _movie.loop();

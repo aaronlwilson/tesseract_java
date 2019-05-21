@@ -86,7 +86,7 @@ public class OnScreen {
 
 
         //draw nodes
-        p.strokeWeight(2);
+        p.strokeWeight(10);
 
 
         TesseractMain myMain = TesseractMain.getMain();
