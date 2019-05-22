@@ -24,7 +24,6 @@ public class Channel {
     //CONSTRUCTOR
     public Channel(int theChannelNumber) {
         channelNumber = theChannelNumber;
-
     }
 
     /*

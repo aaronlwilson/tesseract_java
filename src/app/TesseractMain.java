@@ -173,6 +173,9 @@ public class TesseractMain extends PApplet {
   private void createBuiltInScenes() {
     // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
     // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
+    Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
+    this.sceneStore.addOrUpdate(sScan);
+
     Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0});
     this.sceneStore.addOrUpdate(sVid);
 
@@ -193,10 +196,11 @@ public class TesseractMain extends PApplet {
     // have to be a bit smarter about how we create the initial playlist so these uuids don't change all the time, its annoying
 
     List<PlaylistItem> playlistItems = Arrays.asList(
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 10),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 2),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
