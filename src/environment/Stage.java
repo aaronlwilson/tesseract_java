@@ -1,6 +1,6 @@
 package environment;
 
-import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
+
 import processing.core.PApplet;
 
 

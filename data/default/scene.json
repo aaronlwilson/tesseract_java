@@ -1,5 +1,19 @@
 [
     {
+        "id": 6,
+        "displayName": "Node Scanner",
+        "clipId": "node_scan",
+        "clipValues": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ]
+    },
+    {
         "id": 5,
         "displayName": "First Video",
         "clipId": "video",

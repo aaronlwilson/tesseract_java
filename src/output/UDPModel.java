@@ -1,6 +1,7 @@
 package output;
 
 import hypermedia.net.UDP;
+import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 
 import processing.core.PApplet;
 
