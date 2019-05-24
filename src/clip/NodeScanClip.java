@@ -4,6 +4,9 @@ import environment.Node;
 
 public class NodeScanClip extends AbstractClip {
 
+    //setting this in init() function, which is better?
+    //String clipId = "node_scan";
+
     private int _scanNode;
 
     //constructor
