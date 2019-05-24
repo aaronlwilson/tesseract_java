@@ -4,52 +4,52 @@
         "displayName": "Cubotron",
         "items": [
             {
-                "id": "65fcfe16-d743-4562-921b-21e37f56fb57",
+                "id": "32db1f01-f84e-4d3a-b437-085641806f4e",
                 "sceneId": 6,
                 "duration": 10
             },
             {
-                "id": "32db1f01-f84e-4d3a-b437-085641806f4e",
+                "id": "8f3dd42f-5c94-49f8-851d-718852129ffe",
                 "sceneId": 5,
                 "duration": 4
             },
             {
-                "id": "8f3dd42f-5c94-49f8-851d-718852129ffe",
+                "id": "7daa66b3-8084-43eb-a195-26f53da83cef",
                 "sceneId": 4,
                 "duration": 4
             },
             {
-                "id": "7daa66b3-8084-43eb-a195-26f53da83cef",
+                "id": "8959fe86-53fe-4b4c-9581-ac999780f4bc",
                 "sceneId": 1,
                 "duration": 3
             },
             {
-                "id": "8959fe86-53fe-4b4c-9581-ac999780f4bc",
-                "sceneId": 4,
-                "duration": 4
-            },
-            {
                 "id": "f38145bb-eebb-478e-9df5-91330ed85cc8",
-                "sceneId": 2,
+                "sceneId": 4,
                 "duration": 4
             },
             {
                 "id": "3f353ebc-509e-4e68-b4b9-3d3417fb4142",
+                "sceneId": 2,
+                "duration": 4
+            },
+            {
+                "id": "3810070c-5592-488e-85e6-d2d71e44d1b3",
                 "sceneId": 3,
                 "duration": 3
             },
             {
-                "id": "3810070c-5592-488e-85e6-d2d71e44d1b3",
+                "id": "5d71b499-29a1-49e4-aa76-7b539c20f2f2",
                 "sceneId": 4,
                 "duration": 5
             },
             {
-                "id": "5d71b499-29a1-49e4-aa76-7b539c20f2f2",
+                "id": "437b0aac-c6e7-4bff-90c0-274e6ce7f2a3",
                 "sceneId": 3,
                 "duration": 5
             },
             {
-                "id": "437b0aac-c6e7-4bff-90c0-274e6ce7f2a3",
+                "id": "33ff6eaf-8834-4b01-bf6b-3991ddb7d0e5",
                 "sceneId": 2,
                 "duration": 7
             }
