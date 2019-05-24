@@ -20,8 +20,8 @@ public class Playlist {
   // Track whether we're playing, looping, or stopped
   PlayState currentPlayState;
 
-  // The index of the current playlist item
-  private int currentIdx;
+  // The current playlist item
+  PlaylistItem currentItem;
 
   private Timer currentTimer;
   private long currentTimerStartTime;
@@ -31,7 +31,6 @@ public class Playlist {
     this.displayName = displayName;
     this.defaultDuration = defaultDuration;
     this.items = items;
-    this.currentIdx = 0;
 
     // start initially in the stopped state, when the initial data loads it will update
     this.currentPlayState = PlayState.STOPPED;
@@ -41,26 +40,32 @@ public class Playlist {
     this.channel = channel;
   }
 
-  public PlaylistItem getCurrentItem() {
-    this.items[this.currentIdx];
+  private PlaylistItem getNextItem() {
+    this.items.get(this.getNextIdx())
+  }
+
+  // Get the index of the next item.  for now we will play everything sequentially (but we could add 'shuffle' later)
+  private Integer getNextIdx() {
+    Integer currentItemIndex = this.items.findIndexOf { it == this.getCurrentItem() }
+    currentItemIndex = currentItemIndex ?: 0
+
+    // always repeat for now
+    currentItemIndex++;
+    if (currentItemIndex >= items.size()) {
+      currentItemIndex = 0;
+    }
+
+    currentItemIndex
   }
 
   private void scheduleNextScene(long delay) {
     TimerTask task = new TimerTask() {
       public void run() {
-        // always repeat for now
-        currentIdx++;
-        if (currentIdx >= items.size()) {
-          currentIdx = 0;
-        }
-
-        _playPlaylist();
-
-        //System.out.println("Task performed on: " + new Date() + "n" + "Thread's name: " + Thread.currentThread().getName());
+        _playPlaylist(getNextItem(), getCurrentPlayState());
       }
     };
 
-    Timer timer = new Timer("Playlist.play()");
+    Timer timer = new Timer("Playlist.scheduleNextScene()");
 
     // Keep track of when we started the timer
     this.currentTimerStartTime = System.currentTimeMillis()
@@ -82,22 +87,6 @@ public class Playlist {
     timeLeft
   }
 
-  public void unsetChannel() {
-    this.channel = null;
-  }
-
-  public boolean isPlaying() {
-    this.currentPlayState == PlayState.PLAYING;
-  }
-
-  public boolean isLooping() {
-    this.currentPlayState == PlayState.LOOP_SCENE;
-  }
-
-  public boolean isStopped() {
-    this.currentPlayState == PlayState.STOPPED;
-  }
-
   private void cancelCurrentTimer() {
     if (this.currentTimer) {
       this.currentTimer.cancel()
@@ -106,62 +95,77 @@ public class Playlist {
     this.currentTimer = null
   }
 
-  // Loop current scene on playlist.  continues playing the scene, but won't advance to the next item
-  // will play the scene if we are stopped
-  public void loopScene() {
-//    println "[Playlist] loopScene: State is ${this.currentPlayState}"
-
-    this.currentPlayState = PlayState.LOOP_SCENE
+  // Unloads the scene from the channel, sets the channel to null, and cancels the current timer
+  public void unload() {
+    // Is there a better way to stop the channel from playing (than unsetScene)?
+    // this throws a NPE sometimes which is a problem
+    if (this.channel) this.channel.unsetScene()
+    this.channel = null
     this.cancelCurrentTimer()
-
-    this._playPlaylist()
   }
 
   // Stop playlist.  continues playing the scene, but won't advance to the next item
-  public void stop() {
-    this.currentPlayState = PlayState.STOPPED
-
-    // need to figure out how to actually stop the clip from playing, if this doesn't do it
-    // this throws a NPE sometimes which is a problem
-    this.channel.unsetScene()
-    this.cancelCurrentTimer()
-
-    StateManager.get().sendActiveState()
+  public void stop(boolean shouldSendState = true) {
+    this.setCurrentPlayState(PlayState.STOPPED)
+    this.unload()
+    if (shouldSendState) StateManager.get().sendActiveState()
   }
 
-  // todo: add ability to play a specific playlist
-  public void play() {
-    this.currentPlayState = PlayState.PLAYING
-    this._playPlaylist()
-  }
+  public void play(String playlistItemId, PlayState playState) {
+    this.setCurrentPlayState(playState)
 
-  // Plays a scene
-  private void playItem(PlaylistItem item) {
-    this.channel.setScene(item.scene, false, 10);
-
-    System.out.println("Playing scene '${item.scene.getDisplayName()}' on playlist '${this.displayName}'");
-  }
-
-  // This method handles playing an item on the playlist w/o changing the 'playState', which is whether we're playing/looping/stopped
-  private void _playPlaylist() {
-    if (this.isStopped()) {
-      println "[Playlist] WARNING: Called _playPlaylist while state is ${this.currentPlayState}".yellow()
+    // Handle empty playlist
+    if (this.items.size() == 0) {
+      println "[Playlist] Called play, but playlist is empty. Setting state to STOPPED"
+      this.stop()
       return
     }
 
-//    println "[Playlist] _playPlaylist: State is ${this.currentPlayState}"
+    // handle stopped. this might never be called but we want to make sure we return here anyway
+    if (playState == PlayState.STOPPED) {
+      this.stop()
+      return
+    }
 
-    PlaylistItem currentItem = this.items[this.currentIdx];
-    this.playItem(currentItem);
+    PlaylistItem item = playlistItemId == null ? this.items[0] : this.items.find { it.id == playlistItemId }
+
+    if (!item) {
+      throw new RuntimeException("[Playlist] ERROR!  Could not find the PlaylistItem on this playlist.  Make sure this PlaylistItem existings on this Playlist!")
+    }
+
+    this._playPlaylist(item, playState)
+  }
+
+  // This method handles playing an item on the playlist w/o changing the 'playState', which is whether we're playing/looping/stopped
+  private void _playPlaylist(PlaylistItem item, PlayState playState) {
+    // Exit early if we've had our channel removed
+//    this means we've switched to a different playlist, but the timer
+    if (!this.channel) {
+      println "[Playlist] Called _playPlaylist but channel was null"
+    }
+
+    // If there is a current timer, cancel it.  one timer at a time folks
+    this.cancelCurrentTimer()
+
+    // This case should be handled before we ever get here, but if it happens nbd
+    if (playState == PlayState.STOPPED) {
+      println "[Playlist] WARNING: Called _playPlaylist while state is STOPPED.  Nothing to do.".yellow()
+      return
+    }
+
+    this.setCurrentItem(item)
+
+    this.channel.setScene(item.scene, false, 10);
+    System.out.println("[Playlist] Playing scene '${item.scene.getDisplayName()}' on playlist '${this.displayName}'");
 
     // Schedule the next item
-    if (this.isPlaying()) {
-      PlaylistItem nextItem = this.items[this.currentIdx];
-      long delay = nextItem.duration * 1000 as long;
+    if (playState == PlayState.PLAYING) {
+      long delay = item.duration * 1000 as long;
       this.scheduleNextScene(delay);
     }
 
     // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
+    // if we don't send it here, the UI won't get the update when the timer triggers this function
     StateManager.get().sendActiveState()
   }
 }
