@@ -1,6 +1,7 @@
 package show
 
 import model.Channel
+import show.Playlist.PlayState
 import stores.PlaylistStore
 import websocket.WebsocketInterface
 
@@ -38,25 +39,18 @@ public class PlaylistManager {
     return this.currentPlaylist;
   }
 
+  public PlayState getCurrentPlayState() {
+    return this.currentPlaylist.getCurrentPlayState()
+  }
+
   // figure out how long we have until our timer expires
   public long getCurrentSceneDurationRemaining() {
     this.currentPlaylist.getCurrentSceneDurationRemaining()
   }
 
-  public void loopScene() {
-    this.currentPlaylist.loopScene()
-  }
-
-  public void stop() {
-    this.currentPlaylist.stop()
-  }
-
-  // Play a specific playlist
-  // This API will probably change
-  public play(Integer playlistId = null, int itemIdx = 0, Playlist.PlayState initialPlayState = Playlist.PlayState.PLAYING) {
+  // Get the initial playlist (or non-initial, or whatever)
+  public Playlist getInitialPlaylist(Integer playlistId) {
     Playlist p;
-
-    // for now, just handle playing the first playlist and the first scene
     if (!playlistId) {
       p = this.playlistStore.getItems().first()
       if (!p) throw new RuntimeException("Error: PlaylistManager: PlaylistStore is empty!")
@@ -64,25 +58,46 @@ public class PlaylistManager {
       p = this.playlistStore.find('id', playlistId)
     }
 
-    println "[PlaylistManager] Playing playlist '${p.getDisplayName()}'. PlayState: ${p.getCurrentPlayState()}"
+    p
+  }
 
-    // will implement when getting playlist switching working
-//    if (this.currentPlaylist) {
-//      this.currentPlaylist.unsetChannel()
-//    }
+  public void stop(Integer playlistId = null, String playlistItemId = null) {
+    // for now, just handle playing the first playlist and the first scene
+    Playlist p = this.getInitialPlaylist(playlistId)
 
     if (this.currentPlaylist != p) {
+      println "[PlaylistManager: Switching playlist from ${this.currentPlaylist.displayName} to ${this.currentPlaylist.displayName}"
       this.currentPlaylist = p;
       this.channel.unsetScene()
-      p.setChannel(this.channel);
     }
 
-    if (initialPlayState == Playlist.PlayState.PLAYING) {
-      p.play();
-    } else if (initialPlayState == Playlist.PlayState.LOOP_SCENE) {
-      p.loopScene();
-    } else {
-      p.stop();
+    p.setChannel(this.channel);
+    this.getCurrentPlaylist().stop(false)
+
+  }
+
+  // Play a specific playlist, set the play state
+  public play(Integer playlistId = null, String playlistItemId = null, PlayState playState) {
+    Playlist p = this.getInitialPlaylist(playlistId)
+
+    println "[PlaylistManager] Playing playlist '${p.getDisplayName()}'. PlayState: ${p.getCurrentPlayState()}"
+
+    if (this.currentPlaylist != p) {
+      if (!this.currentPlaylist) {
+//        println "[PlaylistManager: Playing initial playlist ${p.getDisplayName()}"
+      } else {
+//        println "[PlaylistManager: Switching playlist from ${this.getCurrentPlaylist().getDisplayName()} to ${p.getDisplayName()}"
+      }
+
+      // Unset the channel on the old playlist, and set it on the new playlist
+      if (this.currentPlaylist) {
+        this.currentPlaylist.unload()
+      }
+      this.currentPlaylist = p;
     }
+
+    p.setChannel(this.channel);
+
+    p.play(playlistItemId, playState);
   }
 }
