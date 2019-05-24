@@ -88,8 +88,8 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
   List<Map> loadDataFromDisk() {
     File dataFile = new File(Util.getDataFilePath('playlist'))
     if (!dataFile.exists()) {
-      println "No datafile found, using mock playlist data"
-      return MockData.getPlaylistStoreData()
+      println "[PlaylistStore] No datafile found at '${dataFile.getAbsolutePath()}'.  Returning empty list"
+      return []
     }
 
     println "Loading playlist data from Disk".yellow()
