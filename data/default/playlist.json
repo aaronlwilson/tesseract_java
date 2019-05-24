@@ -4,11 +4,6 @@
         "displayName": "Cubotron",
         "items": [
             {
-                "id": "32db1f01-f84e-4d3a-b437-085641806f4e",
-                "sceneId": 6,
-                "duration": 10
-            },
-            {
                 "id": "8f3dd42f-5c94-49f8-851d-718852129ffe",
                 "sceneId": 5,
                 "duration": 4
