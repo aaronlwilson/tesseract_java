@@ -68,7 +68,7 @@ class SceneStore extends BaseStore implements IJsonPersistable {
 
     int enumVal = clipIdMap[clipId]
 
-    if (!enumVal) {
+    if (enumVal == null) {
       throw new RuntimeException("Error: No matching class for clipId: ${clipId}")
     }
 

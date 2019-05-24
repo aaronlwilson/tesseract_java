@@ -114,7 +114,7 @@ public class TesseractMain extends PApplet {
     PlaylistManager.get().setChannel(this.channel1);
 
     // Play the playlist with id = 1, play the first item in the playlist, and start in the 'looping' state
-    PlaylistManager.get().play(1, 0, Playlist.PlayState.LOOP_SCENE);
+    PlaylistManager.get().play(1, null, Playlist.PlayState.LOOP_SCENE);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
