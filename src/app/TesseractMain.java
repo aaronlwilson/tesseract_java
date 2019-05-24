@@ -114,7 +114,7 @@ public class TesseractMain extends PApplet {
     PlaylistManager.get().setChannel(this.channel1);
 
     // Play the playlist with id = 1, play the first item in the playlist, and start in the 'looping' state
-    PlaylistManager.get().play(1, null, Playlist.PlayState.LOOP_SCENE);
+    PlaylistManager.get().play(1, null, Playlist.PlayState.PLAYING);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
@@ -196,8 +196,8 @@ public class TesseractMain extends PApplet {
     // have to be a bit smarter about how we create the initial playlist so these uuids don't change all the time, its annoying
 
     List<PlaylistItem> playlistItems = Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 10),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),

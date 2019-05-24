@@ -56,12 +56,14 @@ public class OnScreen {
 
         p.noFill();
 
-        p.translate(p.width/2, p.height/2, -100);
+        //center camera and move backward
+        p.translate(p.width/2, p.height/2, -150);
 
 
         if(p.mousePressed) {
             _xDelta = _xStart - p.mouseX;
             _yDelta = _yStart - p.mouseY;
+
         }else{
             _xDelta = 0;
             _yDelta = 0;
@@ -80,14 +82,19 @@ public class OnScreen {
         p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI));
         p.rotateY(p.map(_xrot,0, p.width, p.PI, -p.PI));
 
-
-
         drawAxes(500);
 
 
-        //draw nodes
-        p.strokeWeight(10);
 
+        p.pushMatrix();
+
+        float spin = p.frameCount * 0.01f;
+        p.rotateX(spin);
+        p.rotateY(45);
+        p.rotateZ(45);
+
+        //draw nodes
+        p.strokeWeight(8);
 
         TesseractMain myMain = TesseractMain.getMain();
 
@@ -104,7 +111,7 @@ public class OnScreen {
         }
 
 
-
+        p.popMatrix();
 
     }
 
