@@ -40,10 +40,10 @@ class StateManager {
   // Things like which playlist / scene are we playing, stuff like that
   public Map getActiveState() {
     Map activeState = [
-        playlistItemId: PlaylistManager.get().getCurrentPlaylist().getCurrentItem().getId(),
-        playlistId    : PlaylistManager.get().getCurrentPlaylist().getId(),
+        playlistItemId               : PlaylistManager.get().getCurrentPlaylist().getCurrentItem().getId(),
+        playlistId                   : PlaylistManager.get().getCurrentPlaylist().getId(),
         currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
-        playlistPlayState: PlaylistManager.get().getCurrentPlaylist().getCurrentPlayState().name(),
+        playlistPlayState            : PlaylistManager.get().getCurrentPlaylist().getCurrentPlayState().name(),
     ]
 
     return activeState
@@ -60,7 +60,7 @@ class StateManager {
     // scenes
     // playlists
 
-    println "Sending initial state to Client".cyan()
+    println "[StateManager] Sending initial state to Client".cyan()
 
     Map data = [
         clipData    : ClipMetadata.getClipMetadata(),
@@ -77,7 +77,7 @@ class StateManager {
   // Send this to all clients for now
   // In the future, we will want something like 'send to all clients except one'
   public void sendStateUpdate(String stateKey, value) {
-    println "Sending stateUpdate event: ${stateKey} ${value}".cyan()
+    println "[StateManager] Sending stateUpdate event: ${stateKey} ${value}".cyan()
 
     def data = [
         key  : stateKey,
@@ -129,17 +129,32 @@ class StateManager {
     PlaylistStore.get().saveDataToDisk()
   }
 
-  // Create a new playlist object and shove it into the store, then write data to disk
+  // Handles updates to the 'play state'
+  // The playState is: whether we are playing, looping the current scene, or stopped, and the current playlistId and sceneId
   public void handlePlayStateUpdate(Map inData) {
-    println "[StateManager] playState updated to: ${inData.playState}"
+    int playlistId = inData.activePlaylistId
+    String playlistItemId = inData.activePlaylistItemId
+    Playlist.PlayState playState = inData.playState as Playlist.PlayState
 
-    // handle logic around playing / pausing playlist
-    if (Playlist.PlayState.PLAYING == inData.playState as Playlist.PlayState) {
-      PlaylistManager.get().play()
-    } else if (Playlist.PlayState.LOOP_SCENE == inData.playState as Playlist.PlayState) {
-      PlaylistManager.get().loopScene()
-    } else { // stop
-      PlaylistManager.get().stop()
+    // if we're already playing the correct playlist and item and we're in the correct playstate, don't do anything
+    // this should prevent the playlist from restarting if we click it again in the UI and we're already on it
+    if (playlistId == PlaylistManager.get().getCurrentPlaylist().getId()
+        && playlistItemId == PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
+        && playState == PlaylistManager.get().getCurrentPlayState()) {
+      println "[StateManager] Already in the correct state, don't do anything"
+      return
     }
+
+    // check the current values and react accordingly
+    // if playState changed, but activePlaylist didn't, we need to be able to update the playState without restarting the playlist
+    if (playState == Playlist.PlayState.STOPPED) {
+      // here we should just stop the playlist, doesn't matter
+      println "[StateManager] playState updated to STOPPED"
+      PlaylistManager.get().stop(playlistId, playlistItemId)
+      return
+    }
+
+    // If we made it this far, we should play the incoming playlist, item, and playstate
+    PlaylistManager.get().play(playlistId, playlistItemId, playState)
   }
 }
