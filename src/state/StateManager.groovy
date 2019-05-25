@@ -35,15 +35,37 @@ class StateManager {
     ws.registerActionHandler('stateUpdate', this.&handleStateUpdate)
   }
 
+  // Returns a reference to the live clip instance.  this might be currentScene or nextScene on the channel, depending if we are transitioning
+  private AbstractClip getActiveClip() {
+    TesseractMain.getMain().channel1.getActiveClip()
+  }
+
+  // Get the current values of a clip
+  // Return a Map like this [ field1: value1, field2: value2, etc ]
+  private getClipControlValues(AbstractClip clip) {
+    Map clipMeta = ClipMetadata.getClipMetadata().find { it.clipId == clip.clipId }
+
+    Map values = clipMeta.controls.inject([:]) { Map result, Map data ->
+      // If the value is defined, use the current value.  if the value is null, use the default value
+      def newValue = clip."${data.fieldName}" == null ? data.defaultValue : clip."${data.fieldName}"
+      result[data.fieldName] = newValue
+      result
+    }
+
+    [clipId: clip.clipId, values: values]
+  }
+
   // it would be get to get the current values of the controls here too
   // This gets the 'active state' of the application
   // Things like which playlist / scene are we playing, stuff like that
+  // We also want to send the current values of the clip controls
   public Map getActiveState() {
     Map activeState = [
         playlistItemId               : PlaylistManager.get().getCurrentPlaylist().getCurrentItem().getId(),
         playlistId                   : PlaylistManager.get().getCurrentPlaylist().getId(),
         currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
         playlistPlayState            : PlaylistManager.get().getCurrentPlaylist().getCurrentPlayState().name(),
+        clipControlValues            : this.getClipControlValues(this.getActiveClip())
     ]
 
     return activeState
@@ -109,7 +131,7 @@ class StateManager {
   // Handle an update to one of the active controls
   public void handleActiveControlsUpdate(Map inData) {
     // find the active clip.  this is gonna be kinda hacky for now
-    AbstractClip clip = TesseractMain.getMain().channel1.getScene().clip
+    AbstractClip clip = this.getActiveClip()
 
     String fieldName = inData.fieldName
     float newValue = inData.newValue

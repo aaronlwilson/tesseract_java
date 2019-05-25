@@ -17,5 +17,4 @@ public class PlaylistItem {
     this.scene = scene;
     this.duration = duration;
   }
-
 }
