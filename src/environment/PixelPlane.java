@@ -8,7 +8,8 @@ public class PixelPlane {
 
     public Node[] buildNineTiles(int startIndex, int startX, int startY, int startZ, int rotation){
 
-        Node[] planeNodes = new Node[(36*36)+(36*36)+(36*36)];
+        int total = (36*36)*6;
+        Node[] planeNodes = new Node[total];
 
         int counter = 0;
 
@@ -18,7 +19,7 @@ public class PixelPlane {
             for (int j = 0; j < 36; j++) {
                 int x = (10*i) + startX;
                 int y = (10*j) + startY;
-                int z = startZ;
+                int z = startZ-10;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
                 counter++;
@@ -28,7 +29,7 @@ public class PixelPlane {
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
                 int x = (10*i) + startX;
-                int y = startY;
+                int y = startY-10;
                 int z = (10*j) + startZ;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
@@ -38,7 +39,7 @@ public class PixelPlane {
 
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
-                int x = startX;
+                int x = startX-10;
                 int y = (10*i) + startY;
                 int z = (10*j) + startZ;
 
@@ -46,6 +47,44 @@ public class PixelPlane {
                 counter++;
             }
         }
+
+        // other half
+        for (int i = 0; i < 36; i++) {
+            for (int j = 0; j < 36; j++) {
+                int x = (10*i) + startX;
+                int y = (10*j) + startY;
+                int z = startZ+360;
+
+                planeNodes[counter] = new Node(x, y, z, counter, null);
+                counter++;
+            }
+        }
+
+        for (int i = 0; i < 36; i++) {
+            for (int j = 0; j < 36; j++) {
+                int x = startX+360;
+                int y = (10*i) + startY;
+                int z = (10*j) + startZ;
+
+                planeNodes[counter] = new Node(x, y, z, counter, null);
+                counter++;
+            }
+        }
+
+        for (int i = 0; i < 36; i++) {
+            for (int j = 0; j < 36; j++) {
+                int x = (10*i) + startX;
+                int y = startY+360;
+                int z = (10*j) + startZ;
+
+                planeNodes[counter] = new Node(x, y, z, counter, null);
+                counter++;
+            }
+        }
+
+
+
+
 
 
         return planeNodes;

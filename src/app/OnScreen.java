@@ -19,6 +19,8 @@ public class OnScreen {
     private float _xMove;
     private float _yMove;
 
+    private TesseractMain _myMain;
+
 
     public OnScreen(PApplet pApplet) {
         p = pApplet;
@@ -33,33 +35,35 @@ public class OnScreen {
         _yDelta = 0;
         _xMove = 0;
         _yMove = 0;
+
+        _myMain = TesseractMain.getMain();
     }
 
     private void drawAxes(float size){
         p.strokeWeight (1);
         //X  - red
-        p.stroke(192,0,0);
+        p.stroke(220,0,0);
         p.line(0,0,0,size,0,0);
         //Y - green
-        p.stroke(0,192,0);
+        p.stroke(0,220,0);
         p.line(0,0,0,0,size,0);
         //Z - blue
-        p.stroke(0,0,192);
+        p.stroke(0,0,220);
         p.line(0,0,0,0,0,size);
     }
 
     public void draw() {
 
         p.background(20);
+        p.noFill();
+        p.ortho();
 
         drawFramerate();
 
-        p.noFill();
-
         //center camera and move backward
-        p.translate(p.width/2, p.height/2, -150);
+        p.translate(p.width/2, (p.height/2), -150);
 
-
+        //explore the world
         if(p.mousePressed) {
             _xDelta = _xStart - p.mouseX;
             _yDelta = _yStart - p.mouseY;
@@ -82,36 +86,41 @@ public class OnScreen {
         p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI));
         p.rotateY(p.map(_xrot,0, p.width, p.PI, -p.PI));
 
-        drawAxes(500);
-
+        drawAxes(600);
 
 
         p.pushMatrix();
+        //p.rotateY(p.radians(45f));
+        float spin = p.frameCount * 0.5f;
+        //p.rotateZ(spin);
 
-        float spin = p.frameCount * 0.01f;
-        p.rotateX(spin);
-        p.rotateY(45);
-        p.rotateZ(45);
+        //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
+        //we want to translate the object on multiple axes using the current global coordinates.
+        float valueX = 45, valueY = 0, valueZ = 35.3f;
+        rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+
 
         //draw nodes
         p.strokeWeight(8);
-
-        TesseractMain myMain = TesseractMain.getMain();
-
-        if(myMain.stage.nodes == null) {
-            return;
-
-        }else{
-            int l = myMain.stage.nodes.length;
+        if(_myMain.stage.nodes != null) {
+            int l = _myMain.stage.nodes.length;
             for (int i = 0; i < l; i++) {
-                Node node = myMain.stage.nodes[i];
+                Node node = _myMain.stage.nodes[i];
                 p.stroke (node.r, node.g, node.b);
                 p.point(node.x, node.y, node.z);
+
+                //record the "projected" node position in 2 space
+                float nX = (float)node.x;
+                float nY = (float)node.y;
+                float nZ = (float)node.z;
+
+                node.screenX = p.screenX(nX, nY, nZ);
+                node.screenY = p.screenY(nX, nY, nZ);
             }
         }
 
-
         p.popMatrix();
+
 
     }
 
@@ -128,12 +137,27 @@ public class OnScreen {
     public void mousePressed() {
         _xStart = p.mouseX;
         _yStart = p.mouseY;
-
         //p.println(_xStart);
     }
 
     public void mouseReleased() {
         _xMove = _xMove - _xDelta;
         _yMove = _yMove - _yDelta;
+    }
+
+    private void rotateXYZ(float xx, float yy, float zz) {
+        float cx, cy, cz, sx, sy, sz;
+
+        cx = p.cos(xx);
+        cy = p.cos(yy);
+        cz = p.cos(zz);
+        sx = p.sin(xx);
+        sy = p.sin(yy);
+        sz = p.sin(zz);
+
+        p.applyMatrix(cy*cz, (cz*sx*sy)-(cx*sz), (cx*cz*sy)+(sx*sz), 0.0f,
+                cy*sz, (cx*cz)+(sx*sy*sz), (-cz*sx)+(cx*sy*sz), 0.0f,
+                -sy, cy*sx, cx*cy, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
     }
 }
