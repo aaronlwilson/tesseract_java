@@ -42,7 +42,7 @@ public class Stage {
 
 
         PixelPlane plane = new PixelPlane();
-        nodes = plane.buildNineTiles(counter,0,0, 0, 0 );
+        nodes = plane.buildNineTiles(counter,-175,-175, -175, 0 );
 
         //set the boundaries of the stage
         for (Node n: nodes) {

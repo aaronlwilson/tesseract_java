@@ -54,8 +54,19 @@ public class VideoClip extends AbstractClip{
 
         int[] nodestate = new int[3];
 
-        int vidX = (int) _myMain.map(node.x, 0, _myMain.stage.maxW, 0, _videoW-1);
-        int vidY = (int) _myMain.map(node.y,0, _myMain.stage.maxH, 0, _videoH-1);
+        //cool mirroring
+        /*
+        int x = Math.abs(node.x);
+        int y = Math.abs(node.y);
+
+        int vidX = (int) _myMain.map(x, 0, _myMain.stage.maxW, 0, _videoW-1);
+        int vidY = (int) _myMain.map(y,0, _myMain.stage.maxH, 0, _videoH-1);
+         */
+
+
+        int vidX = (int) _myMain.map(node.screenX, 0, 1100, 0, _videoW-1);
+        int vidY = (int) _myMain.map(node.screenY,0, 800, 0, _videoH-1);
+
 
         int loc = vidX + vidY * _videoW;
         int c = _movie.pixels[loc];
