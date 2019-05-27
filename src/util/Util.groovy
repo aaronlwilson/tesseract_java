@@ -40,19 +40,26 @@ public class Util {
 
   // Returns the directory we are going to use to store json files
   // 'group' will be a way we can have different sets of files
+  // ensures the directory exists
   public static getDataDir(String group = 'default') {
     // this returns '<repo dir>/data/<group>'
-    "${new File(".").getAbsoluteFile().getParent()}/data/${group}"
+    String dirPath = "${new File(".").getAbsoluteFile().getParent()}/data/${group}"
+    File dir = new File(dirPath)
+    if (!dir.exists()) {
+      dir.mkdirs()
+    }
+
+    dir
   }
 
   // Get the data file path for a type
   // types: ClipControl, Playlist, Scene
-  public static getDataFilePath(String type, String group = 'default') {
-    "${new File(".").getAbsoluteFile().getParent()}/data/${group}/${type}.json"
+  public static String getDataFilePath(String type, String group = 'default') {
+    "${getDataDir(group)}/${type}.json"
   }
 
   // Pretty print a complex object.  doesn't work for objects w/ cyclical references, you can use obj.dump() and obj.inspect() on complex objects
-  public static pp(o) {
+  public static void pp(o) {
     println new JsonBuilder(o).toPrettyString()
   }
 
@@ -61,15 +68,17 @@ public class Util {
   public static int getR(int c) {
     return c >> 16 & 0xFF;
   }
+
   public static int getG(int c) {
     return c >> 8 & 0xFF;
   }
+
   public static int getB(int c) {
     return c & 0xFF;
   }
 
-  public static float getPercent(int loaded, int total){
-    return ((float)loaded/total) * 100;
+  public static float getPercent(int loaded, int total) {
+    return ((float) loaded / total) * 100;
   }
 
 }
