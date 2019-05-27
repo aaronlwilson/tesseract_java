@@ -55,6 +55,13 @@ class ClipMetadata {
                 [displayName: 'Blue', type: 'knob', defaultValue:  1.0, fieldName: 'p6'],
             ],
         ],
+        [
+            displayName: 'Video',
+            clipId     : 'video',
+            controls   : [
+                [displayName: 'Video File', type: 'videoFile', defaultValue:  '24K_loop-nosound.mp4', fieldName: 'filename'],
+            ],
+        ],
     ]
   }
 
