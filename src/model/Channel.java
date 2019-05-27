@@ -163,8 +163,14 @@ public class Channel {
     }
 
     // I need a reference to the 'active' clip, meaning the one we are playing or will be playing once the transition is finished
-    // Returns _nextScene.clip if _nextScene is not null, otherwise _currentScene.clip
+    // Returns _nextScene.clip if _nextScene is set, otherwise _currentScene.clip.  if both are null, returns null
     public AbstractClip getActiveClip() {
-        return this._nextScene != null ? this._nextScene.clip : this._currentScene.clip;
+        if (this._nextScene != null) {
+            return this._nextScene.clip;
+        } else if (this._currentScene != null) {
+            return this._currentScene.clip;
+        } else {
+            return null;
+        }
     }
 }
