@@ -43,6 +43,11 @@ class StateManager {
   // Get the current values of a clip
   // Return a Map like this [ field1: value1, field2: value2, etc ]
   private getClipControlValues(AbstractClip clip) {
+    // If we're stopped, these values will be null
+    if (clip == null) {
+      return [clipId: null, values: null]
+    }
+
     Map clipMeta = ClipMetadata.getClipMetadata().find { it.clipId == clip.clipId }
 
     Map values = clipMeta.controls.inject([:]) { Map result, Map data ->
@@ -61,7 +66,7 @@ class StateManager {
   // We also want to send the current values of the clip controls
   public Map getActiveState() {
     Map activeState = [
-        playlistItemId               : PlaylistManager.get().getCurrentPlaylist().getCurrentItem().getId(),
+        playlistItemId               : PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId(),
         playlistId                   : PlaylistManager.get().getCurrentPlaylist().getId(),
         currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
         playlistPlayState            : PlaylistManager.get().getCurrentPlaylist().getCurrentPlayState().name(),
