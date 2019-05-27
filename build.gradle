@@ -1,3 +1,7 @@
+plugins {
+  id "de.undercouch.download" version "3.4.3"
+}
+
 // This allows us to compile either groovy or java from the same set of directories
 apply plugin: 'groovy'
 
@@ -33,7 +37,21 @@ dependencies {
   // https://mvnrepository.com/artifact/org.processing/video
   compile group: 'org.processing', name: 'video', version: '3.3.7'
 
+  // https://mvnrepository.com/artifact/org.freedesktop.gstreamer/gst1-java-core
+  compile group: 'org.freedesktop.gstreamer', name: 'gst1-java-core', version: '1.0.0'
+}
 
+task downloadProcessingVideoLibrary(type: Download) {
+  println "Downloading processing video library"
+  src 'https://github.com/processing/processing-video/releases/download/latest/video.zip'
+  dest new File("${rootDir}/tmp", 'processing-video-lib.zip')
+  onlyIfModified true
+}
+
+task unzipProcessingVideoLibrary(dependsOn: downloadProcessingVideoLibrary, type: Copy) {
+  println "Unzipping processing video library"
+  from zipTree(downloadProcessingVideoLibrary.dest)
+  into "${rootDir}/lib"
 }
 
 // To do this, I googled 'gradle build fat jar' and copied this from the first link (with a couple modifications)
@@ -46,3 +64,5 @@ task fatJar(type: Jar) {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   with jar
 }
+
+build.dependsOn unzipProcessingVideoLibrary
