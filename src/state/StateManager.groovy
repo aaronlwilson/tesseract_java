@@ -167,10 +167,8 @@ class StateManager {
       return
     }
 
-    // check the current values and react accordingly
-    // if playState changed, but activePlaylist didn't, we need to be able to update the playState without restarting the playlist
+    // Just stop
     if (playState == Playlist.PlayState.STOPPED) {
-      // here we should just stop the playlist, doesn't matter
       println "[StateManager] playState updated to STOPPED"
       PlaylistManager.get().stop(playlistId, playlistItemId)
       return
