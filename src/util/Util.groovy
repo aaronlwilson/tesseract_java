@@ -71,4 +71,5 @@ public class Util {
   public static float getPercent(int loaded, int total){
     return ((float)loaded/total) * 100;
   }
+
 }

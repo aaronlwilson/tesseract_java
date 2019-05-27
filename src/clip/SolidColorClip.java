@@ -21,8 +21,6 @@ public class SolidColorClip extends AbstractClip{
     private int green = 0xff;
     private int blue = 0xff;
 
-    String clipId = "solid_color";
-
 
     //constructor
     public SolidColorClip(String theClipName) {
@@ -30,6 +28,7 @@ public class SolidColorClip extends AbstractClip{
     }
 
     public void init() {
+        clipId = "solid_color";
         super.init();
 
         c[0] = 0xff0000;
