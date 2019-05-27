@@ -115,3 +115,6 @@ lib/video/
 
 # temporary directory where we download dependencies before unpacking them
 tmp/
+
+# ignore json data
+data/default/*.json

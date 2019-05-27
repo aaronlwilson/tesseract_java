@@ -193,10 +193,7 @@ public class TesseractMain extends PApplet {
   }
 
   private void createBuiltInPlaylists() {
-    // have to be a bit smarter about how we create the initial playlist so these uuids don't change all the time, its annoying
-
-    List<PlaylistItem> playlistItems = Arrays.asList(
-       // new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 5),
+    List<PlaylistItem> playlist1Items = Arrays.asList(
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 10),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
@@ -208,19 +205,20 @@ public class TesseractMain extends PApplet {
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 7)
     );
 
-    // Kinda hacky but what we do here is see if we've already got a playlist w/ the id we want to create, and if so, we
-    // loop through the existing playlist items and use those UUIDs on the PlaylistItems we're using in 'addOrUpdate'
-    // This prevents the playlist.json file from changing every time we launch the application
-    Playlist existingPlaylist = PlaylistStore.get().find("id", 1);
-    if (existingPlaylist != null) {
-      for (int i = 0; i < existingPlaylist.getItems().size() && i < playlistItems.size(); i++) {
-        playlistItems.get(i).setId(existingPlaylist.getItems().get(i).getId());
-      }
-    }
-
-    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlistItems);
-
+    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
     this.playlistStore.addOrUpdate(playlist1);
+
+    List<PlaylistItem> playlist2Items = Arrays.asList(
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3)
+    );
+
+    Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
+    this.playlistStore.addOrUpdate(playlist2);
   }
 
   private void createShutdownHook() {
