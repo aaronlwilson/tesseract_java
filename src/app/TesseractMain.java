@@ -2,6 +2,7 @@ package app;
 
 
 import processing.core.*;
+import processing.video.Movie;
 
 import output.*;
 import environment.*;
@@ -27,12 +28,11 @@ public class TesseractMain extends PApplet {
   public static final int NODESCAN = 0;
   public static final int SOLID = 1;
   public static final int COLORWASH = 2;
-  public static final int STRIPE = 3;
+  public static final int VIDEO = 3;
+
 
   public static String[] clipNames = {
-      "nodescan",
-      "solid",
-      "colorwash"
+      "Node Scan", "Solid", "Color Wash", "Video"
   };
 
   private UDPModel udpModel;
@@ -152,15 +152,6 @@ public class TesseractMain extends PApplet {
     onScreen.draw();
   }
 
-  @Override
-  public void mousePressed() {
-    onScreen.mousePressed();
-  }
-
-  @Override
-  public void mouseReleased() {
-    onScreen.mouseReleased();
-  }
 
   //determine final color for each node each frame
   public int[] renderNode(Node node) {
@@ -182,6 +173,12 @@ public class TesseractMain extends PApplet {
   private void createBuiltInScenes() {
     // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
     // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
+    Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
+    this.sceneStore.addOrUpdate(sScan);
+
+    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0});
+    this.sceneStore.addOrUpdate(sVid);
+
     Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
     this.sceneStore.addOrUpdate(sWash);
 
@@ -199,13 +196,16 @@ public class TesseractMain extends PApplet {
     // have to be a bit smarter about how we create the initial playlist so these uuids don't change all the time, its annoying
 
     List<PlaylistItem> playlistItems = Arrays.asList(
+       // new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 10),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 1),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 1)
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 7)
     );
 
     // Kinda hacky but what we do here is see if we've already got a playlist w/ the id we want to create, and if so, we
@@ -230,4 +230,19 @@ public class TesseractMain extends PApplet {
       }
     });
   }
+
+  //EVENT HANDLERS
+  //calls happen on pApplet, then can be routed to the proper place in our code
+  @Override
+  public void mousePressed() {
+    onScreen.mousePressed();
+  }
+
+  @Override
+  public void mouseReleased() {
+    onScreen.mouseReleased();
+  }
+
+  //Custom event handler on pApplet for video library
+  public void movieEvent(Movie movie) { movie.read(); }
 }

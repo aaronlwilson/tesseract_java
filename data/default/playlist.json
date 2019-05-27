@@ -4,39 +4,49 @@
         "displayName": "Cubotron",
         "items": [
             {
-                "id": "966b07e9-1b52-4367-86f1-76251cc792e0",
+                "id": "8f3dd42f-5c94-49f8-851d-718852129ffe",
+                "sceneId": 5,
+                "duration": 10
+            },
+            {
+                "id": "7daa66b3-8084-43eb-a195-26f53da83cef",
                 "sceneId": 4,
                 "duration": 4
             },
             {
-                "id": "c7de37d0-646b-4c49-bad0-8247b96d1b13",
+                "id": "8959fe86-53fe-4b4c-9581-ac999780f4bc",
                 "sceneId": 1,
                 "duration": 3
             },
             {
-                "id": "5651bd75-e33b-47bd-a25a-a13b41c4273a",
+                "id": "f38145bb-eebb-478e-9df5-91330ed85cc8",
                 "sceneId": 4,
-                "duration": 1
+                "duration": 4
             },
             {
-                "id": "4c6f90ca-674e-4b6e-a05d-b0f87267dbfe",
+                "id": "3f353ebc-509e-4e68-b4b9-3d3417fb4142",
                 "sceneId": 2,
                 "duration": 4
             },
             {
-                "id": "e5df7624-3876-4f55-b232-63a491a73524",
+                "id": "3810070c-5592-488e-85e6-d2d71e44d1b3",
                 "sceneId": 3,
                 "duration": 3
             },
             {
-                "id": "e81919af-7710-4a4d-b8bc-717d9d17280a",
+                "id": "5d71b499-29a1-49e4-aa76-7b539c20f2f2",
                 "sceneId": 4,
                 "duration": 5
             },
             {
-                "id": "91b24ab4-3072-45ce-8545-4465917b9677",
-                "sceneId": 1,
-                "duration": 1
+                "id": "437b0aac-c6e7-4bff-90c0-274e6ce7f2a3",
+                "sceneId": 3,
+                "duration": 5
+            },
+            {
+                "id": "334b351e-cd03-40d4-bac8-87a2e843a133",
+                "sceneId": 2,
+                "duration": 7
             }
         ]
     },

@@ -108,3 +108,7 @@ build/
 .idea/modules/tesseract_java.test.iml
 .idea/vcs.xml
 tesseract_java.iml
+
+#manually have to include this or have gradle download it separate from the repo
+
+lib/video/
