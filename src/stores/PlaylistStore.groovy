@@ -47,6 +47,7 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
     Playlist existingPlaylist = this.find("id", playlist.id)
     if (existingPlaylist) {
       existingPlaylist.setDisplayName(playlist.getDisplayName())
+      existingPlaylist.setDefaultDuration(playlist.getDefaultDuration())
       existingPlaylist.setItems(playlist.getItems())
     } else {
       this.items.push(playlist)
@@ -76,7 +77,7 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
       new PlaylistItem(playlistItemId, scene, playlistItem.duration)
     }
 
-    new Playlist(jsonObj.id, jsonObj.displayName, 60, playlistItems)
+    new Playlist(jsonObj.id, jsonObj.displayName, jsonObj.defaultDuration, playlistItems)
   }
 
   // Takes an array of parsed JSON
@@ -88,7 +89,6 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
   List<Map> loadDataFromDisk() {
     File dataFile = new File(Util.getDataFilePath('playlist'))
     if (!dataFile.exists()) {
-      println "[PlaylistStore] No datafile found at '${dataFile.getAbsolutePath()}'.  Returning empty list"
       return []
     }
 
@@ -114,9 +114,10 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
   List<Map> asJsonObj() {
     this.items.collect { Playlist item ->
       [
-          id         : item.id,
-          displayName: item.displayName,
-          items      : item.items.collect { i -> [id: i.id, sceneId: i.scene.id, duration: i.duration] },
+          id             : item.id,
+          displayName    : item.displayName,
+          defaultDuration: item.defaultDuration,
+          items          : item.items.collect { i -> [id: i.id, sceneId: i.scene.id, duration: i.duration] },
       ]
     }
   }
