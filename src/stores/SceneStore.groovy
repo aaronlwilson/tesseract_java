@@ -99,7 +99,6 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   List<Map> loadDataFromDisk() {
     File dataFile = new File(Util.getDataFilePath('scene'))
     if (!dataFile.exists()) {
-      println "[SceneStore] No datafile found at '${dataFile.getAbsolutePath()}'.  Returning empty list"
       return []
     }
 
