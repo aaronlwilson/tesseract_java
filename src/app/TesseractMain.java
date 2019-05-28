@@ -15,6 +15,7 @@ import show.*;
 import websocket.WebsocketInterface;
 
 
+import java.io.File;
 import java.util.*;
 
 
@@ -118,6 +119,15 @@ public class TesseractMain extends PApplet {
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
+
+
+    //TEMP, just playing around
+    final File directory = new File("./");
+    System.out.println(directory.getAbsolutePath());
+
+
+    final File videoDirectory = new File("./data/videos");
+    Util.listFilesForFolder(videoDirectory);
   }
 
   @Override

@@ -118,3 +118,6 @@ tmp/
 
 # ignore json data
 data/default/*.json
+
+# ignore video content, its too big
+data/videos
