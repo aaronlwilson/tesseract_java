@@ -6,7 +6,9 @@ public class PixelPlane {
 
     }
 
-    public Node[] buildNineTiles(int startIndex, int startX, int startY, int startZ, int rotation){
+
+
+    public Node[] buildFullCube(int startIndex, int startX, int startY, int startZ, int rotation){
 
         int total = (36*36)*6;
         Node[] planeNodes = new Node[total];
@@ -81,11 +83,26 @@ public class PixelPlane {
                 counter++;
             }
         }
+        return planeNodes;
+    }
 
 
+    public Node[] buildFullWall(int startIndex, int startX, int startY, int startZ, int rotation){
 
+        int total = (36*36)*1;
+        Node[] planeNodes = new Node[total];
 
+        int counter = 0;
 
+        for (int i = 0; i < 36; i++) {
+            for (int j = 0; j < 36; j++) {
+                int x = (10*i) + startX;
+                int y = (10*j) + startY;
+
+                planeNodes[counter] = new Node(x, y, startZ, counter, null);
+                counter++;
+            }
+        }
 
         return planeNodes;
     }
