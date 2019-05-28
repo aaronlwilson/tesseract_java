@@ -109,7 +109,7 @@ public class OnScreen {
                 p.stroke (node.r, node.g, node.b);
                 p.point(node.x, node.y, node.z);
 
-                //record the "projected" node position in 2 space
+                //record the "projected" node position in 2D space
                 float nX = (float)node.x;
                 float nY = (float)node.y;
                 float nZ = (float)node.z;

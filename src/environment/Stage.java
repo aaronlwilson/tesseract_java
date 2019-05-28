@@ -29,7 +29,7 @@ public class Stage {
         int counter = 0;
 
         /*
-        // Initialize all nodes, just a boring cubeotron
+        // Initialize a crap-ton of nodes, just a big basic cubeotron
         for (int i = 0; i < 30; i++) {
             for (int j = 0; j < 30; j++) {
                 for (int k = 0; k < 30; k++) {
@@ -42,7 +42,9 @@ public class Stage {
 
 
         PixelPlane plane = new PixelPlane();
-        nodes = plane.buildNineTiles(counter,-175,-175, -175, 0 );
+        nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
+
+        //nodes = plane.buildFullWall(counter,0,0,0, 0 );
 
         //set the boundaries of the stage
         for (Node n: nodes) {

@@ -58,6 +58,22 @@ public class Util {
     "${getDataDir(group)}/${type}.json"
   }
 
+  public static void listFilesForFolder(final File folder) {
+    System.out.println("FILE LIST");
+
+    for (final File fileEntry : folder.listFiles()) {
+      if (fileEntry.isDirectory()) {
+        //recursive behavior
+        listFilesForFolder(fileEntry);
+      } else {
+        System.out.println(fileEntry.getName());
+      }
+    }
+
+    //TODO return and array of strings, or JSON to be passed to the frontend to populate filename dropdown
+  }
+
+
   // Pretty print a complex object.  doesn't work for objects w/ cyclical references, you can use obj.dump() and obj.inspect() on complex objects
   public static void pp(o) {
     println new JsonBuilder(o).toPrettyString()
