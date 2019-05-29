@@ -9,10 +9,12 @@ public class Rabbit extends Controller  {
   public Tile[] tileArray;
 
   //constructor
-  Rabbit(String theIp, int theId, String theMac) {  
+  public Rabbit(String theIp, int theId, String theMac) {
     ip = theIp;
     id = theId;
     mac = theMac;
+
+    tileArray = new Tile[9];
   }    
 
 

@@ -6,7 +6,7 @@ import processing.core.PApplet;
 
 public class Stage {
 
-    //private PApplet p;
+    private PApplet p;
 
     //used to automatically define bounding box
     public int maxW;
@@ -17,8 +17,10 @@ public class Stage {
     public Node[] nodes;
     public Node[] prevNodes; //last frames data
 
+
+
     public Stage(PApplet pApplet) {
-        //p = pApplet;
+        p = pApplet;
 
         //nodes = new Node[30*30*30];
     }
@@ -41,10 +43,10 @@ public class Stage {
         */
 
 
-        PixelPlane plane = new PixelPlane();
-        nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
+        PixelPlane plane = new PixelPlane(p);
+        //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
-        //nodes = plane.buildFullWall(counter,0,0,0, 0 );
+        nodes = plane.buildFullWall(counter,0,0,0, 0 );
 
         //set the boundaries of the stage
         for (Node n: nodes) {

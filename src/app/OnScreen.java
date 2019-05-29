@@ -90,23 +90,23 @@ public class OnScreen {
 
 
         p.pushMatrix();
-        //p.rotateY(p.radians(45f));
-        float spin = p.frameCount * 0.5f;
-        //p.rotateZ(spin);
 
         //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
         //we want to translate the object on multiple axes using the current global coordinates.
         float valueX = 45, valueY = 0, valueZ = 35.3f;
-        rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+
+        //for Tesseract only
+        //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
 
 
         //draw nodes
-        p.strokeWeight(8);
+        p.strokeWeight(4);
+
         if(_myMain.stage.nodes != null) {
             int l = _myMain.stage.nodes.length;
             for (int i = 0; i < l; i++) {
                 Node node = _myMain.stage.nodes[i];
-                p.stroke (node.r, node.g, node.b);
+                p.stroke(node.r, node.g, node.b);
                 p.point(node.x, node.y, node.z);
 
                 //record the "projected" node position in 2D space
