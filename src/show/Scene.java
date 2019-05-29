@@ -57,7 +57,7 @@ public class Scene {
     }
 
     // set the values on the clip
-    public void setClipValues(float[] clipValues) {
+    private void setClipValues(float[] clipValues) {
         this.clip.p1 = clipValues[0];
         this.clip.p2 = clipValues[1];
         this.clip.p3 = clipValues[2];
