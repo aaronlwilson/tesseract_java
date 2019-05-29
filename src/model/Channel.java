@@ -73,7 +73,7 @@ public class Channel {
             _mix = 0;
             _currentScene = _nextScene;
             _nextScene = null;
-            System.out.printf("fade over\n");
+            //System.out.printf("fade over\n");
         }
 
         if(_mix > 0) {

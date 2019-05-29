@@ -36,10 +36,10 @@ public class TesseractMain extends PApplet {
       "Node Scan", "Solid", "Color Wash", "Video"
   };
 
-  private UDPModel udpModel;
+
   private OnScreen onScreen;
 
-
+  public UDPModel udpModel;
   public Stage stage;
 
   public Channel channel1;
@@ -64,7 +64,9 @@ public class TesseractMain extends PApplet {
   @Override
   public void settings() {
 
-    size(1100, 800, P3D);
+    size(1400, 800, P3D);
+
+
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
@@ -73,6 +75,8 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
+    frameRate( 30 );
+
     Util.enableColorization();
 
     _main = this;
@@ -160,6 +164,11 @@ public class TesseractMain extends PApplet {
     stage.nodes = nextNodes;
 
     onScreen.draw();
+
+    //push packets out to LEDS
+    //udpModel.sendTest();
+
+    udpModel.send();
   }
 
 
@@ -204,6 +213,8 @@ public class TesseractMain extends PApplet {
 
   private void createBuiltInPlaylists() {
     List<PlaylistItem> playlist1Items = Arrays.asList(
+
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 10),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
