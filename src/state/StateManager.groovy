@@ -5,6 +5,7 @@ import clip.AbstractClip
 import clip.ClipMetadata
 import org.java_websocket.WebSocketImpl
 import show.Playlist
+import show.Scene
 import stores.PlaylistStore
 import stores.SceneStore
 import show.PlaylistManager
@@ -123,6 +124,8 @@ class StateManager {
       this.handleActiveControlsUpdate(inData.value);
     } else if (inData.stateKey == "playlist") {
       this.handlePlaylistUpdate(inData.value);
+    } else if (inData.stateKey == "scene") {
+      this.handleSceneUpdate(inData.value);
     } else if (inData.stateKey == "playState") {
       this.handlePlayStateUpdate(inData.value);
     } else {
@@ -154,6 +157,13 @@ class StateManager {
     Playlist p = PlaylistStore.get().createPlaylistFromJson(inData)
     PlaylistStore.get().addOrUpdate(p)
     PlaylistStore.get().saveDataToDisk()
+  }
+
+  // Create a new scene object and shove it into the store, then write data to disk
+  public void handleSceneUpdate(Map inData) {
+    Scene s = SceneStore.get().createSceneFromJson(inData)
+    SceneStore.get().addOrUpdate(s)
+    SceneStore.get().saveDataToDisk()
   }
 
   // Handles updates to the 'play state'

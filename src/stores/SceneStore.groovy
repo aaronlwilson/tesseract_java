@@ -80,13 +80,14 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   // - Match keys on json object to constructor parameters
   // - Hydrate references to objects (e.g., 'clipId: 1' somehow matches the clip...maybe store a map that points clipId to class right now?)
   Scene createSceneFromJson(jsonObj) {
-//    println "createSceneFromJSON!!!".cyan()
-//    pp jsonObj
-
     // find the correct clipClass for the clipId
     int clipClass = this.getClipEnumValue(jsonObj.clipId)
 
-    new Scene(jsonObj.id, jsonObj.displayName, clipClass, jsonObj.clipValues as float[])
+    // ensure the list is the right size
+    float[] values = new float[7];
+    jsonObj.clipValues.eachWithIndex { float val, int idx -> values[idx] = val }
+
+    new Scene(jsonObj.id, jsonObj.displayName, clipClass, values)
   }
 
   // Takes an array of parsed JSON and sets the 'items' property
