@@ -66,8 +66,6 @@ public class TesseractMain extends PApplet {
 
     size(1400, 800, P3D);
 
-
-
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
     //pixelDensity(2);
