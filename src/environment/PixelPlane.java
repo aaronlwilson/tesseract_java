@@ -97,37 +97,15 @@ public class PixelPlane {
 
 
 
-    public Node[] buildFullWall(int startIndex, int startX, int startY, int startZ, int rotation){
-
-        //int total = (36*36)*1;
+    public Node[] buildPanel(Rabbit rabbit, int startIndex, int startX, int startY, int startZ, int rotation){
 
         Node[] planeNodes = new Node[0];
-        int nodeCounter = 0;
+        int nodeCounter = startIndex;
         int tileCounter = 1;
-
-        /*
-        for (int i = 0; i < 36; i++) {
-            for (int j = 0; j < 36; j++) {
-                int x = (10*i) + startX;
-                int y = (10*j) + startY;
-
-                planeNodes[counter] = new Node(x, y, startZ, counter, null);
-                counter++;
-            }
-        }
-        return planeNodes;
-        */
 
         int inc = 6*12; //spacing 6 x 12 nodes
         int xTilePos = startX + (inc*2);
         int yTilePos = startY;
-
-
-
-        //one rabbit per 9 tiles
-        Rabbit rabbit = new Rabbit("192.168.1.102", 1, "mac_address");
-
-        TesseractMain.getMain().udpModel.rabbits[0] = rabbit;
 
 
         //bottom 3
@@ -182,10 +160,7 @@ public class PixelPlane {
             xTilePos -= inc;
         }
 
-
-
         return planeNodes;
-
     }
 
 

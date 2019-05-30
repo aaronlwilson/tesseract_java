@@ -15,13 +15,12 @@ public class UDPModel {
     private PApplet p;
     private UDP udp;
 
-
     public Rabbit[] rabbits;
     public int myPort      = 7777; //6000 also works
     public int rabbitPort  = 7;
 
     private int numTiles    = 9;
-    private String ip       = "192.168.1.102";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
+    private String ip       = "255.255.255.255";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
     private int port        = 7;   //the destination port
 
     private int numColors = 3;
@@ -36,7 +35,7 @@ public class UDPModel {
     public UDPModel(PApplet pApplet) {
         p = pApplet;
 
-        rabbits = new Rabbit[1];
+        rabbits = new Rabbit[6];
 
 
         //red
@@ -128,13 +127,11 @@ public class UDPModel {
                 sendTileFrame(tile);
             }
 
-            //swap command
+            //swap command, makes all the tiles change at once
             byte[] data = new byte[2];
             data[0] = (byte) (p.unhex("FF"));
             data[1] = (byte) (p.unhex("FE"));
-            udp.send( data, ip, port );
-
-
+            udp.send( data, rabbit.ip, port );
         }
 
     }
