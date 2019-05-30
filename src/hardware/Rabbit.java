@@ -4,8 +4,8 @@ public class Rabbit extends Controller  {
   public String ip;
   public int id;
   public String mac;
-  public int numTiles;
-  
+  //public int numTiles;
+
   public Tile[] tileArray;
 
   //constructor
