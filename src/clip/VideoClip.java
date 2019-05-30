@@ -39,7 +39,7 @@ public class VideoClip extends AbstractClip{
         _rows = _videoH/_videoScale;
 
         // Step 2. Initialize Movie object. The file should live in the data/videos folder.
-        _movie = new Movie(_myMain, "videos/DOC000_HexTwist.mov");
+        _movie = new Movie(_myMain, "videos/popbottles_loop-nosound.mp4");
 
         // Step 3. Start playing movie. To play just once play() can be used instead.
         _movie.loop();
@@ -58,14 +58,15 @@ public class VideoClip extends AbstractClip{
         /*
         int x = Math.abs(node.x);
         int y = Math.abs(node.y);
-
         int vidX = (int) _myMain.map(x, 0, _myMain.stage.maxW, 0, _videoW-1);
         int vidY = (int) _myMain.map(y,0, _myMain.stage.maxH, 0, _videoH-1);
-         */
+        */
 
 
         int vidX = (int) _myMain.map(node.screenX, 0, 1100, 0, _videoW-1);
         int vidY = (int) _myMain.map(node.screenY,0, 800, 0, _videoH-1);
+
+
 
 
         int loc = vidX + vidY * _videoW;

@@ -46,7 +46,7 @@ public class Stage {
         PixelPlane plane = new PixelPlane(p);
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
-        nodes = plane.buildFullWall(counter,0,0,0, 0 );
+        nodes = plane.buildFullWall(counter,0,-72,0, 0 );
 
         //set the boundaries of the stage
         for (Node n: nodes) {

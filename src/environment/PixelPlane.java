@@ -115,17 +115,17 @@ public class PixelPlane {
                 counter++;
             }
         }
-
         return planeNodes;
         */
 
-        int xTilePos = startX;
-        int yTilePos = startY;
         int inc = 6*12; //spacing 6 x 12 nodes
+        int xTilePos = startX + (inc*2);
+        int yTilePos = startY;
+
 
 
         //one rabbit per 9 tiles
-        Rabbit rabbit = new Rabbit("192.168.1.105", 1, "mac_address");
+        Rabbit rabbit = new Rabbit("192.168.1.102", 1, "mac_address");
 
         TesseractMain.getMain().udpModel.rabbits[0] = rabbit;
 
@@ -142,16 +142,35 @@ public class PixelPlane {
             nodeCounter += 144;
             tileCounter++;
 
-            xTilePos += inc;
+            xTilePos -= inc;
         }
 
-        xTilePos -= inc;
-        yTilePos += inc;
+        xTilePos += inc;
+        yTilePos -= inc;
+
 
         //middle 3
         for(int i=0; i<3; i++) {
             Tile tile = new Tile(rabbit, tileCounter);
             tile.rotation = 2;//upside down
+
+            rabbit.tileArray[tileCounter - 1] = tile;
+
+            Node[] tileNodes = tile.getNodeLayout(xTilePos, yTilePos, nodeCounter);
+            planeNodes = (Node[]) p.concat( planeNodes, tileNodes );
+            nodeCounter += 144;
+            tileCounter ++;
+
+            xTilePos += inc;
+        }
+
+        xTilePos -= inc;
+        yTilePos -= inc;
+
+
+        //top 3
+        for(int i=0; i<3; i++) {
+            Tile tile = new Tile(rabbit, tileCounter);
 
             rabbit.tileArray[tileCounter - 1] = tile;
 

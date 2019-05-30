@@ -214,8 +214,8 @@ public class TesseractMain extends PApplet {
   private void createBuiltInPlaylists() {
     List<PlaylistItem> playlist1Items = Arrays.asList(
 
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 6),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 6),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),

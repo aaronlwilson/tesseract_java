@@ -1,11 +1,13 @@
 package output;
 
+import hardware.Tile;
 import hypermedia.net.UDP;
 //import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 
 import processing.core.PApplet;
 
 import hardware.Rabbit;
+import environment.Node;
 
 
 public class UDPModel {
@@ -19,7 +21,7 @@ public class UDPModel {
     public int rabbitPort  = 7;
 
     private int numTiles    = 9;
-    private String ip       = "192.168.1.105";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
+    private String ip       = "192.168.1.102";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
     private int port        = 7;   //the destination port
 
     private int numColors = 3;
@@ -35,7 +37,6 @@ public class UDPModel {
         p = pApplet;
 
         rabbits = new Rabbit[1];
-
 
 
         //red
@@ -122,19 +123,31 @@ public class UDPModel {
     public void send() {
         for (Rabbit rabbit : rabbits) {
             //System.out.printf("RABBIT IP: %s \n", rabbit.ip);
+
+            for (Tile tile : rabbit.tileArray) {
+                sendTileFrame(tile);
+            }
+
+            //swap command
+            byte[] data = new byte[2];
+            data[0] = (byte) (p.unhex("FF"));
+            data[1] = (byte) (p.unhex("FE"));
+            udp.send( data, ip, port );
+
+
         }
 
     }
 
-    /*
+
     public void sendTileFrame(Tile tile){
         //data for one tile, one frame
         byte[] data = new byte[(432+4)]; //144 nodes * 3 channels per node = 432
 
-        data[0] = (byte) (unhex("ff")); //listen for command
-        data[1] = (byte) (unhex("ff")); //chip command
-        data[2] = (byte) (unhex("00")); //start command
-        data[3] = byte(tile.id-1); //tile address
+        data[0] = (byte) (p.unhex("ff")); //listen for command
+        data[1] = (byte) (p.unhex("ff")); //chip command
+        data[2] = (byte) (p.unhex("00")); //start command
+        data[3] = (byte) (tile.id-1); //tile address
 
         //node map for one tile
         for (int y=0; y<12; y++){
@@ -156,7 +169,12 @@ public class UDPModel {
 
     }//end sendTileFrame
 
-    */
+
+
+
+
+
+
 
     public void sendTest() {
 
