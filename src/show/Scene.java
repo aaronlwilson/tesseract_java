@@ -3,6 +3,7 @@ package show;
 import app.TesseractMain;
 import clip.*;
 import stores.SceneStore;
+import util.Util;
 
 public class Scene {
 
@@ -31,6 +32,16 @@ public class Scene {
         this.id = id;
         this.displayName = displayName;
         this.setSceneValues(clipValues);
+        this.constructNewClip(clipClass);
+    }
+
+    // When we change the current Scene's clip, we call this to load the new clip
+    public void setClipByClipId(String clipId) {
+        // if we've already got the correct clip, do nothing so we don't interrupt the animation
+        if (this.clip.clipId == clipId) {
+            return;
+        }
+        Integer clipClass = Util.getClipEnumValue(clipId);
         this.constructNewClip(clipClass);
     }
 

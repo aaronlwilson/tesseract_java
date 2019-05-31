@@ -41,47 +41,35 @@ class SceneStore extends BaseStore implements IJsonPersistable {
     Scene existingScene = this.find("id", scene.id)
     if (existingScene) {
       existingScene.setDisplayName(scene.getDisplayName())
+      existingScene.setClipByClipId(scene.clip.clipId)
       existingScene.setSceneValues(scene.getSceneValues())
     } else {
       this.items.push(scene)
     }
   }
 
-  Scene find(String property, value) {
+  // Remove a scene from the store
+  public remove(Scene scene) {
+    println "[SceneStore] Removing Scene '${scene.displayName}'"
+    this.items.removeElement(scene);
+  }
+
+  public Scene find(String property, value) {
     items.find { item -> item."${property}" == value }
   }
 
   // Find the next ID if we are creating a scene and not providing an ID
-  int getNextId() {
+  public int getNextId() {
     this.items.size() == 0 ? 1 : this.items.max { Scene s -> s.id }.id + 1
-  }
-
-  // This probably isn't the best spot for this but it will work for now
-  int getClipEnumValue(String clipId) {
-    // map of clipId to ENUM value
-    Map clipIdMap = [
-        color_wash : TesseractMain.COLORWASH,
-        node_scan  : TesseractMain.NODESCAN,
-        solid_color: TesseractMain.SOLID,
-        video     : TesseractMain.VIDEO,
-    ]
-
-    int enumVal = clipIdMap[clipId]
-
-    if (enumVal == null) {
-      throw new RuntimeException("Error: No matching class for clipId: ${clipId}")
-    }
-
-    enumVal
   }
 
   // Creates a Scene object from the JSON representation
   // Steps:
   // - Match keys on json object to constructor parameters
   // - Hydrate references to objects (e.g., 'clipId: 1' somehow matches the clip...maybe store a map that points clipId to class right now?)
-  Scene createSceneFromJson(jsonObj) {
+  public Scene createSceneFromJson(jsonObj) {
     // find the correct clipClass for the clipId
-    int clipClass = this.getClipEnumValue(jsonObj.clipId)
+    Integer clipClass = Util.getClipEnumValue(jsonObj.clipId)
 
     // ensure the list is the right size
     float[] values = new float[7];
@@ -91,13 +79,13 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   }
 
   // Takes an array of parsed JSON and sets the 'items' property
-  void refreshFromJS(List arr) {
+  public void refreshFromJS(List arr) {
     // Collect maps over a list and runs a function on each item, returning the result as a new list
     this.items = arr.collect { o -> createSceneFromJson(o) }
   }
 
   // Load the JSON data from the disk and parse JSON
-  List<Map> loadDataFromDisk() {
+  public List<Map> loadDataFromDisk() {
     File dataFile = new File(Util.getDataFilePath('scene'))
     if (!dataFile.exists()) {
       return []
@@ -109,7 +97,7 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   }
 
   // Save current state to disk as JSON
-  void saveDataToDisk() {
+  public void saveDataToDisk() {
     String filename = Util.getDataFilePath('scene')
 
     List<Map> jsonObj = this.asJsonObj()
@@ -121,7 +109,7 @@ class SceneStore extends BaseStore implements IJsonPersistable {
 
   // Get the store data as JSON, either for persisting or sending to the front end
   // This will be a List/Map that serializes to the correct JSON, rather than the JSON string itself
-  List<Map> asJsonObj() {
+  public List<Map> asJsonObj() {
     this.items.collect { Scene item ->
       [
           id         : item.id,

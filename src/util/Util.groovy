@@ -1,5 +1,6 @@
 package util
 
+import app.TesseractMain
 import groovy.json.JsonBuilder
 
 public class Util {
@@ -77,6 +78,24 @@ public class Util {
   // Pretty print a complex object.  doesn't work for objects w/ cyclical references, you can use obj.dump() and obj.inspect() on complex objects
   public static void pp(o) {
     println new JsonBuilder(o).toPrettyString()
+  }
+
+  public static int getClipEnumValue(String clipId) {
+    // map of clipId to ENUM value
+    Map clipIdMap = [
+        color_wash : TesseractMain.COLORWASH,
+        node_scan  : TesseractMain.NODESCAN,
+        solid_color: TesseractMain.SOLID,
+        video     : TesseractMain.VIDEO,
+    ]
+
+    Integer enumVal = clipIdMap[clipId]
+
+    if (enumVal == null) {
+      throw new RuntimeException("Error: No matching class for clipId: ${clipId}")
+    }
+
+    enumVal
   }
 
   //COLOR utility methods

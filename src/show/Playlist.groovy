@@ -41,11 +41,20 @@ public class Playlist {
   }
 
   private PlaylistItem getNextItem() {
+    Integer nextIdx = this.getNextIdx()
+    if (nextIdx == -1) {
+      return null
+    }
+
     this.items.get(this.getNextIdx())
   }
 
   // Get the index of the next item.  for now we will play everything sequentially (but we could add 'shuffle' later)
   private Integer getNextIdx() {
+    if (this.items.size() == 0) {
+      return -1; // this means there are no items in the playlist and we don't have a next item
+    }
+
     Integer currentItemIndex = this.items.findIndexOf { it == this.getCurrentItem() }
     currentItemIndex = currentItemIndex ?: 0
 
@@ -56,6 +65,24 @@ public class Playlist {
     }
 
     currentItemIndex
+  }
+
+  // This is used when we delete the currently running Scene and we need to skip to the next item
+  // Could also be used to add a 'next' button in the UI
+  public void playNext() {
+    this.cancelCurrentTimer()
+
+    // Check to see if there are any more items in the playlist.  If not, stop
+    PlaylistItem nextItem = this.getNextItem()
+    if (nextItem == null) {
+      // null current playlist item.  probably not the ideal way to do this, but don't want to send a 'non existent' playlist item
+      // with our stateUpdate event
+      this.currentItem = null
+      this.stop()
+      return
+    }
+
+    this._playPlaylist(nextItem, this.getCurrentPlayState());
   }
 
   private void scheduleNextScene(long delay) {
@@ -104,7 +131,7 @@ public class Playlist {
     this.cancelCurrentTimer()
   }
 
-  // Stop playlist.  continues playing the scene, but won't advance to the next item
+  // Stop.  Unload.  Maybe do some stuff.
   public void stop(boolean shouldSendState = true) {
     this.setCurrentPlayState(PlayState.STOPPED)
     this.unload()

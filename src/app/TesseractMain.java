@@ -203,7 +203,8 @@ public class TesseractMain extends PApplet {
   }
 
   private void createBuiltInPlaylists() {
-    List<PlaylistItem> playlist1Items = Arrays.asList(
+    // Arrays.asList makes an immutable list, creating a new LinkedList with those items will make it mutable which we need
+    List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 10),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
@@ -213,19 +214,19 @@ public class TesseractMain extends PApplet {
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 5),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 7)
-    );
+    ));
 
     Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
     this.playlistStore.addOrUpdate(playlist1);
 
-    List<PlaylistItem> playlist2Items = Arrays.asList(
+    List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3)
-    );
+    ));
 
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
     this.playlistStore.addOrUpdate(playlist2);
