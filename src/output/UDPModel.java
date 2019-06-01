@@ -152,9 +152,16 @@ public class UDPModel {
                 //one node, set each channel
                 Node node = tile.tileNodeArray[x][y];
 
+
                 data[nodeMap[y][x]+4] = (byte)node.g;
                 data[nodeMap[y][x]+3+4] = (byte)node.r;
                 data[nodeMap[y][x]+6+4] = (byte)node.b;
+
+                //hack for using v1 tiles
+                if(tile.channelSwap){
+                    data[nodeMap[y][x]+4] = (byte)node.b;
+                    data[nodeMap[y][x]+6+4] = (byte)node.g;
+                }
             }
         }
         // send the message for 1 tile

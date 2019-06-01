@@ -5,8 +5,8 @@ import environment.Node;
 public class Tile extends Fixture {
 
     public Rabbit parentRabbit;
-    public int[][] numberPImageArray;
-    public int[][] rotatedPImageArray;
+    //public int[][] numberPImageArray;
+    //public int[][] rotatedPImageArray;
 
     //this tile holds references to all its nodes, and where they are mapped considering rotation
     public Node[][] tileNodeArray = new Node[12][12];
@@ -20,6 +20,9 @@ public class Tile extends Fixture {
     public int snapX = -1;// -1 means its outside of the tilegrid
     public int snapY = -1;
     public int rotation = 0;
+
+    //this is a work-around to correct one v1 tile that has swapped blue and green channels
+    public boolean channelSwap;
 
 
     //CONSTRUCTOR
