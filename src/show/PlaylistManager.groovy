@@ -48,6 +48,20 @@ public class PlaylistManager {
     this.currentPlaylist.getCurrentSceneDurationRemaining()
   }
 
+
+  // Remove Scene from all Playlists, and change the current playState to the next Scene
+  // When we delete a scene, we need to ensure the data stays consistent by removing it from all playlists or we'll get errors
+  public void removeSceneFromPlaylists(Scene s) {
+    println "[PlaylistManager] Removing Scene '${s.displayName}' from all playlists"
+    PlaylistStore.get().items.each { playlist ->
+      playlist.items.removeAll { PlaylistItem i -> i.scene.id == s.id }
+    }
+
+    PlaylistStore.get().saveDataToDisk()
+
+    this.getCurrentPlaylist().playNext()
+  }
+
   // Get the initial playlist (or non-initial, or whatever)
   public Playlist getInitialPlaylist(Integer playlistId) {
     Playlist p;

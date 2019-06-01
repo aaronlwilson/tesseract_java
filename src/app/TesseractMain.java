@@ -193,7 +193,7 @@ public class TesseractMain extends PApplet {
     Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
     this.sceneStore.addOrUpdate(sScan);
 
-    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0});
+    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "24K_loop-nosound.mp4");
     this.sceneStore.addOrUpdate(sVid);
 
     Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
@@ -222,19 +222,19 @@ public class TesseractMain extends PApplet {
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 5),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 7)
-    );
+    ));
 
     Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
     this.playlistStore.addOrUpdate(playlist1);
 
-    List<PlaylistItem> playlist2Items = Arrays.asList(
+    List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3)
-    );
+    ));
 
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
     this.playlistStore.addOrUpdate(playlist2);
