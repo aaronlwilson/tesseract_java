@@ -71,7 +71,10 @@ public class VideoClip extends AbstractClip{
 
 
         int loc = vidX + vidY * _videoW;
-        int c = _movie.pixels[loc];
+        int c = 0;
+        if(loc>=0 && loc < _movie.pixels.length) {
+            c = _movie.pixels[loc];
+        }
 
         //int values 0-255 for R G and B
         nodestate[0] = Util.getR(c);
