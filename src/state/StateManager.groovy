@@ -5,6 +5,8 @@ import clip.AbstractClip
 import clip.ClipMetadata
 import org.java_websocket.WebSocketImpl
 import show.Playlist
+import show.Scene
+import stores.MediaStore
 import stores.PlaylistStore
 import stores.SceneStore
 import show.PlaylistManager
@@ -65,8 +67,21 @@ class StateManager {
   // Things like which playlist / scene are we playing, stuff like that
   // We also want to send the current values of the clip controls
   public Map getActiveState() {
+    String playlistItemId = PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
+
+    // This is to help track down any issues with telling the UI to play a playlist item that no longer exists
+    if (playlistItemId != null) {
+      Playlist containingPlaylist = PlaylistStore.get().items.find { p ->
+        p.items.find { item -> item.id == playlistItemId }
+      }
+
+      if (containingPlaylist == null) {
+        throw new RuntimeException("Error: active playlist item does not belong to a playlist");
+      }
+    }
+
     Map activeState = [
-        playlistItemId               : PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId(),
+        playlistItemId               : playlistItemId,
         playlistId                   : PlaylistManager.get().getCurrentPlaylist().getId(),
         currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
         playlistPlayState            : PlaylistManager.get().getCurrentPlaylist().getCurrentPlayState().name(),
@@ -82,21 +97,30 @@ class StateManager {
 
   // Sends the state of the relevant objects to the front end for initial hydration
   public void sendInitialState(WebSocketImpl conn, Map inData) {
-    // Send objects in this order:
-    // clips (clips I'll leave hardcoded for now)
-    // scenes
-    // playlists
-
     println "[StateManager] Sending initial state to Client".cyan()
 
     Map data = [
         clipData    : ClipMetadata.getClipMetadata(),
         sceneData   : SceneStore.get().asJsonObj(),
         playlistData: PlaylistStore.get().asJsonObj(),
+        mediaData   : MediaStore.get().asJsonObj(),
         activeState : this.getActiveState(),
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
+  }
+
+  // Refresh the Scenes and Playlists
+  // Necessary after deleting a Scene or Playlist
+  public void sendStoreRefresh() {
+    println "[StateManager] Sending store refresh to Clients".cyan()
+
+    Map data = [
+        sceneData   : SceneStore.get().asJsonObj(),
+        playlistData: PlaylistStore.get().asJsonObj(),
+    ]
+
+    this.sendStateUpdate('storeRefresh', data)
   }
 
   // A 'stateUpdate' event means something changed in the
@@ -116,13 +140,14 @@ class StateManager {
 
   // Handle receiving a stateUpdate event from a client
   public void handleStateUpdate(conn, inData) {
-//    println "Got a state update event!!!"
-//    println inData
-
     if (inData.stateKey == "activeControls") {
       this.handleActiveControlsUpdate(inData.value);
     } else if (inData.stateKey == "playlist") {
       this.handlePlaylistUpdate(inData.value);
+    } else if (inData.stateKey == "scene") {
+      this.handleSceneUpdate(inData.value);
+    } else if (inData.stateKey == "sceneDelete") {
+      this.handleSceneDelete(inData.value);
     } else if (inData.stateKey == "playState") {
       this.handlePlayStateUpdate(inData.value);
     } else {
@@ -137,8 +162,16 @@ class StateManager {
   public void handleActiveControlsUpdate(Map inData) {
     // find the active clip.  this is gonna be kinda hacky for now
     AbstractClip clip = this.getActiveClip()
-
     String fieldName = inData.fieldName
+
+    // Handle video file changes, they are special
+    if (inData.fieldName == 'filename') {
+      String newValue = inData.newValue;
+      clip.setFilename(newValue)
+      return
+    }
+
+    // Handle all other clip control value changes (floats)
     float newValue = inData.newValue
 
     // Set the field in 'fieldName' to the value in 'newValue'
@@ -154,6 +187,35 @@ class StateManager {
     Playlist p = PlaylistStore.get().createPlaylistFromJson(inData)
     PlaylistStore.get().addOrUpdate(p)
     PlaylistStore.get().saveDataToDisk()
+  }
+
+  // Create a new scene object and shove it into the store, then write data to disk
+  // This can change the active scene, so send an activeState update to the frontend
+  public void handleSceneUpdate(Map inData) {
+    Scene s = SceneStore.get().createSceneFromJson(inData)
+    SceneStore.get().addOrUpdate(s)
+    SceneStore.get().saveDataToDisk()
+    this.sendActiveState()
+  }
+
+  // Create a new scene object and shove it into the store, then write data to disk
+  // This can change the active scene, so send an activeState update to the frontend
+  public void handleSceneDelete(Map inData) {
+    Scene s = SceneStore.get().find('id', inData.id)
+
+    if (s == null) {
+      throw new RuntimeException("[StateManager] Could not find scene to delete with id ${inData.id}")
+    }
+
+    SceneStore.get().remove(s)
+    SceneStore.get().saveDataToDisk()
+
+    // Need to also remove the Scene from all playlists
+    // This also handles playing the next item, since the current item won't exist
+    PlaylistManager.get().removeSceneFromPlaylists(s)
+
+    this.sendStoreRefresh()
+    this.sendActiveState()
   }
 
   // Handles updates to the 'play state'

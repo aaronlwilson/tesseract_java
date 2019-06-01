@@ -34,11 +34,11 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
     instance
   }
 
-  List<Playlist> getItems() {
+  public List<Playlist> getItems() {
     return this.items;
   }
 
-  void setItems(List<Playlist> items) {
+  public void setItems(List<Playlist> items) {
     this.items = items;
   }
 
@@ -47,13 +47,14 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
     Playlist existingPlaylist = this.find("id", playlist.id)
     if (existingPlaylist) {
       existingPlaylist.setDisplayName(playlist.getDisplayName())
+      existingPlaylist.setDefaultDuration(playlist.getDefaultDuration())
       existingPlaylist.setItems(playlist.getItems())
     } else {
       this.items.push(playlist)
     }
   }
 
-  Playlist find(String property, value) {
+  public Playlist find(String property, value) {
     items.find { item -> item."${property}" == value }
   }
 
@@ -61,11 +62,7 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
   // Steps:
   // - Match keys on json object to constructor parameters
   // - Hydrate references to objects (e.g., 'sceneId: 1' becomes the actual Scene object from the appropriate store
-  Playlist createPlaylistFromJson(jsonObj) {
-
-//    println "createPlaylistFromJSON!!!".cyan()
-//    pp jsonObj
-
+  public Playlist createPlaylistFromJson(jsonObj) {
     List<PlaylistItem> playlistItems = jsonObj.items.collect { Map playlistItem ->
       // Find scene in scene store
       Scene scene = this.sceneStore.find 'id', playlistItem.sceneId
@@ -76,19 +73,18 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
       new PlaylistItem(playlistItemId, scene, playlistItem.duration)
     }
 
-    new Playlist(jsonObj.id, jsonObj.displayName, 60, playlistItems)
+    new Playlist(jsonObj.id, jsonObj.displayName, jsonObj.defaultDuration, playlistItems)
   }
 
   // Takes an array of parsed JSON
-  void refreshFromJS(List arr) {
+  public void refreshFromJS(List arr) {
     this.items = arr.collect { o -> createPlaylistFromJson(o) }
   }
 
   // Load the JSON data from the disk and parse JSON
-  List<Map> loadDataFromDisk() {
+  public List<Map> loadDataFromDisk() {
     File dataFile = new File(Util.getDataFilePath('playlist'))
     if (!dataFile.exists()) {
-      println "[PlaylistStore] No datafile found at '${dataFile.getAbsolutePath()}'.  Returning empty list"
       return []
     }
 
@@ -98,7 +94,7 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
   }
 
   // Save current state to disk as JSON
-  void saveDataToDisk() {
+  public void saveDataToDisk() {
     println "Writing Playlist Data to Disk".yellow()
 
     String filename = Util.getDataFilePath('playlist')
@@ -111,12 +107,13 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
 
   // Get the store data as JSON, either for persisting or sending to the front end
   // This will be a List/Map that serializes to the correct JSON, rather than the JSON string itself
-  List<Map> asJsonObj() {
+  public List<Map> asJsonObj() {
     this.items.collect { Playlist item ->
       [
-          id         : item.id,
-          displayName: item.displayName,
-          items      : item.items.collect { i -> [id: i.id, sceneId: i.scene.id, duration: i.duration] },
+          id             : item.id,
+          displayName    : item.displayName,
+          defaultDuration: item.defaultDuration,
+          items          : item.items.collect { i -> [id: i.id, sceneId: i.scene.id, duration: i.duration] },
       ]
     }
   }

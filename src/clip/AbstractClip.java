@@ -45,6 +45,15 @@ public class AbstractClip  {
 
   }
 
+  // This is used & overridden by VideoClip
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
+
+  public String getFilename() {
+    return this.filename;
+  }
+
   public int[] drawNode(Node node) {// apply the animation logic calculated above to each node
 
     return new int[3];

@@ -1,5 +1,6 @@
 package util
 
+import app.TesseractMain
 import groovy.json.JsonBuilder
 
 public class Util {
@@ -40,7 +41,7 @@ public class Util {
 
   // Returns the directory we are going to use to store json files
   // 'group' will be a way we can have different sets of files
-  // ensures the directory exists
+  // creates any necessary directories to ensure the path exists
   public static getDataDir(String group = 'default') {
     // this returns '<repo dir>/data/<group>'
     String dirPath = "${new File(".").getAbsoluteFile().getParent()}/data/${group}"
@@ -58,25 +59,44 @@ public class Util {
     "${getDataDir(group)}/${type}.json"
   }
 
-  public static void listFilesForFolder(final File folder) {
-    System.out.println("FILE LIST");
-
-    for (final File fileEntry : folder.listFiles()) {
-      if (fileEntry.isDirectory()) {
-        //recursive behavior
-        listFilesForFolder(fileEntry);
-      } else {
-        System.out.println(fileEntry.getName());
-      }
-    }
-
-    //TODO return and array of strings, or JSON to be passed to the frontend to populate filename dropdown
+  // The root data directory (e.g. repo/data)
+  public static String getRootDataDir() {
+    new File("./data").getCanonicalPath()
   }
 
+  // returns relative paths to all files in the directory (relative to the root directory)
+  public static getMediaFileList(String type) {
+    String rootPath = "${Util.getRootDataDir()}/${type}"
+    List<String> res = []
+
+    new File(rootPath).eachFileRecurse(groovy.io.FileType.FILES) { File file ->
+      res.push(file.getCanonicalPath().replace("${rootPath}/", ''))
+    }
+
+    return res
+  }
 
   // Pretty print a complex object.  doesn't work for objects w/ cyclical references, you can use obj.dump() and obj.inspect() on complex objects
   public static void pp(o) {
     println new JsonBuilder(o).toPrettyString()
+  }
+
+  public static int getClipEnumValue(String clipId) {
+    // map of clipId to ENUM value
+    Map clipIdMap = [
+        color_wash : TesseractMain.COLORWASH,
+        node_scan  : TesseractMain.NODESCAN,
+        solid_color: TesseractMain.SOLID,
+        video     : TesseractMain.VIDEO,
+    ]
+
+    Integer enumVal = clipIdMap[clipId]
+
+    if (enumVal == null) {
+      throw new RuntimeException("Error: No matching class for clipId: ${clipId}")
+    }
+
+    enumVal
   }
 
   //COLOR utility methods
