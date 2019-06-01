@@ -123,13 +123,15 @@ public class TesseractMain extends PApplet {
     createShutdownHook();
 
 
+    /*
     //TEMP, just playing around
     final File directory = new File("./");
     System.out.println(directory.getAbsolutePath());
 
-
     final File videoDirectory = new File("./data/videos");
     Util.listFilesForFolder(videoDirectory);
+    */
+
   }
 
   @Override
@@ -193,7 +195,7 @@ public class TesseractMain extends PApplet {
     Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
     this.sceneStore.addOrUpdate(sScan);
 
-    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "24K_loop-nosound.mp4");
+    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "videos/24K_loop-nosound.mp4");
     this.sceneStore.addOrUpdate(sVid);
 
     Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
@@ -210,7 +212,7 @@ public class TesseractMain extends PApplet {
   }
 
   private void createBuiltInPlaylists() {
-    List<PlaylistItem> playlist1Items = Arrays.asList(
+    List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
 
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 6),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 6),

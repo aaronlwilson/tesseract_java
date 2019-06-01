@@ -64,7 +64,9 @@ public class VideoClip extends AbstractClip{
     }
 
     public void run() {
-        _movie.loadPixels();
+        if(_movie != null) {
+            _movie.loadPixels();
+        }
     }
 
     public int[] drawNode(Node node) {
@@ -87,10 +89,12 @@ public class VideoClip extends AbstractClip{
 
         int loc = vidX + vidY * _videoW;
         int c = 0;
-        //make sure we don't overrun the array which can happen when pixels go offscreen
-        if(loc>=0 && loc < _movie.pixels.length && this._movie != null) {
-          // This is to handle a case when we are switching the video file and don't want to get exceptions
-          c = _movie.pixels[loc];
+        if(_movie != null) {
+            //make sure we don't overrun the array which can happen when pixels go offscreen
+            if (loc >= 0 && loc < _movie.pixels.length) {
+                // This is to handle a case when we are switching the video file and don't want to get exceptions
+                c = _movie.pixels[loc];
+            }
         }
 
         //int values 0-255 for R G and B
