@@ -1,6 +1,6 @@
 package stores
 
-import app.TesseractMain
+import clip.ClipMetadata
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import show.Scene
@@ -75,7 +75,17 @@ class SceneStore extends BaseStore implements IJsonPersistable {
     float[] values = new float[7];
     jsonObj.clipValues.eachWithIndex { float val, int idx -> values[idx] = val }
 
-    new Scene(jsonObj.id, jsonObj.displayName, clipClass, values)
+    // for filename, default it to the default value of the 'video' clip filename
+    // TODO: make this more robust.  way more robust
+
+    String filename
+    if (jsonObj.filename == null) {
+      filename = ClipMetadata.getMetadataForClip('video').controls[0].defaultValue
+    } else {
+      filename = jsonObj.filename
+    }
+
+    new Scene(jsonObj.id, jsonObj.displayName, clipClass, values, filename)
   }
 
   // Takes an array of parsed JSON and sets the 'items' property
@@ -116,6 +126,7 @@ class SceneStore extends BaseStore implements IJsonPersistable {
           displayName: item.getDisplayName(),
           clipId     : item.clip.clipId,
           clipValues : item.getSceneValues(),
+          filename   : item.filename,
       ]
     }
   }
