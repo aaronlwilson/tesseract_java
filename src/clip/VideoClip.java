@@ -4,6 +4,7 @@ package clip;
 import processing.video.*;
 
 import environment.Node;
+import stores.MediaStore;
 import util.Util;
 
 
@@ -37,9 +38,24 @@ public class VideoClip extends AbstractClip{
         // Initialize columns and rows
         _cols = _videoW/_videoScale;
         _rows = _videoH/_videoScale;
+    }
+
+    // set the filename for the movie
+    // handle creating the movie object and all that
+    public void setFilename(String filename) {
+        if (!MediaStore.get().containsMedia("videos", filename)) {
+            System.out.println("[VideoClip] Warning: Tried to set non-existent mediafile of type 'video' and filename '" + filename + "'");
+            return;
+        }
+
+        this.filename = filename;
+
+        if (_movie != null) {
+            _movie.stop();
+        }
 
         // Step 2. Initialize Movie object. The file should live in the data/videos folder.
-        _movie = new Movie(_myMain, "videos/24K_loop-nosound.mp4");
+        _movie = new Movie(_myMain, "videos/" + filename);
 
         // Step 3. Start playing movie. To play just once play() can be used instead.
         _movie.loop();
@@ -47,7 +63,6 @@ public class VideoClip extends AbstractClip{
 
     public void run() {
         _movie.loadPixels();
-
     }
 
     public int[] drawNode(Node node) {
@@ -64,12 +79,13 @@ public class VideoClip extends AbstractClip{
          */
 
 
-        int vidX = (int) _myMain.map(node.screenX, 0, 1100, 0, _videoW-1);
-        int vidY = (int) _myMain.map(node.screenY,0, 800, 0, _videoH-1);
-
+        int vidX = (int) _myMain.map(node.screenX, 0, 1100, 0, _videoW - 1);
+        int vidY = (int) _myMain.map(node.screenY, 0, 800, 0, _videoH - 1);
 
         int loc = vidX + vidY * _videoW;
-        int c = _movie.pixels[loc];
+
+        // This is to handle a case when we are switching the video file and don't want to get exceptions
+        int c = this._movie != null && this._movie.pixels.length > loc ? _movie.pixels[loc] : 0;
 
         //int values 0-255 for R G and B
         nodestate[0] = Util.getR(c);
