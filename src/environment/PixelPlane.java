@@ -145,10 +145,6 @@ public class PixelPlane {
         xTilePos -= inc;
         yTilePos -= inc;
 
-        for (int i = 0; i < 36; i++) {
-            for (int j = 0; j < 36; j++) {
-                int x = (10*i) + startX;
-                int y = (10*j) + startY;
 
         //top 3
         for(int i=0; i<3; i++) {
