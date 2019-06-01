@@ -6,6 +6,7 @@ import clip.ClipMetadata
 import org.java_websocket.WebSocketImpl
 import show.Playlist
 import show.Scene
+import stores.MediaStore
 import stores.PlaylistStore
 import stores.SceneStore
 import show.PlaylistManager
@@ -102,6 +103,7 @@ class StateManager {
         clipData    : ClipMetadata.getClipMetadata(),
         sceneData   : SceneStore.get().asJsonObj(),
         playlistData: PlaylistStore.get().asJsonObj(),
+        mediaData   : MediaStore.get().asJsonObj(),
         activeState : this.getActiveState(),
     ]
 
@@ -160,8 +162,16 @@ class StateManager {
   public void handleActiveControlsUpdate(Map inData) {
     // find the active clip.  this is gonna be kinda hacky for now
     AbstractClip clip = this.getActiveClip()
-
     String fieldName = inData.fieldName
+
+    // Handle video file changes, they are special
+    if (inData.fieldName == 'filename') {
+      String newValue = inData.newValue;
+      clip.setFilename(newValue)
+      return
+    }
+
+    // Handle all other clip control value changes (floats)
     float newValue = inData.newValue
 
     // Set the field in 'fieldName' to the value in 'newValue'

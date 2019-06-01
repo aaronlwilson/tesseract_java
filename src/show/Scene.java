@@ -13,6 +13,9 @@ public class Scene {
     // all parameters should be normalized to a range 0.00 - 1.00
     public float p1, p2, p3, p4, p5, p6, p7; // p 1-3 knobs, p 4-7 sliders
 
+    // Only used for Video clips right now
+    public String filename;
+
     public String displayName;
     public int id;
 
@@ -29,9 +32,15 @@ public class Scene {
 
     // Use this constructor when rehydrating from json
     public Scene(int id, String displayName, int clipClass, float[] clipValues) {
+        this(id, displayName, clipClass, clipValues, null);
+    }
+
+    // Use this constructor when rehydrating from json
+    public Scene(int id, String displayName, int clipClass, float[] clipValues, String filename) {
         this.id = id;
         this.displayName = displayName;
         this.setSceneValues(clipValues);
+        this.filename = filename;
         this.constructNewClip(clipClass);
     }
 
@@ -68,7 +77,7 @@ public class Scene {
     }
 
     // set the values on the clip
-    private void setClipValues(float[] clipValues) {
+    private void setClipValues(float[] clipValues, String filename) {
         this.clip.p1 = clipValues[0];
         this.clip.p2 = clipValues[1];
         this.clip.p3 = clipValues[2];
@@ -76,6 +85,9 @@ public class Scene {
         this.clip.p5 = clipValues[4];
         this.clip.p6 = clipValues[5];
         this.clip.p7 = clipValues[6];
+
+        // todo: make the controls for different clips more consistent
+        this.clip.setFilename(filename);
     }
 
     public void constructNewClip(int clipClass) {
@@ -102,7 +114,7 @@ public class Scene {
         if (newClip != null) {
             newClip.init();
             clip = newClip;
-            this.setClipValues(this.getSceneValues());
+            this.setClipValues(this.getSceneValues(), this.filename);
         }
     }
 
