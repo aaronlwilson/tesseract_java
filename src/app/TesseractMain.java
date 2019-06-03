@@ -195,7 +195,7 @@ public class TesseractMain extends PApplet {
     Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
     this.sceneStore.addOrUpdate(sScan);
 
-    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "videos/24K_loop-nosound.mp4");
+    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "videos/Acid Shapes __ Free Vj Loop.mp4");
     this.sceneStore.addOrUpdate(sVid);
 
     Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});

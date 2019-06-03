@@ -3,6 +3,7 @@ package environment;
 
 import app.TesseractMain;
 import hardware.Rabbit;
+import hardware.Teensy;
 import processing.core.PApplet;
 
 
@@ -32,32 +33,35 @@ public class Stage {
 
     public void buildStage(){
 
-        int counter = 0;
+        //buildCubotron();
 
-        /*
-        // Initialize a crap-ton of nodes, just a big basic cubeotron
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 30; j++) {
-                for (int k = 0; k < 30; k++) {
-                    nodes[counter] = new Node(10*i, 10*j, 10*k, counter, null);
-                    counter++;
-                }
-            }
+        //buildTesseractStage();
+
+        buildDracoStage();
+
+        //set the boundaries of the stage
+        for (Node n: nodes) {
+            if(n.x>maxW) maxW = n.x;
+            if(n.y>maxH) maxH = n.y;
+            if(n.z>maxD) maxD = n.z;
         }
-        */
+
+    }
+
+    private void buildTesseractStage(){
+        int counter = 0;
 
 
         PixelPlane plane = new PixelPlane(p);
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
-
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.1.102", 1, "mac_address");
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.1.105", 2, "mac_address");
-        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.1.103", 3, "mac_address");
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.1.104", 4, "mac_address");
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.1.101", 5, "mac_address");
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.1.101", 6, "mac_address");
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.102", 1, "mac_address");
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.105", 2, "mac_address");
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.103", 3, "mac_address");
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.104", 4, "mac_address");
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address");
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.106", 6, "mac_address");
 
 
         nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,0,-72,0, 0 );
@@ -77,15 +81,47 @@ public class Stage {
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,-(72*9),-72,0, 0 );
         nodes = (Node[]) p.concat( nodes, planeNodes );
 
-
-        //set the boundaries of the stage
-        for (Node n: nodes) {
-            if(n.x>maxW) maxW = n.x;
-            if(n.y>maxH) maxH = n.y;
-            if(n.z>maxD) maxD = n.z;
-        }
-
     }
 
 
+    private void buildDracoStage() {
+
+        int counter = 0;
+
+        _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
+        //_myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
+        //_myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
+        //_myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
+
+        int h = 4;
+        int w = 8;
+
+        nodes = new Node[h*w];
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                nodes[counter] = new Node(30 * i, 40 * j, 0, counter, null);
+                counter++;
+            }
+
+        }
+    }
+
+    private void buildCubotron() {
+
+        int counter = 0;
+
+        nodes = new Node[30*30*30];
+
+        // Initialize a crap-ton of nodes, just a big basic cubeotron
+        for (int i = 0; i < 30; i++) {
+            for (int j = 0; j < 30; j++) {
+                for (int k = 0; k < 30; k++) {
+                    nodes[counter] = new Node(10*i, 10*j, 10*k, counter, null);
+                    counter++;
+                }
+            }
+        }
+
+    }
 }
