@@ -36,10 +36,10 @@ public class TesseractMain extends PApplet {
       "Node Scan", "Solid", "Color Wash", "Video"
   };
 
-  private UDPModel udpModel;
+
   private OnScreen onScreen;
 
-
+  public UDPModel udpModel;
   public Stage stage;
 
   public Channel channel1;
@@ -64,7 +64,7 @@ public class TesseractMain extends PApplet {
   @Override
   public void settings() {
 
-    size(1100, 800, P3D);
+    size(1400, 800, P3D);
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
@@ -73,6 +73,8 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
+    frameRate( 30 );
+
     Util.enableColorization();
 
     _main = this;
@@ -119,6 +121,17 @@ public class TesseractMain extends PApplet {
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
+
+
+    /*
+    //TEMP, just playing around
+    final File directory = new File("./");
+    System.out.println(directory.getAbsolutePath());
+
+    final File videoDirectory = new File("./data/videos");
+    Util.listFilesForFolder(videoDirectory);
+    */
+
   }
 
   @Override
@@ -151,6 +164,11 @@ public class TesseractMain extends PApplet {
     stage.nodes = nextNodes;
 
     onScreen.draw();
+
+    //push packets out to LEDS
+    //udpModel.sendTest();
+
+    udpModel.send();
   }
 
 
@@ -177,7 +195,7 @@ public class TesseractMain extends PApplet {
     Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
     this.sceneStore.addOrUpdate(sScan);
 
-    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "24K_loop-nosound.mp4");
+    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "videos/24K_loop-nosound.mp4");
     this.sceneStore.addOrUpdate(sVid);
 
     Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
@@ -194,9 +212,10 @@ public class TesseractMain extends PApplet {
   }
 
   private void createBuiltInPlaylists() {
-    // Arrays.asList makes an immutable list, creating a new LinkedList with those items will make it mutable which we need
     List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 10),
+
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 6),
+        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 6),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
         new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),

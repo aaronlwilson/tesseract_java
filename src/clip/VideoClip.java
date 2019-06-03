@@ -17,6 +17,7 @@ public class VideoClip extends AbstractClip{
     private int _videoScale = 16;
     // Number of columns and rows in the system
     private int _cols, _rows;
+
     // Step 1. Declare a Movie object.
     private Movie _movie;
 
@@ -59,10 +60,13 @@ public class VideoClip extends AbstractClip{
 
         // Step 3. Start playing movie. To play just once play() can be used instead.
         _movie.loop();
+
     }
 
     public void run() {
-        _movie.loadPixels();
+        if(_movie != null) {
+            _movie.loadPixels();
+        }
     }
 
     public int[] drawNode(Node node) {
@@ -73,19 +77,25 @@ public class VideoClip extends AbstractClip{
         /*
         int x = Math.abs(node.x);
         int y = Math.abs(node.y);
-
         int vidX = (int) _myMain.map(x, 0, _myMain.stage.maxW, 0, _videoW-1);
         int vidY = (int) _myMain.map(y,0, _myMain.stage.maxH, 0, _videoH-1);
-         */
+        */
 
 
-        int vidX = (int) _myMain.map(node.screenX, 0, 1100, 0, _videoW - 1);
-        int vidY = (int) _myMain.map(node.screenY, 0, 800, 0, _videoH - 1);
+        int vidX = (int) _myMain.map(node.screenX, 0, 1400, 0, _videoW-1);
+        int vidY = (int) _myMain.map(node.screenY,0, 800, 0, _videoH-1);
+
+
 
         int loc = vidX + vidY * _videoW;
-
-        // This is to handle a case when we are switching the video file and don't want to get exceptions
-        int c = this._movie != null && this._movie.pixels.length > loc ? _movie.pixels[loc] : 0;
+        int c = 0;
+        if(_movie != null) {
+            //make sure we don't overrun the array which can happen when pixels go offscreen
+            if (loc >= 0 && loc < _movie.pixels.length) {
+                // This is to handle a case when we are switching the video file and don't want to get exceptions
+                c = _movie.pixels[loc];
+            }
+        }
 
         //int values 0-255 for R G and B
         nodestate[0] = Util.getR(c);
