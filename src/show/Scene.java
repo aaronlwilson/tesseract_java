@@ -22,12 +22,12 @@ public class Scene {
     // CONSTRUCTORS
     // Use this constructor if you don't want to set clip values right away
     public Scene(String displayName, int clipClass) {
-        this(displayName, clipClass, new float[]{0, 0, 0, 0, 0, 0, 0});
+        this(displayName, clipClass, new float[]{0, 0, 0, 0, 0, 0, 0}, null);
     }
 
     // Use this constructor when creating a new clip w/o an existing ID
-    public Scene(String displayName, int clipClass, float[] clipValues) {
-        this(SceneStore.get().getNextId(), displayName, clipClass, clipValues);
+    public Scene(String displayName, int clipClass, float[] clipValues, String filename) {
+        this(SceneStore.get().getNextId(), displayName, clipClass, clipValues, filename);
     }
 
     // Use this constructor when rehydrating from json
