@@ -2,6 +2,12 @@ package util
 
 import app.TesseractMain
 import groovy.json.JsonBuilder
+import show.Playlist
+import show.PlaylistItem
+import show.Scene
+import stores.MediaStore
+import stores.PlaylistStore
+import stores.SceneStore
 
 public class Util {
 
@@ -117,4 +123,72 @@ public class Util {
     return ((float) loaded / total) * 100;
   }
 
+  public static void createBuiltInPlaylists() {
+    // Arrays.asList makes an immutable list, creating a new LinkedList with those items will make it mutable which we need
+    List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 7)
+    ));
+
+    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
+    PlaylistStore.get().addOrUpdate(playlist1);
+
+    List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4),
+    ));
+
+    Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
+    PlaylistStore.get().addOrUpdate(playlist2);
+
+    // Create playlist of all videos
+    List<PlaylistItem> playlist3Items = SceneStore.get().getItems()
+        .findAll { scene -> scene.clip.clipId == 'video' }
+        .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene, 60 * 20) }
+
+    PlaylistStore.get().addOrUpdate(new Playlist(3, "All Videos", 60 * 20, playlist3Items))
+
+    // Save the created data to disk so we persist our manually created scenes/playlists
+    // This also has the effect of resetting any changes we make to them in the UI once we start the backend
+    PlaylistStore.get().saveDataToDisk();
+  }
+
+  public static void createBuiltInScenes() {
+    // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
+    // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
+    List<Scene> scenes = [
+        new Scene(1, "Yellow", TesseractMain.SOLID, [0, 0, 0, 1, 1, 0, 0] as float[]),
+        new Scene(2, "Purple", TesseractMain.SOLID, [0, 0, 0, 1, 0, 1, 0] as float[]),
+        new Scene(3, "Red", TesseractMain.SOLID, [0, 0, 0, 1, 0, 0, 0] as float[]),
+        new Scene(4, "Color Wash", TesseractMain.COLORWASH, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f] as float[]),
+        new Scene(5, "Node Scanner", TesseractMain.NODESCAN, [0, 0, 0, 0, 0, 0, 0] as float[]),
+    ]
+
+    int nextIdx = 6
+    List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
+      Scene s = new Scene(nextIdx, videoPath, TesseractMain.VIDEO, [0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
+      nextIdx++
+      s
+    }
+
+    scenes.addAll(videoScenes)
+
+    scenes.each { SceneStore.get().addOrUpdate(it); }
+
+    SceneStore.get().saveDataToDisk();
+  }
 }
