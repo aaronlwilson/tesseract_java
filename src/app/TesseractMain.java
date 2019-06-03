@@ -105,13 +105,8 @@ public class TesseractMain extends PApplet {
     //channel1.constructNewClip(SOLID);
 
     // Make some dummy data in the stores
-    this.createBuiltInScenes();
-    this.createBuiltInPlaylists();
-
-    // Save the created data to disk so we persist our manually created scenes/playlists
-    // This also has the effect of resetting any changes we make to them in the UI once we start the backend
-    this.sceneStore.saveDataToDisk();
-    this.playlistStore.saveDataToDisk();
+    Util.createBuiltInScenes();
+    Util.createBuiltInPlaylists();
 
     // Set the channel on the playlist manager
     PlaylistManager.get().setChannel(this.channel1);
@@ -188,59 +183,6 @@ public class TesseractMain extends PApplet {
     return rgb1;
 
   }//end render node
-
-  private void createBuiltInScenes() {
-    // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
-    // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
-    Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
-    this.sceneStore.addOrUpdate(sScan);
-
-    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "videos/24K_loop-nosound.mp4");
-    this.sceneStore.addOrUpdate(sVid);
-
-    Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
-    this.sceneStore.addOrUpdate(sWash);
-
-    Scene sYellow = new Scene(1, "Yellow", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 1, 0, 0});
-    this.sceneStore.addOrUpdate(sYellow);
-
-    Scene sPurple = new Scene(2, "Purple", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 1, 0});
-    this.sceneStore.addOrUpdate(sPurple);
-
-    Scene sRed = new Scene(3, "Red", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 0, 0});
-    this.sceneStore.addOrUpdate(sRed);
-  }
-
-  private void createBuiltInPlaylists() {
-    List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
-
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 6),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 6),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 7)
-    ));
-
-    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
-    this.playlistStore.addOrUpdate(playlist1);
-
-    List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3)
-    ));
-
-    Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
-    this.playlistStore.addOrUpdate(playlist2);
-  }
 
   private void createShutdownHook() {
     Runtime.getRuntime().addShutdownHook(new Thread() {
