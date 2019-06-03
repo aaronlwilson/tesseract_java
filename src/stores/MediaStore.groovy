@@ -26,6 +26,10 @@ class MediaStore {
     !!this.items[type]?.contains(path)
   }
 
+  public List<String> getMediaOfType(String type) {
+    this.items[type]
+  }
+
   // Get the store data as JSON, either for persisting or sending to the front end
   // This will be a List/Map that serializes to the correct JSON, rather than the JSON string itself
   public Map<String, List<String>> asJsonObj() {
