@@ -89,21 +89,24 @@ public class Stage {
         int counter = 0;
 
         _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
-        //_myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
-        //_myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
-        //_myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
+        _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
+        _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
+        _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
 
-        int h = 4;
-        int w = 8;
+        int h = 4; //number of teensies
+        int w = 8; //number of pins per OCTO
 
         nodes = new Node[h*w];
 
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
-                nodes[counter] = new Node(30 * i, 40 * j, 0, counter, null);
+                Node dracoNode = new Node(30 * i, 40 * j, 0, counter, null);
+
+                nodes[counter] = dracoNode;
+                _myMain.udpModel.teensies[i].nodeArray[j] = dracoNode;
+
                 counter++;
             }
-
         }
     }
 

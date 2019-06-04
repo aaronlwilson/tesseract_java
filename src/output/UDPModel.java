@@ -1,11 +1,10 @@
 package output;
 
-import app.TesseractMain;
+
 import hardware.Tile;
 import hypermedia.net.UDP;
 //import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 
-import org.gstreamer.elements.Tee;
 import processing.core.PApplet;
 
 import hardware.*;
@@ -26,7 +25,7 @@ public class UDPModel {
 
 
     private int numTiles    = 9;
-    private String broadcastIp       = "255.255.255.255";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
+    private String broadcastIp = "255.255.255.255";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
 
 
     private int numColors = 3;
@@ -42,7 +41,7 @@ public class UDPModel {
         p = pApplet;
 
         rabbits = new Rabbit[0];
-        teensies = new Teensy[1];
+        teensies = new Teensy[4];
 
 
         //red
@@ -191,34 +190,35 @@ public class UDPModel {
 
 
     public void sendTeensyNodesAsPanels(Teensy teensy) {
-        TesseractMain myMain = TesseractMain.getMain();
 
-        int length = myMain.stage.nodes.length;
+        int length = teensy.nodeArray.length;
 
         //basically a node is an entire panel or tile
         for (int t=0; t<length; t++){
 
-            Node node = myMain.stage.nodes[t];
-            int ledPerPin = 512;
+            Node node =  teensy.nodeArray[t];
+            int ledPerPin = 100;
 
             byte[] data = new byte[(ledPerPin*3) + 2];
 
             data[0] = (byte) ('l'); //LIGHTS command
-            data[1] = (byte) t; //tile address
-
+            data[1] = (byte) t; //pin address, once again we are doing one node per pin
 
             for (int i=0; i<ledPerPin; i++){
-
                 data[(i*3) + 0 +2] = (byte) node.r;
                 data[(i*3) + 1 +2] = (byte) node.g;
                 data[(i*3) + 2 +2] = (byte) node.b;
 
+                //for the love of god, something please just happen on the lights so I know my life isn't a complete sham.
+                //data[(i*3) + 0 +2] = (byte) (PApplet.unhex("FF"));
+                //data[(i*3) + 1 +2] = (byte) (PApplet.unhex("FF"));
+                //data[(i*3) + 2 +2] = (byte) (PApplet.unhex("FF"));
             }
 
             // send the bytes for each tile separately
             udp.send( data, teensy.ip, teensyPort );
 
-        }//end for num tiles
+        }
 
     }
 
