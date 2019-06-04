@@ -108,6 +108,9 @@ public class TesseractMain extends PApplet {
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
 
+    SceneStore.get().saveDataToDisk();
+    PlaylistStore.get().saveDataToDisk();
+
     // Set the channel on the playlist manager
     PlaylistManager.get().setChannel(this.channel1);
 
