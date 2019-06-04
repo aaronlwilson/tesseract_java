@@ -164,7 +164,6 @@ public class Util {
 
     // Save the created data to disk so we persist our manually created scenes/playlists
     // This also has the effect of resetting any changes we make to them in the UI once we start the backend
-    PlaylistStore.get().saveDataToDisk();
   }
 
   public static void createBuiltInScenes() {
@@ -188,7 +187,5 @@ public class Util {
     scenes.addAll(videoScenes)
 
     scenes.each { SceneStore.get().addOrUpdate(it); }
-
-    SceneStore.get().saveDataToDisk();
   }
 }
