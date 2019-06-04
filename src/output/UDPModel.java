@@ -1,12 +1,13 @@
 package output;
 
+
 import hardware.Tile;
 import hypermedia.net.UDP;
 //import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 
 import processing.core.PApplet;
 
-import hardware.Rabbit;
+import hardware.*;
 import environment.Node;
 
 
@@ -16,12 +17,16 @@ public class UDPModel {
     private UDP udp;
 
     public Rabbit[] rabbits;
+    public Teensy[] teensies;
+
     public int myPort      = 7777; //6000 also works
     public int rabbitPort  = 7;
+    public int teensyPort  = 1337;
+
 
     private int numTiles    = 9;
-    private String ip       = "255.255.255.255";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
-    private int port        = 7;   //the destination port
+    private String broadcastIp = "255.255.255.255";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
+
 
     private int numColors = 3;
     private int[] c = new int[numColors*3];
@@ -35,7 +40,8 @@ public class UDPModel {
     public UDPModel(PApplet pApplet) {
         p = pApplet;
 
-        rabbits = new Rabbit[6];
+        rabbits = new Rabbit[0];
+        teensies = new Teensy[4];
 
 
         //red
@@ -131,7 +137,17 @@ public class UDPModel {
             byte[] data = new byte[2];
             data[0] = (byte) (p.unhex("FF"));
             data[1] = (byte) (p.unhex("FE"));
-            udp.send( data, rabbit.ip, port );
+            udp.send( data, rabbit.ip, rabbitPort );
+        }
+
+
+        for (Teensy teensy : teensies) {
+            sendTeensyNodesAsPanels(teensy);
+
+            //swap command, makes all the tiles change at once
+            byte[] data = new byte[1];
+            data[0] = (byte) ('s');
+            udp.send( data, teensy.ip, teensyPort );
         }
 
     }
@@ -151,7 +167,6 @@ public class UDPModel {
             for (int x=0; x<12; x++){
                 //one node, set each channel
                 Node node = tile.tileNodeArray[x][y];
-
 
                 data[nodeMap[y][x]+4] = (byte)node.g;
                 data[nodeMap[y][x]+3+4] = (byte)node.r;
@@ -174,9 +189,38 @@ public class UDPModel {
     }//end sendTileFrame
 
 
+    public void sendTeensyNodesAsPanels(Teensy teensy) {
 
+        int length = teensy.nodeArray.length;
 
+        //basically a node is an entire panel or tile
+        for (int t=0; t<length; t++){
 
+            Node node =  teensy.nodeArray[t];
+            int ledPerPin = 100;
+
+            byte[] data = new byte[(ledPerPin*3) + 2];
+
+            data[0] = (byte) ('l'); //LIGHTS command
+            data[1] = (byte) t; //pin address, once again we are doing one node per pin
+
+            for (int i=0; i<ledPerPin; i++){
+                data[(i*3) + 0 +2] = (byte) node.r;
+                data[(i*3) + 1 +2] = (byte) node.g;
+                data[(i*3) + 2 +2] = (byte) node.b;
+
+                //for the love of god, something please just happen on the lights so I know my life isn't a complete sham.
+                //data[(i*3) + 0 +2] = (byte) (PApplet.unhex("FF"));
+                //data[(i*3) + 1 +2] = (byte) (PApplet.unhex("FF"));
+                //data[(i*3) + 2 +2] = (byte) (PApplet.unhex("FF"));
+            }
+
+            // send the bytes for each tile separately
+            udp.send( data, teensy.ip, teensyPort );
+
+        }
+
+    }
 
 
 
@@ -212,14 +256,14 @@ public class UDPModel {
             }
 
             // send the message for each tile
-            udp.send( data, ip, port );
+            udp.send( data, broadcastIp, rabbitPort );
         }//end for num tiles
 
         //swap command
         byte[] data = new byte[2];
         data[0] = (byte) (p.unhex("FF"));
         data[1] = (byte) (p.unhex("FE"));
-        udp.send( data, ip, port );
+        udp.send( data, broadcastIp, rabbitPort );
 
 
         currentNode++;//increment node
