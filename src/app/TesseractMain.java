@@ -105,13 +105,8 @@ public class TesseractMain extends PApplet {
     //channel1.constructNewClip(SOLID);
 
     // Make some dummy data in the stores
-    this.createBuiltInScenes();
-    this.createBuiltInPlaylists();
-
-    // Save the created data to disk so we persist our manually created scenes/playlists
-    // This also has the effect of resetting any changes we make to them in the UI once we start the backend
-    this.sceneStore.saveDataToDisk();
-    this.playlistStore.saveDataToDisk();
+    Util.createBuiltInScenes();
+    Util.createBuiltInPlaylists();
 
     // Set the channel on the playlist manager
     PlaylistManager.get().setChannel(this.channel1);
