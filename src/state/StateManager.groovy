@@ -67,7 +67,7 @@ class StateManager {
   // Things like which playlist / scene are we playing, stuff like that
   // We also want to send the current values of the clip controls
   public Map getActiveState() {
-    String playlistItemId = PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
+    String playlistItemId = PlaylistManager.get().getCurrentPlaylist()?.getCurrentItem()?.getId()
 
     // This is to help track down any issues with telling the UI to play a playlist item that no longer exists
     if (playlistItemId != null) {
