@@ -36,9 +36,6 @@ dependencies {
 
   // https://mvnrepository.com/artifact/org.processing/video
   compile group: 'org.processing', name: 'video', version: '3.3.7'
-
-  // https://mvnrepository.com/artifact/org.freedesktop.gstreamer/gst1-java-core
-  compile group: 'org.freedesktop.gstreamer', name: 'gst1-java-core', version: '1.0.0'
 }
 
 task downloadProcessingVideoLibrary(type: Download) {
