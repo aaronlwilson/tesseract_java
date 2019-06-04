@@ -66,6 +66,4 @@ public class AbstractClip  {
     paramDefaults[param-1] = value;
     return true;
   }
-
-
 }
