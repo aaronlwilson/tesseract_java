@@ -19,7 +19,7 @@ public class VideoClip extends AbstractClip{
     private int _cols, _rows;
 
     // Step 1. Declare a Movie object.
-    private Movie _movie;
+    public Movie _movie;
 
     private int _videoW = 640;
     private int _videoH = 360;
