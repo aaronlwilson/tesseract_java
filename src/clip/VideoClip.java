@@ -107,7 +107,8 @@ public class VideoClip extends AbstractClip{
     }
 
     public void die() {
-
+        _movie.stop();
+        super.die();
     }
 
 
