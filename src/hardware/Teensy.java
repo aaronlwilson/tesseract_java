@@ -1,6 +1,9 @@
 package hardware;
+import environment.Node;
 
 public class Teensy extends Controller {
+
+    public Node[] nodeArray;
 
     //constructor
     public Teensy(String theIp, int theId, String theMac) {
@@ -8,6 +11,7 @@ public class Teensy extends Controller {
         id = theId;
         mac = theMac;
 
+        nodeArray = new Node[8];
     }
 
 }
