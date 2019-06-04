@@ -71,6 +71,8 @@ public class Channel {
 
         if(_mix < 0){
             _mix = 0;
+
+            _currentScene.clip.die();
             _currentScene = _nextScene;
             _nextScene = null;
             //System.out.printf("fade over\n");
