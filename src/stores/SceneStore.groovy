@@ -14,9 +14,6 @@ class SceneStore extends BaseStore implements IJsonPersistable {
   public SceneStore() {
     List<Map> data = this.loadDataFromDisk()
     refreshFromJS(data)
-
-    // save right when we load for testing
-    // this.saveDataToDisk()
   }
 
   // Singleton
@@ -26,6 +23,10 @@ class SceneStore extends BaseStore implements IJsonPersistable {
     }
 
     instance
+  }
+
+  List<Scene> getItems() {
+    return this.items
   }
 
   // Add a scene to the store
