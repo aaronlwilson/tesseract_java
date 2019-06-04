@@ -33,11 +33,11 @@ public class Stage {
 
     public void buildStage(){
 
-        //buildCubotron();
-
         //buildTesseractStage();
 
         buildDracoStage();
+
+        //buildCubotron();
 
         //set the boundaries of the stage
         for (Node n: nodes) {
@@ -54,6 +54,8 @@ public class Stage {
 
         PixelPlane plane = new PixelPlane(p);
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
+
+        _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
         _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.102", 1, "mac_address");
@@ -87,6 +89,9 @@ public class Stage {
     private void buildDracoStage() {
 
         int counter = 0;
+
+
+        _myMain.udpModel.teensies = new Teensy[4];
 
         _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
         _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");

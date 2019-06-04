@@ -41,7 +41,7 @@ public class UDPModel {
         p = pApplet;
 
         rabbits = new Rabbit[0];
-        teensies = new Teensy[4];
+        teensies = new Teensy[0];
 
 
         //red
