@@ -57,14 +57,15 @@ public class VideoClip extends AbstractClip{
 
         // Step 2. Initialize Movie object. The file should live in the data/videos folder.
         _movie = new Movie(_myMain, "videos/" + filename);
-
-        // Step 3. Start playing movie. To play just once play() can be used instead.
-        _movie.loop();
-
     }
 
     public void run() {
         if(_movie != null) {
+            if (!_movie.playbin.isPlaying()) {
+                // Step 3. Start playing movie. To play just once play() can be used instead.
+                _movie.loop();
+            }
+
             _movie.loadPixels();
         }
     }
