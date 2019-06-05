@@ -33,9 +33,9 @@ public class Stage {
 
     public void buildStage(){
 
-        //buildTesseractStage();
+        buildTesseractStage();
 
-        buildDracoStage();
+        //buildDracoStage();
 
         //buildCubotron();
 
@@ -62,7 +62,7 @@ public class Stage {
         _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.105", 2, "mac_address");
         _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.103", 3, "mac_address");
         _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.104", 4, "mac_address");
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address");
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.100", 5, "mac_address");
         _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.106", 6, "mac_address");
 
 
@@ -90,15 +90,15 @@ public class Stage {
 
         int counter = 0;
 
-
-        _myMain.udpModel.teensies = new Teensy[4];
+        int h = 1; //number of teensies
+        _myMain.udpModel.teensies = new Teensy[h];
 
         _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
-        _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
-        _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
-        _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
+        //_myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
+        //_myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
+        //_myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
 
-        int h = 4; //number of teensies
+
         int w = 8; //number of pins per OCTO
 
         nodes = new Node[h*w];
