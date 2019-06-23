@@ -30,23 +30,24 @@ public class Stage {
         _myMain = TesseractMain.getMain();
     }
 
-
-    public void buildStage(){
-
-        //buildCubotron();
-
-        //buildTesseractStage();
-
-        buildDracoStage();
-
-        //set the boundaries of the stage
-        for (Node n: nodes) {
-            if(n.x>maxW) maxW = n.x;
-            if(n.y>maxH) maxH = n.y;
-            if(n.z>maxD) maxD = n.z;
-        }
-
+  public void buildStage(String stageType) {
+    if (stageType.equals("CUBOTRON")) {
+      buildCubotron();
+    } else if (stageType.equals("TESSERACT")) {
+      buildTesseractStage();
+    } else if (stageType.equals("DRACO")) {
+      buildDracoStage();
+    } else {
+      throw new RuntimeException("ERROR: Invalid stage of type: " + stageType);
     }
+
+    //set the boundaries of the stage
+    for (Node n : nodes) {
+      if (n.x > maxW) maxW = n.x;
+      if (n.y > maxH) maxH = n.y;
+      if (n.z > maxD) maxD = n.z;
+    }
+  }
 
     private void buildTesseractStage(){
         int counter = 0;
