@@ -30,10 +30,11 @@ public class TesseractMain extends PApplet {
   public static final int SOLID = 1;
   public static final int COLORWASH = 2;
   public static final int VIDEO = 3;
+  public static final int PARTICLE = 4;
 
 
   public static String[] clipNames = {
-      "Node Scan", "Solid", "Color Wash", "Video"
+      "Node Scan", "Solid", "Color Wash", "Video", "Particle"
   };
 
 
@@ -105,17 +106,17 @@ public class TesseractMain extends PApplet {
     //channel1.constructNewClip(SOLID);
 
     // Make some dummy data in the stores
-    Util.createBuiltInScenes();
-    Util.createBuiltInPlaylists();
+    //Util.createBuiltInScenes();
+    //Util.createBuiltInPlaylists();
 
-    SceneStore.get().saveDataToDisk();
-    PlaylistStore.get().saveDataToDisk();
+    //SceneStore.get().saveDataToDisk();
+    //PlaylistStore.get().saveDataToDisk();
 
     // Set the channel on the playlist manager
     PlaylistManager.get().setChannel(this.channel1);
 
     // Play the playlist with id = 1, play the first item in the playlist, and start in the 'looping' state
-    PlaylistManager.get().play(1, null, Playlist.PlayState.LOOP_SCENE);
+    PlaylistManager.get().play(2, null, Playlist.PlayState.PLAYING);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
@@ -166,6 +167,8 @@ public class TesseractMain extends PApplet {
     //push packets out to LEDS
     //udpModel.sendTest();
 
+
+    //PUT BACK
     udpModel.send();
   }
 
@@ -177,9 +180,9 @@ public class TesseractMain extends PApplet {
 
 
     //apply channel brightness
-    //rgb1[0] = int(rgb1[0] * (channelCanvas1.channelBrightness/100) * (channelCanvas1.rBrightness/100));
-    //rgb1[1] = int(rgb1[1] * (channelCanvas1.channelBrightness/100) * (channelCanvas1.gBrightness/100));
-    //rgb1[2] = int(rgb1[2] * (channelCanvas1.channelBrightness/100) * (channelCanvas1.bBrightness/100));
+    rgb1[0] = (int)rgb1[0] /2;
+    rgb1[1] = (int)rgb1[1] /2;
+    rgb1[2] = (int)rgb1[2] /2;
 
     //mix the 2 channels together
 
@@ -187,6 +190,8 @@ public class TesseractMain extends PApplet {
 
   }//end render node
 
+
+  /*
   private void createBuiltInScenes() {
     // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
     // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
@@ -208,7 +213,9 @@ public class TesseractMain extends PApplet {
     Scene sRed = new Scene(3, "Red", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 0, 0});
     this.sceneStore.addOrUpdate(sRed);
   }
+  */
 
+  /*
   private void createBuiltInPlaylists() {
     List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
 
@@ -239,6 +246,7 @@ public class TesseractMain extends PApplet {
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
     this.playlistStore.addOrUpdate(playlist2);
   }
+  */
 
   private void createShutdownHook() {
     Runtime.getRuntime().addShutdownHook(new Thread() {

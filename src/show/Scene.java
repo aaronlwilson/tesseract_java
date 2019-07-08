@@ -106,6 +106,10 @@ public class Scene {
             case TesseractMain.VIDEO:
                 newClip = new VideoClip(TesseractMain.clipNames[clipClass]);
                 break;
+            case TesseractMain.PARTICLE:
+                newClip = new VideoClip(TesseractMain.clipNames[clipClass]);
+                break;
+
 
             default:
                 throw new IllegalStateException("Unexpected value: " + clipClass);

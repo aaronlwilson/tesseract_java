@@ -183,11 +183,14 @@ public class Playlist {
 
     this.setCurrentItem(item)
 
+    /*
     // todo: refactor
     // this is a giant hack to stop a previously playing video
     if (this.channel?.scene?.clip instanceof VideoClip) {
-      ((VideoClip)this.channel?.scene?.clip)?._movie?.stop();
+      ((VideoClip)this.channel?.scene?.clip)?.movie?.stop();
     }
+    */
+
 
     this.channel.setScene(item.scene, false, 10);
     System.out.println("[Playlist] Playing scene '${item.scene.getDisplayName()}' on playlist '${this.displayName}'");

@@ -158,9 +158,9 @@ public class Util {
     // Create playlist of all videos
     List<PlaylistItem> playlist3Items = SceneStore.get().getItems()
         .findAll { scene -> scene.clip.clipId == 'video' }
-        .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene, 60 * 5) }
+        .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene, 60 * 1) }
 
-    PlaylistStore.get().addOrUpdate(new Playlist(3, "All Videos", 60 * 5, playlist3Items))
+    PlaylistStore.get().addOrUpdate(new Playlist(3, "All Videos", 60 * 1, playlist3Items))
 
     // Save the created data to disk so we persist our manually created scenes/playlists
     // This also has the effect of resetting any changes we make to them in the UI once we start the backend
