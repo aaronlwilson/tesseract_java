@@ -80,11 +80,13 @@ class StateManager {
       }
     }
 
+    // It doesn't matter if a bunch of these are null.  If the UI requests the data before we've played a playlist,
+    // there won't be a currentPlaylist.  When we start playing a playlist, we will update the activeState in the UI
     Map activeState = [
         playlistItemId               : playlistItemId,
-        playlistId                   : PlaylistManager.get().getCurrentPlaylist().getId(),
+        playlistId                   : PlaylistManager.get().getCurrentPlaylist()?.getId(),
         currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
-        playlistPlayState            : PlaylistManager.get().getCurrentPlaylist().getCurrentPlayState().name(),
+        playlistPlayState            : PlaylistManager.get().getCurrentPlaylist()?.getCurrentPlayState()?.name(),
         clipControlValues            : this.getClipControlValues(this.getActiveClip())
     ]
 
