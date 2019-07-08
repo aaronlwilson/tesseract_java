@@ -26,6 +26,7 @@ public class Channel {
         channelNumber = theChannelNumber;
     }
 
+    //this logic is duplicated in Scene, it should be abstracted
     /*
     public void constructNewClip(int clipClass) {
 

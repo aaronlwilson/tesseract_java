@@ -106,30 +106,20 @@ public class TesseractMain extends PApplet {
     //channel1.constructNewClip(SOLID);
 
     // Make some dummy data in the stores
-    //Util.createBuiltInScenes();
-    //Util.createBuiltInPlaylists();
+    Util.createBuiltInScenes();
+    Util.createBuiltInPlaylists();
+    SceneStore.get().saveDataToDisk();
+    PlaylistStore.get().saveDataToDisk();
 
-    //SceneStore.get().saveDataToDisk();
-    //PlaylistStore.get().saveDataToDisk();
 
     // Set the channel on the playlist manager
     PlaylistManager.get().setChannel(this.channel1);
 
     // Play the playlist with id = 1, play the first item in the playlist, and start in the 'looping' state
-    PlaylistManager.get().play(2, null, Playlist.PlayState.PLAYING);
+    PlaylistManager.get().play(2, null, Playlist.PlayState.LOOP_SCENE);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
-
-
-    /*
-    //TEMP, just playing around
-    final File directory = new File("./");
-    System.out.println(directory.getAbsolutePath());
-
-    final File videoDirectory = new File("./data/videos");
-    Util.listFilesForFolder(videoDirectory);
-    */
 
   }
 
@@ -169,7 +159,7 @@ public class TesseractMain extends PApplet {
 
 
     //PUT BACK
-    udpModel.send();
+    //udpModel.send();
   }
 
 
@@ -180,9 +170,9 @@ public class TesseractMain extends PApplet {
 
 
     //apply channel brightness
-    rgb1[0] = (int)rgb1[0] /2;
-    rgb1[1] = (int)rgb1[1] /2;
-    rgb1[2] = (int)rgb1[2] /2;
+    rgb1[0] = (int)rgb1[0];
+    rgb1[1] = (int)rgb1[1];
+    rgb1[2] = (int)rgb1[2];
 
     //mix the 2 channels together
 

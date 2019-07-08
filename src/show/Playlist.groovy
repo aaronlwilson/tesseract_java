@@ -193,6 +193,8 @@ public class Playlist {
 
 
     this.channel.setScene(item.scene, false, 10);
+
+    //wrap this in a "debug"
     System.out.println("[Playlist] Playing scene '${item.scene.getDisplayName()}' on playlist '${this.displayName}'");
 
     // Schedule the next item
@@ -203,6 +205,8 @@ public class Playlist {
 
     // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
     // if we don't send it here, the UI won't get the update when the timer triggers this function
-    StateManager.get().sendActiveState()
+
+   //PUT BACK
+   // StateManager.get().sendActiveState()
   }
 }

@@ -35,7 +35,7 @@ public class Scene {
         this(id, displayName, clipClass, clipValues, null);
     }
 
-    // Use this constructor when rehydrating from json
+    //other constructors all lead here
     public Scene(int id, String displayName, int clipClass, float[] clipValues, String filename) {
         this.id = id;
         this.displayName = displayName;
@@ -107,7 +107,7 @@ public class Scene {
                 newClip = new VideoClip(TesseractMain.clipNames[clipClass]);
                 break;
             case TesseractMain.PARTICLE:
-                newClip = new VideoClip(TesseractMain.clipNames[clipClass]);
+                newClip = new ParticleClip(TesseractMain.clipNames[clipClass]);
                 break;
 
 

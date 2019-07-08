@@ -94,6 +94,7 @@ public class Util {
         node_scan  : TesseractMain.NODESCAN,
         solid_color: TesseractMain.SOLID,
         video     : TesseractMain.VIDEO,
+        particle_clip     : TesseractMain.PARTICLE,
     ]
 
     Integer enumVal = clipIdMap[clipId]
@@ -144,12 +145,11 @@ public class Util {
     PlaylistStore.get().addOrUpdate(playlist1);
 
     List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4),
+
+            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Particles'), 10),
+            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
+            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
+            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4)
     ));
 
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
@@ -175,9 +175,10 @@ public class Util {
         new Scene(3, "Red", TesseractMain.SOLID, [0, 0, 0, 1, 0, 0, 0] as float[]),
         new Scene(4, "Color Wash", TesseractMain.COLORWASH, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f] as float[]),
         new Scene(5, "Node Scanner", TesseractMain.NODESCAN, [0, 0, 0, 0, 0, 0, 0] as float[]),
+        new Scene(6, "Particles", TesseractMain.PARTICLE, [0, 0, 0, 0, 0, 0, 0] as float[]),
     ]
 
-    int nextIdx = 6
+    int nextIdx = 7
     List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
       Scene s = new Scene(nextIdx, videoPath, TesseractMain.VIDEO, [0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
       nextIdx++
