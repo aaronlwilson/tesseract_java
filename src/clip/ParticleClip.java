@@ -92,7 +92,7 @@ public class ParticleClip  extends AbstractClip {
 
         PVector theSpeed = new PVector(randFloatRange(lowVel,highVel), randFloatRange(lowVel,highVel), randFloatRange(lowVel,highVel));
 
-        PVector theAccel = new PVector(0.0f, 0.0f, 0.0f);
+        PVector theAccel = new PVector(0.01f, 0.01f, 0.01f);
 
 
         _particles.add(new Particle(theLoc, theC,100.0f, theSpeed, theAccel));
@@ -117,19 +117,18 @@ public class ParticleClip  extends AbstractClip {
             float surface = particle.size;
 
             if (dist < surface) {
-                brightness = 0.5f;
+                brightness = 1.0f;
+
+                newRed =   (int)(Util.getR(particle.color) * brightness);
+                newGreen = (int)(Util.getG(particle.color) * brightness);
+                newBlue  = (int)(Util.getB(particle.color) * brightness);
             }
-
-            newRed +=   (int)(Util.getR(particle.color) * brightness);
-            newGreen += (int)(Util.getG(particle.color) * brightness);
-            newBlue  += (int)(Util.getB(particle.color) * brightness);
-
 
         }
 
-        nodestate[0] = newRed;
-        nodestate[1] = newGreen;
-        nodestate[2] = newBlue;
+        if(newRed > 0) nodestate[0] = newRed;
+        if(newGreen > 0) nodestate[1] = newGreen;
+        if(newBlue > 0) nodestate[2] = newBlue;
 
 
         return nodestate;
