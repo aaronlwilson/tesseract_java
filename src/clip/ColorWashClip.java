@@ -40,9 +40,11 @@ public class ColorWashClip extends AbstractClip {
         //_bCut = Util.getPercent(p6, 100) *.01f;
     }
 
+    /*
     public void die() {
 
     }
+    */
 
     public int[] drawNode(Node node) {
         _angleCalc =  node.y * _angle1;

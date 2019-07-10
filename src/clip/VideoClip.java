@@ -112,8 +112,6 @@ public class VideoClip extends AbstractClip{
         System.out.printf("VIDEO DIE \n");
 
         super.die();
-
-
     }
 
 

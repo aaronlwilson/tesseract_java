@@ -3,47 +3,41 @@ package clip;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.util.Random;
+
 public class Particle
 {
     //variable definition
-    int index;
     int lifespan = 200;
 
-    int c;
+    public int color;
     float radius = 0.0f;
 
     PVector position;
     PVector velocity;
     PVector acceleration;
 
-    float size = 0.0f;
-    float ramp = 0.0f;
-    float fade = 1.0f;
+    public float size = 100.0f;
+    public float ramp = 0.0f;
+    public float fade = 1.0f;
 
 
 
     //constructor
-    public Particle(PVector theL, int theC) {
-
-        acceleration = new PVector(0, 0, 0);
-
-        //float lowVel = -10.0f;
-        //float highVel = 10.0f;
-
-
-        //velocity = new PVector(PApplet.random(lowVel,highVel), PApplet.random(lowVel,highVel), PApplet.random(lowVel,highVel));
-        velocity = new PVector(0, 0, 0);
+    public Particle(PVector theL, int theC, float theSize, PVector theSpeed, PVector theAccel) {
 
         position = theL.copy();
 
-        //index = particles.size();
+        color = theC;
 
-        //each drop is a little different
-        //c = color( int(random(100, 255)), int(random(100, 255)), int(random(100, 255)));
-        //println(hex(theC));
+        size = theSize;
 
-        c = theC;
+        velocity = theSpeed.copy();
+
+        acceleration = theAccel;
     }
+
+
 
     // Method to update position
     public void run() {
@@ -53,6 +47,7 @@ public class Particle
         lifespan -= 1;
         fade = PApplet.map(lifespan, 0, 200, 0.0f, 1.0f);
 
+        /*
         if(size <100){
             size += 10;
         }
@@ -60,6 +55,7 @@ public class Particle
         if(ramp <100) {
             ramp += 5;
         }
+        */
     }
 
     // Is the particle still useful?
