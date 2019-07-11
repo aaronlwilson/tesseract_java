@@ -26,8 +26,7 @@ public class ParticleClip  extends AbstractClip {
 
 
     //constructor
-    public ParticleClip(String theClipName) {
-        super(theClipName);
+    public ParticleClip() {
     }
 
     public void init() {

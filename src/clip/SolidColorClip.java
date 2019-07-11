@@ -20,8 +20,8 @@ public class SolidColorClip extends AbstractClip{
 
 
     //constructor
-    public SolidColorClip(String theClipName) {
-        super(theClipName);
+    public SolidColorClip() {
+
     }
 
     public void init() {

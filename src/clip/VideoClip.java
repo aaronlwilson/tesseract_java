@@ -26,8 +26,7 @@ public class VideoClip extends AbstractClip{
 
 
     //constructor
-    public VideoClip(String theClipName) {
-        super(theClipName);
+    public VideoClip() {
     }
 
     public void init() {

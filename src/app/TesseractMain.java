@@ -31,12 +31,7 @@ public class TesseractMain extends PApplet {
   public static final int COLORWASH = 2;
   public static final int VIDEO = 3;
   public static final int PARTICLE = 4;
-
-
-  public static String[] clipNames = {
-      "Node Scan", "Solid", "Color Wash", "Video", "Particle"
-  };
-
+  
 
   private OnScreen onScreen;
 
@@ -108,6 +103,8 @@ public class TesseractMain extends PApplet {
     // Make some dummy data in the stores
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
+
+    //save it to disk
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
 

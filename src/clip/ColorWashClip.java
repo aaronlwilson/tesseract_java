@@ -18,8 +18,8 @@ public class ColorWashClip extends AbstractClip {
 
 
     //constructor
-    public ColorWashClip(String theClipName) {
-        super(theClipName);
+    public ColorWashClip() {
+
     }
 
     public void init() {
