@@ -28,27 +28,35 @@ public class Channel {
 
     //this logic is duplicated in Scene, it should be abstracted
     /*
-    public void constructNewClip(int clipClass) {
+     public void constructNewClip(int clipClass) {
 
-        AbstractClip clip = new AbstractClip("Abstract Clip");
+        AbstractClip newClip = new AbstractClip();
         switch (clipClass) {
             case TesseractMain.NODESCAN:
-                clip = new NodeScanClip(TesseractMain.clipNames[clipClass]);
+                newClip = new NodeScanClip();
                 break;
             case TesseractMain.SOLID:
-                clip = new SolidColorClip(TesseractMain.clipNames[clipClass]);
+                newClip = new SolidColorClip();
                 break;
             case TesseractMain.COLORWASH:
-                clip = new ColorWashClip(TesseractMain.clipNames[clipClass]);
+                newClip = new ColorWashClip();
                 break;
+            case TesseractMain.VIDEO:
+                newClip = new VideoClip();
+                break;
+            case TesseractMain.PARTICLE:
+                newClip = new ParticleClip();
+                break;
+
 
             default:
                 throw new IllegalStateException("Unexpected value: " + clipClass);
         }
 
-        if (clip != null) {
-            clip.init();
-            currentClip = clip;
+        if (newClip != null) {
+            newClip.init();
+            clip = newClip;
+            this.setClipValues(this.getSceneValues(), this.filename);
         }
     }
     */

@@ -205,6 +205,8 @@ public class Playlist {
 
     // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
     // if we don't send it here, the UI won't get the update when the timer triggers this function
+
+    //This will throw an exception if the clipMetaData doesn't match the clipId
     StateManager.get().sendActiveState()
   }
 }

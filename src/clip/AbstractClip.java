@@ -16,7 +16,7 @@ public class AbstractClip  {
 
   // Params
   // all parameters should be normalized to a range 0.00 - 1.00
-  public float p1, p2, p3, p4, p5, p6, p7; // p 1-3 knobs, p 4-7 sliders
+  public float p1, p2, p3, p4, p5, p6, p7, p8;
   public String filename;
 
   protected float[] paramDefaults = new float[7];

@@ -1,8 +1,12 @@
 package clip;
 
 import java.util.*;
+
+//import processing.core.PApplet;
 import processing.core.PVector;
 import static processing.core.PApplet.dist;
+import static processing.core.PApplet.map;
+import static processing.core.PApplet.constrain;
 
 
 import environment.Node;
@@ -41,6 +45,7 @@ public class ParticleClip  extends AbstractClip {
 
         //map local vars to abstract clip parameters
         _pSize = p1*200.0f;
+        //TODO add ramp
         _pSpeed = p2*20.0f;
         _pAccel = p3;
         _pDensity = (p4*30)+1;
@@ -85,7 +90,6 @@ public class ParticleClip  extends AbstractClip {
         int theC = _myMain.color(rRed, rBlue, rGreen);
         //println(hex(theC));
 
-
         float lowVel = -_pSpeed;
         float highVel = _pSpeed;
 
@@ -121,6 +125,15 @@ public class ParticleClip  extends AbstractClip {
                 newRed =   (int)(Util.getR(particle.color) * brightness);
                 newGreen = (int)(Util.getG(particle.color) * brightness);
                 newBlue  = (int)(Util.getB(particle.color) * brightness);
+
+            }else{
+                //ramp calculates a soft leading edge to the brightness threshold
+                brightness = map(dist, surface, surface+particle.ramp, 1.0f, 0);
+                brightness = constrain(brightness, 0, 1.0f);
+
+                newRed += (int)(Util.getR(particle.color) * brightness);
+                newGreen += (int)(Util.getG(particle.color) * brightness);
+                newBlue  += (int)(Util.getB(particle.color) * brightness);
             }
 
         }

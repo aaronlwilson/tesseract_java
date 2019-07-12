@@ -18,7 +18,7 @@ public class Particle
     PVector acceleration;
 
     public float size = 100.0f;
-    public float ramp = 0.0f;
+    public float ramp = 100.0f;
     public float fade = 1.0f;
 
 

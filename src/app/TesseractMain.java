@@ -31,7 +31,8 @@ public class TesseractMain extends PApplet {
   public static final int COLORWASH = 2;
   public static final int VIDEO = 3;
   public static final int PARTICLE = 4;
-  
+  public static final int PERLINNOISE = 5;
+
 
   private OnScreen onScreen;
 

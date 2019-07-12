@@ -11,7 +11,7 @@ public class Scene {
 
     //these are the saved values for the current clips parameters
     // all parameters should be normalized to a range 0.00 - 1.00
-    public float p1, p2, p3, p4, p5, p6, p7; // p 1-3 knobs, p 4-7 sliders
+    public float p1, p2, p3, p4, p5, p6, p7, p8;
 
     // Only used for Video clips right now
     public String filename;
@@ -22,7 +22,7 @@ public class Scene {
     // CONSTRUCTORS
     // Use this constructor if you don't want to set clip values right away
     public Scene(String displayName, int clipClass) {
-        this(displayName, clipClass, new float[]{0, 0, 0, 0, 0, 0, 0}, null);
+        this(displayName, clipClass, new float[]{0, 0, 0, 0, 0, 0, 0, 0}, null);
     }
 
     // Use this constructor when creating a new clip w/o an existing ID
@@ -70,10 +70,11 @@ public class Scene {
         p5 = clipValues[4];
         p6 = clipValues[5];
         p7 = clipValues[6];
+        p8 = clipValues[7];
     }
 
     public float[] getSceneValues() {
-        return new float[]{p1, p2, p3, p4, p5, p6, p7};
+        return new float[]{p1, p2, p3, p4, p5, p6, p7, p8};
     }
 
     // set the values on the clip
@@ -85,6 +86,7 @@ public class Scene {
         this.clip.p5 = clipValues[4];
         this.clip.p6 = clipValues[5];
         this.clip.p7 = clipValues[6];
+        this.clip.p8 = clipValues[7];
 
         // todo: make the controls for different clips more consistent
         this.clip.setFilename(filename);
@@ -108,6 +110,9 @@ public class Scene {
                 break;
             case TesseractMain.PARTICLE:
                 newClip = new ParticleClip();
+                break;
+            case TesseractMain.PERLINNOISE:
+                newClip = new PerlinNoiseClip();
                 break;
 
 
