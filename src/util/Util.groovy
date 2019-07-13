@@ -121,6 +121,7 @@ public class Util {
     return c & 0xFF;
   }
 
+
   public static float getPercent(int loaded, int total) {
     return ((float) loaded / total) * 100;
   }

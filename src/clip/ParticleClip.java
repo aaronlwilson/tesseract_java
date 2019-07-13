@@ -2,7 +2,7 @@ package clip;
 
 import java.util.*;
 
-//import processing.core.PApplet;
+
 import processing.core.PVector;
 import static processing.core.PApplet.dist;
 import static processing.core.PApplet.map;
@@ -88,7 +88,7 @@ public class ParticleClip  extends AbstractClip {
         int rGreen = (int)(Math.random()*255);
 
         int theC = _myMain.color(rRed, rBlue, rGreen);
-        //println(hex(theC));
+
 
         float lowVel = -_pSpeed;
         float highVel = _pSpeed;
