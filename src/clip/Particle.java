@@ -11,7 +11,6 @@ public class Particle
     int lifespan = 200;
 
     public int color;
-    float radius = 0.0f;
 
     PVector position;
     PVector velocity;
@@ -24,13 +23,15 @@ public class Particle
 
 
     //constructor
-    public Particle(PVector theL, int theC, float theSize, PVector theSpeed, PVector theAccel) {
+    public Particle(PVector theL, int theC, float theSize, float theRamp, PVector theSpeed, PVector theAccel) {
 
         position = theL.copy();
 
         color = theC;
 
         size = theSize;
+
+        ramp = theRamp;
 
         velocity = theSpeed.copy();
 

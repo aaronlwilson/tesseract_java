@@ -19,12 +19,13 @@ public class ParticleClip  extends AbstractClip {
 
     private ArrayList<Particle> _particles;
 
+
     private float _pSize;
+    private float _pRamp;
     private float _pSpeed;
     private float _pAccel;
     private float _pDensity;
 
-    private float _pRamp;
 
     private int _counter;
 
@@ -45,10 +46,11 @@ public class ParticleClip  extends AbstractClip {
 
         //map local vars to abstract clip parameters
         _pSize = p1*200.0f;
-        //TODO add ramp
-        _pSpeed = p2*20.0f;
-        _pAccel = p3;
-        _pDensity = (p4*30)+1;
+        _pRamp = p2*200.0f;
+
+        _pSpeed = p3*20.0f;
+        _pAccel = p4;
+        _pDensity = (p5*30)+1;
 
 
         int length = _particles.size()-1;
@@ -94,11 +96,9 @@ public class ParticleClip  extends AbstractClip {
         float highVel = _pSpeed;
 
         PVector theSpeed = new PVector(randFloatRange(lowVel,highVel), randFloatRange(lowVel,highVel), randFloatRange(lowVel,highVel));
-
         PVector theAccel = new PVector(0.01f, 0.01f, 0.01f);
 
-
-        _particles.add(new Particle(theLoc, theC,100.0f, theSpeed, theAccel));
+        _particles.add(new Particle(theLoc, theC,_pSize, _pRamp, theSpeed, theAccel));
 
     }
 
@@ -122,9 +122,11 @@ public class ParticleClip  extends AbstractClip {
             if (dist < surface) {
                 brightness = 1.0f;
 
-                newRed =   (int)(Util.getR(particle.color) * brightness);
-                newGreen = (int)(Util.getG(particle.color) * brightness);
-                newBlue  = (int)(Util.getB(particle.color) * brightness);
+                newRed = (int) (Util.getR(particle.color) * brightness);
+                newGreen = (int) (Util.getG(particle.color) * brightness);
+                newBlue = (int) (Util.getB(particle.color) * brightness);
+
+            }else if (dist >= surface+particle.ramp) {
 
             }else{
                 //ramp calculates a soft leading edge to the brightness threshold

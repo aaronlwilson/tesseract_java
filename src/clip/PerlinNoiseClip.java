@@ -2,6 +2,7 @@ package clip;
 
 import environment.Node;
 import model.Palette;
+import processing.core.PApplet;
 import util.Util;
 
 import static processing.core.PApplet.map;
@@ -54,9 +55,11 @@ public class PerlinNoiseClip  extends AbstractClip {
 
 
         // Calculate noise and scale by 255
-        float nX = node.x * _noiseScale;
+        float nX = (node.x - 1000) * _noiseScale;
         float nY = node.y * _noiseScale;
         float nZ = node.z * _noiseScale;
+
+        _myMain.noiseDetail(1,0.65f);
 
         float n = _myMain.noise(nX, nY, _theta);
         //int brightness = (int)(n*255);
@@ -80,7 +83,7 @@ public class PerlinNoiseClip  extends AbstractClip {
 
 
         int l = _palette.colors.length;
-        float snap = map(n, 0.0f, 1.0f, 0, l-1);
+        float snap = map(n, 0.0f, 1.0f, 0, l-2);
 
         int element = (int)Math.floor(snap);
         int c = _palette.colors[element];

@@ -53,19 +53,22 @@ class ClipMetadata {
                 displayName: 'Particle Clip',
                 clipId     : 'particle_clip',
                 controls   : [
-                        [displayName: 'Size', type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
-                        [displayName: 'Speed', type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
-                        [displayName: 'Acceleration', slider: 'knob', defaultValue: 0.0, fieldName: 'p3'],
-                        [displayName: 'Density', type: 'slider', defaultValue: 0.1, fieldName: 'p4'],
-                        [displayName: 'Ramp', type: 'knob', defaultValue: 0.2, fieldName: 'p5'],
-                        //[displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                        [displayName: 'Size',         type: 'slider', defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Ramp',         type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Speed',        type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'Acceleration', type: 'slider', defaultValue: 0.0, fieldName: 'p4'],
+                        [displayName: 'Density',      type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
+                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
+                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
+
                 ],
         ],
         [
                 displayName: 'Perlin Noise',
                 clipId     : 'perlin_noise',
                 controls   : [
-                        [displayName: 'Size', type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Size',  type: 'knob',   defaultValue: 0.5, fieldName: 'p1'],
                         [displayName: 'Speed', type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
                         //[displayName: 'Acceleration', slider: 'knob', defaultValue: 0.0, fieldName: 'p3'],
                         //[displayName: 'Density', type: 'slider', defaultValue: 0.1, fieldName: 'p4'],
