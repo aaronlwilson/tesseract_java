@@ -179,7 +179,7 @@ public class Util {
         new Scene(4, "Color Wash", TesseractMain.COLORWASH, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0] as float[]),
         new Scene(5, "Node Scanner", TesseractMain.NODESCAN, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
         new Scene(6, "Particles", TesseractMain.PARTICLE, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
-        new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.0f, 0.0f, 0.0f, 0.0f, 0, 0, 0, 0] as float[]),
+        new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
     ]
 
     int nextIdx = 8

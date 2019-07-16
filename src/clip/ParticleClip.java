@@ -127,7 +127,7 @@ public class ParticleClip  extends AbstractClip {
                 newBlue = (int) (Util.getB(particle.color) * brightness);
 
             }else if (dist >= surface+particle.ramp) {
-
+                //this particle has no effect on this node
             }else{
                 //ramp calculates a soft leading edge to the brightness threshold
                 brightness = map(dist, surface, surface+particle.ramp, 1.0f, 0);

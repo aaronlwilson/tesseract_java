@@ -23,15 +23,15 @@ public class Palette {
 
         colors[0] = p.color(0,145,35);
         colors[1] = randomColor();
-        colors[2] = p.color(0,0,0);
+        colors[2] = randomColor();
         colors[3] = randomColor();
-        colors[4] = p.color(245,35,200);
+        colors[4] = p.color(10,35,25);
 
         colors[5] = p.color(0,145,35);
         colors[6] = randomColor();
-        colors[7] = p.color(0,0,0);
+        colors[7] = randomColor();
         colors[8] = randomColor();
-        colors[9] = p.color(245,35,200);
+        colors[9] = p.color(16,35,24);
 
         //System.out.println(hex(colors[4]));
 

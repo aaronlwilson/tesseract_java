@@ -158,6 +158,7 @@ public class Playlist {
     PlaylistItem item = playlistItemId == null ? this.items[0] : this.items.find { it.id == playlistItemId }
 
     if (!item) {
+      //TODO I get runtime exceptions here
       throw new RuntimeException("[Playlist] ERROR!  Could not find the PlaylistItem on this playlist.  Make sure this PlaylistItem existings on this Playlist!")
     }
 
