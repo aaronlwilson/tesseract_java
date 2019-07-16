@@ -9,6 +9,7 @@ import processing.core.PApplet;
 
 import hardware.*;
 import environment.Node;
+import util.AppSettings;
 
 
 public class UDPModel {
@@ -40,9 +41,8 @@ public class UDPModel {
     public UDPModel(PApplet pApplet) {
         p = pApplet;
 
-        rabbits = new Rabbit[0];
-        teensies = new Teensy[0];
-
+        initRabbits();
+        initTeensies();
 
         //red
         c[0] = 200;//255 is max
@@ -71,6 +71,19 @@ public class UDPModel {
         udp.listen( false );
     }
 
+    // Initialize the rabbit controllers.  Number of controllers is set in env var NUM_RABBITS.  default is 0
+    private void initRabbits() {
+        Integer numRabbits = Integer.parseInt(AppSettings.get("NUM_RABBITS"));
+        rabbits = new Rabbit[numRabbits];
+        // TODO: need to initialize from values in env vars
+    }
+
+    // Initialize the teensy (draco) controllers.  Number of controllers is set in env var NUM_TEENSIES.  default is 0
+    private void initTeensies() {
+        Integer numTeensies = Integer.parseInt(AppSettings.get("NUM_TEENSIES"));
+        teensies = new Teensy[numTeensies];
+        // TODO: need to objects initialize from values in env vars
+    }
 
     void createNodeMap(){
         for (int k=0; k<12; k++){//y
@@ -153,6 +166,7 @@ public class UDPModel {
     }
 
 
+    // Send tile to Tesseract
     public void sendTileFrame(Tile tile){
         //data for one tile, one frame
         byte[] data = new byte[(432+4)]; //144 nodes * 3 channels per node = 432
@@ -189,6 +203,7 @@ public class UDPModel {
     }//end sendTileFrame
 
 
+    // Send data to the Draco panels via Teensy
     public void sendTeensyNodesAsPanels(Teensy teensy) {
 
         int length = teensy.nodeArray.length;

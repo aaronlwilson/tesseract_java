@@ -10,6 +10,7 @@ import model.*;
 import state.StateManager;
 import stores.PlaylistStore;
 import stores.SceneStore;
+import util.AppSettings;
 import util.Util;
 import show.*;
 import websocket.WebsocketInterface;
@@ -33,21 +34,10 @@ public class TesseractMain extends PApplet {
   public static final int PARTICLE = 4;
   public static final int PERLINNOISE = 5;
 
-
   private OnScreen onScreen;
-
   public UDPModel udpModel;
   public Stage stage;
-
   public Channel channel1;
-  public Channel channel2;
-
-  public WebsocketInterface ws;
-  public StateManager stateManager;
-  public SceneStore sceneStore;
-  public PlaylistStore playlistStore;
-
-  public Playlist currentPlaylist;
 
   //Click the arrow on the line below to run the program in .idea
   public static void main(String[] args) {
@@ -76,41 +66,40 @@ public class TesseractMain extends PApplet {
 
     _main = this;
 
-    // Persistence / state update stuff
-    ws = WebsocketInterface.get();
-    stateManager = StateManager.get();
-    sceneStore = SceneStore.get();
-    // Doesn't make sense to fully implement this until we know more about how playlists are gonna work
-    playlistStore = PlaylistStore.get();
-
-    clear();
-
-    udpModel = new UDPModel(this);
-
-    onScreen = new OnScreen(this);
-
-    stage = new Stage(this);
-
-    //pass in an XML stage definition, eventually we might load a saved project which is a playlist and environment together
-    stage.buildStage();
-
-    //create channels
-    channel1 = new Channel(1);
-    //channel2 = new Channel(2);
-
-    //make a dummy clip, one way to use direct control and load a clip directly into a channel, no scene necessary
-    //channel1.constructNewClip(SOLID);
+    // Configure Data and Stores
 
     // Make some dummy data in the stores
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
 
-    //save it to disk
+    // Saves the default data
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
 
+    // Initialize websocket connection
+    WebsocketInterface.get();
 
-    // Set the channel on the playlist manager
+    clear();
+
+    // Start listening for UDP messages.  Handles sending/receiving all UDP data
+    udpModel = new UDPModel(this);
+
+    // Draw the on-screen visualization
+    onScreen = new OnScreen(this);
+
+    // The stage is the LED mapping
+    stage = new Stage(this);
+
+    // Get the configured stage value.  Controlled via environment variable
+    String stageType = AppSettings.get("STAGE_TYPE");
+
+    // eventually we might load a saved project which is a playlist and environment together
+    stage.buildStage(stageType);
+
+    // create channel
+    channel1 = new Channel(1);
+
+    // Tell the PlaylistManager which channel to play playlists in
     PlaylistManager.get().setChannel(this.channel1);
 
     // Play the playlist with id = 1, play the first item in the playlist, and start in the 'looping' state
@@ -184,22 +173,22 @@ public class TesseractMain extends PApplet {
     // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
     // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
     Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
-    this.sceneStore.addOrUpdate(sScan);
+    SceneStore.get().addOrUpdate(sScan);
 
     Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "videos/Acid Shapes __ Free Vj Loop.mp4");
-    this.sceneStore.addOrUpdate(sVid);
+    SceneStore.get().addOrUpdate(sVid);
 
     Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
-    this.sceneStore.addOrUpdate(sWash);
+    SceneStore.get().addOrUpdate(sWash);
 
     Scene sYellow = new Scene(1, "Yellow", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 1, 0, 0});
-    this.sceneStore.addOrUpdate(sYellow);
+    SceneStore.get().addOrUpdate(sYellow);
 
     Scene sPurple = new Scene(2, "Purple", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 1, 0});
-    this.sceneStore.addOrUpdate(sPurple);
+    SceneStore.get().addOrUpdate(sPurple);
 
     Scene sRed = new Scene(3, "Red", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 0, 0});
-    this.sceneStore.addOrUpdate(sRed);
+    SceneStore.get().addOrUpdate(sRed);
   }
   */
 
@@ -207,32 +196,32 @@ public class TesseractMain extends PApplet {
   private void createBuiltInPlaylists() {
     List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
 
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 5), 6),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 6), 6),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 4), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 7)
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 5), 6),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 6), 6),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 4), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 4), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 3), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 4), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 3), 5),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 7)
     ));
 
     Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
-    this.playlistStore.addOrUpdate(playlist1);
+    PlaylistStore.get().addOrUpdate(playlist1);
 
     List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 3), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), this.sceneStore.find("id", 2), 3)
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 3), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 3)
     ));
 
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
-    this.playlistStore.addOrUpdate(playlist2);
+    PlaylistStore.get().addOrUpdate(playlist2);
   }
   */
 
