@@ -15,9 +15,13 @@ import websocket.WebsocketInterface
 // State manager is responsible for managing application state and synchronizing state
 // between client(s) and server
 class StateManager {
-    public static StateManager instance;
+  public static StateManager instance;
 
-    WebsocketInterface ws = WebsocketInterface.get()
+  WebsocketInterface ws = WebsocketInterface.get()
+
+  public StateManager() {
+    this.registerHandlers()
+  }
 
   // Singleton
   public static StateManager get() {
@@ -79,11 +83,11 @@ class StateManager {
     // It doesn't matter if a bunch of these are null.  If the UI requests the data before we've played a playlist,
     // there won't be a currentPlaylist.  When we start playing a playlist, we will update the activeState in the UI
     Map activeState = [
-        playlistItemId               : playlistItemId,
-        playlistId                   : PlaylistManager.get().getCurrentPlaylist()?.getId(),
-        currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
-        playlistPlayState            : PlaylistManager.get().getCurrentPlaylist()?.getCurrentPlayState()?.name(),
-        clipControlValues            : this.getClipControlValues(this.getActiveClip())
+            playlistItemId               : playlistItemId,
+            playlistId                   : PlaylistManager.get().getCurrentPlaylist()?.getId(),
+            currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
+            playlistPlayState            : PlaylistManager.get().getCurrentPlaylist()?.getCurrentPlayState()?.name(),
+            clipControlValues            : this.getClipControlValues(this.getActiveClip())
     ]
 
     return activeState
@@ -98,11 +102,11 @@ class StateManager {
     println "[StateManager] Sending initial state to Client".cyan()
 
     Map data = [
-        clipData    : ClipMetadata.getClipMetadata(),
-        sceneData   : SceneStore.get().asJsonObj(),
-        playlistData: PlaylistStore.get().asJsonObj(),
-        mediaData   : MediaStore.get().asJsonObj(),
-        activeState : this.getActiveState(),
+            clipData    : ClipMetadata.getClipMetadata(),
+            sceneData   : SceneStore.get().asJsonObj(),
+            playlistData: PlaylistStore.get().asJsonObj(),
+            mediaData   : MediaStore.get().asJsonObj(),
+            activeState : this.getActiveState(),
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
@@ -114,8 +118,8 @@ class StateManager {
     println "[StateManager] Sending store refresh to Clients".cyan()
 
     Map data = [
-        sceneData   : SceneStore.get().asJsonObj(),
-        playlistData: PlaylistStore.get().asJsonObj(),
+            sceneData   : SceneStore.get().asJsonObj(),
+            playlistData: PlaylistStore.get().asJsonObj(),
     ]
 
     this.sendStateUpdate('storeRefresh', data)
@@ -129,8 +133,8 @@ class StateManager {
     println "[StateManager] Sending stateUpdate event: ${stateKey} ${value}".cyan()
 
     def data = [
-        key  : stateKey,
-        value: value,
+            key  : stateKey,
+            value: value,
     ]
 
     ws.broadcastMessage('stateUpdate', data)
@@ -178,68 +182,68 @@ class StateManager {
     clip."${fieldName}" = newValue
 
 //    println "Set clip field '${fieldName}' to value '${newValue}'"
+  }
+
+  // Create a new playlist object and shove it into the store, then write data to disk
+  public void handlePlaylistUpdate(Map inData) {
+    Playlist p = PlaylistStore.get().createPlaylistFromJson(inData)
+    PlaylistStore.get().addOrUpdate(p)
+    PlaylistStore.get().saveDataToDisk()
+  }
+
+  // Create a new scene object and shove it into the store, then write data to disk
+  // This can change the active scene, so send an activeState update to the frontend
+  public void handleSceneUpdate(Map inData) {
+    Scene s = SceneStore.get().createSceneFromJson(inData)
+    SceneStore.get().addOrUpdate(s)
+    SceneStore.get().saveDataToDisk()
+    this.sendActiveState()
+  }
+
+  // Create a new scene object and shove it into the store, then write data to disk
+  // This can change the active scene, so send an activeState update to the frontend
+  public void handleSceneDelete(Map inData) {
+    Scene s = SceneStore.get().find('id', inData.id)
+
+    if (s == null) {
+      throw new RuntimeException("[StateManager] Could not find scene to delete with id ${inData.id}")
     }
 
-    // Create a new playlist object and shove it into the store, then write data to disk
-    public void handlePlaylistUpdate(Map inData) {
-        Playlist p = PlaylistStore.get().createPlaylistFromJson(inData)
-        PlaylistStore.get().addOrUpdate(p)
-        PlaylistStore.get().saveDataToDisk()
+    SceneStore.get().remove(s)
+    SceneStore.get().saveDataToDisk()
+
+    // Need to also remove the Scene from all playlists
+    // This also handles playing the next item, since the current item won't exist
+    PlaylistManager.get().removeSceneFromPlaylists(s)
+
+    this.sendStoreRefresh()
+    this.sendActiveState()
+  }
+
+  // Handles updates to the 'play state'
+  // The playState is: whether we are playing, looping the current scene, or stopped, and the current playlistId and sceneId
+  public void handlePlayStateUpdate(Map inData) {
+    int playlistId = inData.activePlaylistId
+    String playlistItemId = inData.activePlaylistItemId
+    Playlist.PlayState playState = inData.playState as Playlist.PlayState
+
+    // if we're already playing the correct playlist and item and we're in the correct playstate, don't do anything
+    // this should prevent the playlist from restarting if we click it again in the UI and we're already on it
+    if (playlistId == PlaylistManager.get().getCurrentPlaylist().getId()
+            && playlistItemId == PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
+            && playState == PlaylistManager.get().getCurrentPlayState()) {
+      println "[StateManager] Already in the correct state, don't do anything"
+      return
     }
 
-    // Create a new scene object and shove it into the store, then write data to disk
-    // This can change the active scene, so send an activeState update to the frontend
-    public void handleSceneUpdate(Map inData) {
-        Scene s = SceneStore.get().createSceneFromJson(inData)
-        SceneStore.get().addOrUpdate(s)
-        SceneStore.get().saveDataToDisk()
-        this.sendActiveState()
+    // Just stop
+    if (playState == Playlist.PlayState.STOPPED) {
+      println "[StateManager] playState updated to STOPPED"
+      PlaylistManager.get().stop(playlistId, playlistItemId)
+      return
     }
 
-    // Create a new scene object and shove it into the store, then write data to disk
-    // This can change the active scene, so send an activeState update to the frontend
-    public void handleSceneDelete(Map inData) {
-        Scene s = SceneStore.get().find('id', inData.id)
-
-        if (s == null) {
-            throw new RuntimeException("[StateManager] Could not find scene to delete with id ${inData.id}")
-        }
-
-        SceneStore.get().remove(s)
-        SceneStore.get().saveDataToDisk()
-
-        // Need to also remove the Scene from all playlists
-        // This also handles playing the next item, since the current item won't exist
-        PlaylistManager.get().removeSceneFromPlaylists(s)
-
-        this.sendStoreRefresh()
-        this.sendActiveState()
-    }
-
-    // Handles updates to the 'play state'
-    // The playState is: whether we are playing, looping the current scene, or stopped, and the current playlistId and sceneId
-    public void handlePlayStateUpdate(Map inData) {
-        int playlistId = inData.activePlaylistId
-        String playlistItemId = inData.activePlaylistItemId
-        Playlist.PlayState playState = inData.playState as Playlist.PlayState
-
-        // if we're already playing the correct playlist and item and we're in the correct playstate, don't do anything
-        // this should prevent the playlist from restarting if we click it again in the UI and we're already on it
-        if (playlistId == PlaylistManager.get().getCurrentPlaylist().getId()
-                && playlistItemId == PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
-                && playState == PlaylistManager.get().getCurrentPlayState()) {
-            println "[StateManager] Already in the correct state, don't do anything"
-            return
-        }
-
-        // Just stop
-        if (playState == Playlist.PlayState.STOPPED) {
-            println "[StateManager] playState updated to STOPPED"
-            PlaylistManager.get().stop(playlistId, playlistItemId)
-            return
-        }
-
-        // If we made it this far, we should play the incoming playlist, item, and playstate
-        PlaylistManager.get().play(playlistId, playlistItemId, playState)
-    }
+    // If we made it this far, we should play the incoming playlist, item, and playstate
+    PlaylistManager.get().play(playlistId, playlistItemId, playState)
+  }
 }
