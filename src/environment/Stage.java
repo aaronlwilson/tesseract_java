@@ -67,21 +67,21 @@ public class Stage {
         _myMain.udpModel.rabbits[5] = new Rabbit("192.168.1.105", 6, "mac_address");
 
 
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,0,-72,0, 0 );
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,0,-72,0, 0, false );
 
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,(72*3),-72,0, 0 );
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,(72*3),-72,0, 0, true );
         nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,(72*6),-72,0, 0 );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,(72*6),-72,0, 0, false );
         nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,-(72*3),-72,0, 0 );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,-(72*3),-72,0, 0, false  );
         nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,-(72*6),-72,0, 0 );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,-(72*6),-72,0, 0, false );
         nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,-(72*9),-72,0, 0 );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,-(72*9),-72,0, 0, false );
         nodes = (Node[]) p.concat( nodes, planeNodes );
 
     }

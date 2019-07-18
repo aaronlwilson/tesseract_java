@@ -97,7 +97,7 @@ public class PixelPlane {
 
 
 
-    public Node[] buildPanel(Rabbit rabbit, int startIndex, int startX, int startY, int startZ, int rotation){
+    public Node[] buildPanel(Rabbit rabbit, int startIndex, int startX, int startY, int startZ, int rotation, boolean channelSwap){
 
         Node[] planeNodes = new Node[0];
         int nodeCounter = startIndex;
@@ -112,6 +112,10 @@ public class PixelPlane {
         for(int i=0; i<3; i++) {
             Tile tile = new Tile(rabbit, tileCounter);
             tile.rotation = 0;
+
+            //big hack for the old school pixel plane panel that has 8 of 9 tiles with rgb channels swapped
+            if(i>0 && channelSwap)
+                tile.channelSwap = true;
 
             rabbit.tileArray[tileCounter - 1] = tile;
 
@@ -132,6 +136,10 @@ public class PixelPlane {
             Tile tile = new Tile(rabbit, tileCounter);
             tile.rotation = 2;//upside down
 
+            //big hack for the old school pixel plane panel that has 8 of 9 tiles with rgb channels swapped
+            if(channelSwap)
+                tile.channelSwap = true;
+
             rabbit.tileArray[tileCounter - 1] = tile;
 
             Node[] tileNodes = tile.getNodeLayout(xTilePos, yTilePos, nodeCounter);
@@ -149,6 +157,10 @@ public class PixelPlane {
         //top 3
         for(int i=0; i<3; i++) {
             Tile tile = new Tile(rabbit, tileCounter);
+
+            //big hack for the old school pixel plane panel that has 8 of 9 tiles with rgb channels swapped
+            if(channelSwap)
+                tile.channelSwap = true;
 
             rabbit.tileArray[tileCounter - 1] = tile;
 
