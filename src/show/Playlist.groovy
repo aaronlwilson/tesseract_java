@@ -158,6 +158,7 @@ public class Playlist {
     PlaylistItem item = playlistItemId == null ? this.items[0] : this.items.find { it.id == playlistItemId }
 
     if (!item) {
+      //TODO I get runtime exceptions here
       throw new RuntimeException("[Playlist] ERROR!  Could not find the PlaylistItem on this playlist.  Make sure this PlaylistItem existings on this Playlist!")
     }
 
@@ -183,13 +184,18 @@ public class Playlist {
 
     this.setCurrentItem(item)
 
+    /*
     // todo: refactor
     // this is a giant hack to stop a previously playing video
     if (this.channel?.scene?.clip instanceof VideoClip) {
-      ((VideoClip)this.channel?.scene?.clip)?._movie?.stop();
+      ((VideoClip)this.channel?.scene?.clip)?.movie?.stop();
     }
+    */
+
 
     this.channel.setScene(item.scene, false, 10);
+
+    //wrap this in a "debug"
     System.out.println("[Playlist] Playing scene '${item.scene.getDisplayName()}' on playlist '${this.displayName}'");
 
     // Schedule the next item
@@ -200,6 +206,8 @@ public class Playlist {
 
     // Send a 'stateUpdated' event to the UI.  we will need to send one of these whenever state changes and we need to update the frontend
     // if we don't send it here, the UI won't get the update when the timer triggers this function
+
+    //This will throw an exception if the clipMetaData doesn't match the clipId
     StateManager.get().sendActiveState()
   }
 }

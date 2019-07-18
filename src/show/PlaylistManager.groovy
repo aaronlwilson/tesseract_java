@@ -80,7 +80,8 @@ public class PlaylistManager {
     Playlist p = this.getInitialPlaylist(playlistId)
 
     if (this.currentPlaylist != p) {
-      println "[PlaylistManager: Switching playlist from ${this.currentPlaylist.displayName} to ${this.currentPlaylist.displayName}"
+      //this should be wrapped by a "debug" setting
+      //println "[PlaylistManager: Switching playlist from ${this.currentPlaylist.displayName} to ${this.currentPlaylist.displayName}"
       this.currentPlaylist = p;
       this.channel.unsetScene()
     }
@@ -94,7 +95,8 @@ public class PlaylistManager {
   public play(Integer playlistId = null, String playlistItemId = null, PlayState playState) {
     Playlist p = this.getInitialPlaylist(playlistId)
 
-    println "[PlaylistManager] Playing playlist '${p.getDisplayName()}'. PlayState: ${playState}"
+    //this should be wrapped by a "debug" setting
+    //println "[PlaylistManager] Playing playlist '${p.getDisplayName()}'. PlayState: ${playState}"
 
     if (this.currentPlaylist != p) {
       // Unset the channel on the old playlist, and set it on the new playlist

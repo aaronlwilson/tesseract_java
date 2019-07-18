@@ -56,13 +56,15 @@ public class Stage {
         PixelPlane plane = new PixelPlane(p);
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
+        _myMain.udpModel.rabbits = new Rabbit[6];
+
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.102", 1, "mac_address");
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.105", 2, "mac_address");
-        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.103", 3, "mac_address");
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.104", 4, "mac_address");
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address");
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.106", 6, "mac_address");
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.1.100", 1, "mac_address");
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.1.101", 2, "mac_address");
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.1.102", 3, "mac_address");
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.1.103", 4, "mac_address");
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.1.104", 5, "mac_address");
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.1.105", 6, "mac_address");
 
 
         nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,0,-72,0, 0 );
@@ -89,12 +91,15 @@ public class Stage {
 
         int counter = 0;
 
+        int h = 4; //number of teensies
+        _myMain.udpModel.teensies = new Teensy[h];
+
         _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
         _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
         _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
 
-        int h = 4; //number of teensies
+
         int w = 8; //number of pins per OCTO
 
         nodes = new Node[h*w];

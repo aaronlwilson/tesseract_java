@@ -19,15 +19,14 @@ public class VideoClip extends AbstractClip{
     private int _cols, _rows;
 
     // Step 1. Declare a Movie object.
-    public Movie _movie;
+    public Movie movie;
 
     private int _videoW = 640;
     private int _videoH = 360;
 
 
     //constructor
-    public VideoClip(String theClipName) {
-        super(theClipName);
+    public VideoClip() {
     }
 
     public void init() {
@@ -51,22 +50,22 @@ public class VideoClip extends AbstractClip{
 
         this.filename = filename;
 
-        if (_movie != null) {
-            _movie.stop();
+        if (movie != null) {
+            movie.stop();
         }
 
         // Step 2. Initialize Movie object. The file should live in the data/videos folder.
-        _movie = new Movie(_myMain, "videos/" + filename);
+        movie = new Movie(_myMain, "videos/" + filename);
     }
 
     public void run() {
-        if(_movie != null) {
-            if (!_movie.playbin.isPlaying()) {
+        if(movie != null) {
+            if (!movie.playbin.isPlaying()) {
                 // Step 3. Start playing movie. To play just once play() can be used instead.
-                _movie.loop();
+                movie.loop();
             }
 
-            _movie.loadPixels();
+            movie.loadPixels();
         }
     }
 
@@ -90,11 +89,11 @@ public class VideoClip extends AbstractClip{
 
         int loc = vidX + vidY * _videoW;
         int c = 0;
-        if(_movie != null) {
+        if(movie != null) {
             //make sure we don't overrun the array which can happen when pixels go offscreen
-            if (loc >= 0 && loc < _movie.pixels.length) {
+            if (loc >= 0 && loc < movie.pixels.length) {
                 // This is to handle a case when we are switching the video file and don't want to get exceptions
-                c = _movie.pixels[loc];
+                c = movie.pixels[loc];
             }
         }
 
@@ -107,7 +106,10 @@ public class VideoClip extends AbstractClip{
     }
 
     public void die() {
-        _movie.stop();
+        movie.stop();
+
+        System.out.printf("VIDEO DIE \n");
+
         super.die();
     }
 
