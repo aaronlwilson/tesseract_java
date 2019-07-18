@@ -7,7 +7,6 @@ import processing.video.Movie;
 import output.*;
 import environment.*;
 import model.*;
-import state.StateManager;
 import stores.PlaylistStore;
 import stores.SceneStore;
 import util.AppSettings;
@@ -31,11 +30,8 @@ public class TesseractMain extends PApplet {
   public static final int SOLID = 1;
   public static final int COLORWASH = 2;
   public static final int VIDEO = 3;
-
-
-  public static String[] clipNames = {
-      "Node Scan", "Solid", "Color Wash", "Video"
-  };
+  public static final int PARTICLE = 4;
+  public static final int PERLINNOISE = 5;
 
   private OnScreen onScreen;
   public UDPModel udpModel;
@@ -106,10 +102,11 @@ public class TesseractMain extends PApplet {
     PlaylistManager.get().setChannel(this.channel1);
 
     // Play the playlist with id = 1, play the first item in the playlist, and start in the 'looping' state
-    PlaylistManager.get().play(1, null, Playlist.PlayState.LOOP_SCENE);
+    PlaylistManager.get().play(2, null, Playlist.PlayState.LOOP_SCENE);
 
     // The shutdown hook will let us clean up when the application is killed
     createShutdownHook();
+
   }
 
   @Override
@@ -146,6 +143,8 @@ public class TesseractMain extends PApplet {
     //push packets out to LEDS
     //udpModel.sendTest();
 
+
+    //PUT BACK
     udpModel.send();
   }
 
@@ -157,68 +156,16 @@ public class TesseractMain extends PApplet {
 
 
     //apply channel brightness
-    //rgb1[0] = int(rgb1[0] * (channelCanvas1.channelBrightness/100) * (channelCanvas1.rBrightness/100));
-    //rgb1[1] = int(rgb1[1] * (channelCanvas1.channelBrightness/100) * (channelCanvas1.gBrightness/100));
-    //rgb1[2] = int(rgb1[2] * (channelCanvas1.channelBrightness/100) * (channelCanvas1.bBrightness/100));
+    rgb1[0] = (int)rgb1[0];
+    rgb1[1] = (int)rgb1[1];
+    rgb1[2] = (int)rgb1[2];
 
-    //mix the 2 channels together
+    //TODO mix the 2 channels together
 
     return rgb1;
 
   }//end render node
 
-  private void createBuiltInScenes() {
-    // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
-    // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
-    Scene sScan = new Scene(6, "Node Scanner", TesseractMain.NODESCAN, new float[]{0, 0, 0, 0, 0, 0, 0});
-    SceneStore.get().addOrUpdate(sScan);
-
-    Scene sVid = new Scene(5, "First Video", TesseractMain.VIDEO, new float[]{0, 0, 0, 0, 0, 0, 0}, "videos/Acid Shapes __ Free Vj Loop.mp4");
-    SceneStore.get().addOrUpdate(sVid);
-
-    Scene sWash = new Scene(4, "Color Wash", TesseractMain.COLORWASH, new float[]{0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f});
-    SceneStore.get().addOrUpdate(sWash);
-
-    Scene sYellow = new Scene(1, "Yellow", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 1, 0, 0});
-    SceneStore.get().addOrUpdate(sYellow);
-
-    Scene sPurple = new Scene(2, "Purple", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 1, 0});
-    SceneStore.get().addOrUpdate(sPurple);
-
-    Scene sRed = new Scene(3, "Red", TesseractMain.SOLID, new float[]{0, 0, 0, 1, 0, 0, 0});
-    SceneStore.get().addOrUpdate(sRed);
-  }
-
-  private void createBuiltInPlaylists() {
-    List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
-
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 5), 6),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 6), 6),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 4), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 4), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 3), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 4), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 3), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 7)
-    ));
-
-    Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
-    PlaylistStore.get().addOrUpdate(playlist1);
-
-    List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 3), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 1), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("id", 2), 3)
-    ));
-
-    Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
-    PlaylistStore.get().addOrUpdate(playlist2);
-  }
 
   private void createShutdownHook() {
     Runtime.getRuntime().addShutdownHook(new Thread() {

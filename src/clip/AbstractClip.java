@@ -16,30 +16,26 @@ public class AbstractClip  {
 
   // Params
   // all parameters should be normalized to a range 0.00 - 1.00
-  public float p1, p2, p3, p4, p5, p6, p7; // p 1-3 knobs, p 4-7 sliders
+  public float p1, p2, p3, p4, p5, p6, p7, p8;
   public String filename;
 
   protected float[] paramDefaults = new float[7];
 
   //constructor
-  public AbstractClip(String theClipName) {
-    clipName = theClipName;
+  public AbstractClip() {
+
   }
 
 
   // ---- TO BE OVERWRITTEN by Clip Class ------
   public void init() {
     _myMain = app.TesseractMain.getMain();
-    //animationCanvas.getChannelCanvas(channel).resetAllControllers();
   }
 
   public void run() {// animation logic that runs per frame
 
   }
 
-  public void loadFile(String filePath) {
-
-  }
 
   public void die() {
 
@@ -59,11 +55,5 @@ public class AbstractClip  {
     return new int[3];
   }
 
-  public boolean setParamDefault(int param, int value) {
-    if(param < 1 || param > 6){
-      return false;
-    }
-    paramDefaults[param-1] = value;
-    return true;
-  }
+
 }

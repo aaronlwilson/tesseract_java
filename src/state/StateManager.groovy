@@ -83,11 +83,11 @@ class StateManager {
     // It doesn't matter if a bunch of these are null.  If the UI requests the data before we've played a playlist,
     // there won't be a currentPlaylist.  When we start playing a playlist, we will update the activeState in the UI
     Map activeState = [
-        playlistItemId               : playlistItemId,
-        playlistId                   : PlaylistManager.get().getCurrentPlaylist()?.getId(),
-        currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
-        playlistPlayState            : PlaylistManager.get().getCurrentPlaylist()?.getCurrentPlayState()?.name(),
-        clipControlValues            : this.getClipControlValues(this.getActiveClip())
+            playlistItemId               : playlistItemId,
+            playlistId                   : PlaylistManager.get().getCurrentPlaylist()?.getId(),
+            currentSceneDurationRemaining: PlaylistManager.get().getCurrentSceneDurationRemaining(),
+            playlistPlayState            : PlaylistManager.get().getCurrentPlaylist()?.getCurrentPlayState()?.name(),
+            clipControlValues            : this.getClipControlValues(this.getActiveClip())
     ]
 
     return activeState
@@ -102,11 +102,11 @@ class StateManager {
     println "[StateManager] Sending initial state to Client".cyan()
 
     Map data = [
-        clipData    : ClipMetadata.getClipMetadata(),
-        sceneData   : SceneStore.get().asJsonObj(),
-        playlistData: PlaylistStore.get().asJsonObj(),
-        mediaData   : MediaStore.get().asJsonObj(),
-        activeState : this.getActiveState(),
+            clipData    : ClipMetadata.getClipMetadata(),
+            sceneData   : SceneStore.get().asJsonObj(),
+            playlistData: PlaylistStore.get().asJsonObj(),
+            mediaData   : MediaStore.get().asJsonObj(),
+            activeState : this.getActiveState(),
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
@@ -118,8 +118,8 @@ class StateManager {
     println "[StateManager] Sending store refresh to Clients".cyan()
 
     Map data = [
-        sceneData   : SceneStore.get().asJsonObj(),
-        playlistData: PlaylistStore.get().asJsonObj(),
+            sceneData   : SceneStore.get().asJsonObj(),
+            playlistData: PlaylistStore.get().asJsonObj(),
     ]
 
     this.sendStateUpdate('storeRefresh', data)
@@ -133,8 +133,8 @@ class StateManager {
     println "[StateManager] Sending stateUpdate event: ${stateKey} ${value}".cyan()
 
     def data = [
-        key  : stateKey,
-        value: value,
+            key  : stateKey,
+            value: value,
     ]
 
     ws.broadcastMessage('stateUpdate', data)
@@ -230,8 +230,8 @@ class StateManager {
     // if we're already playing the correct playlist and item and we're in the correct playstate, don't do anything
     // this should prevent the playlist from restarting if we click it again in the UI and we're already on it
     if (playlistId == PlaylistManager.get().getCurrentPlaylist().getId()
-        && playlistItemId == PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
-        && playState == PlaylistManager.get().getCurrentPlayState()) {
+            && playlistItemId == PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
+            && playState == PlaylistManager.get().getCurrentPlayState()) {
       println "[StateManager] Already in the correct state, don't do anything"
       return
     }

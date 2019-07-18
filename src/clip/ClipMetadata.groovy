@@ -50,6 +50,36 @@ class ClipMetadata {
             ],
         ],
         [
+                displayName: 'Particle Clip',
+                clipId     : 'particle_clip',
+                controls   : [
+                        [displayName: 'Size',         type: 'slider', defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Ramp',         type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Speed',        type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'Acceleration', type: 'slider', defaultValue: 0.0, fieldName: 'p4'],
+                        [displayName: 'Density',      type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
+                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
+                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
+
+                ],
+        ],
+        [
+                displayName: 'Perlin Noise',
+                clipId     : 'perlin_noise',
+                controls   : [
+                        [displayName: 'Speed',      type: 'slider',   defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Scale',      type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Threshold',  type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'Lod',        type: 'slider', defaultValue: 0.5, fieldName: 'p4'],
+                        [displayName: 'Falloff',    type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
+                        [displayName: 'X',          type: 'knob', defaultValue: 0.0, fieldName: 'p6'],
+                        [displayName: 'Y',          type: 'knob', defaultValue: 0.0, fieldName: 'p7'],
+                        [displayName: 'Z',          type: 'knob', defaultValue: 0.0, fieldName: 'p8']
+
+                ],
+        ],
+        [
             displayName: 'Video',
             clipId     : 'video',
             controls   : [

@@ -10,8 +10,8 @@ public class NodeScanClip extends AbstractClip {
     private int _scanNode;
 
     //constructor
-    public NodeScanClip(String theClipName) {
-        super(theClipName);
+    public NodeScanClip() {
+
     }
 
     public void init() {
