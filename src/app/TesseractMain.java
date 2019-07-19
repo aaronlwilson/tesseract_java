@@ -1,23 +1,18 @@
 package app;
 
-
-import processing.core.*;
+import environment.Node;
+import environment.Stage;
+import model.Channel;
+import output.UDPModel;
+import processing.core.PApplet;
 import processing.video.Movie;
-
-import output.*;
-import environment.*;
-import model.*;
+import show.Playlist;
+import show.PlaylistManager;
 import stores.PlaylistStore;
 import stores.SceneStore;
 import util.AppSettings;
 import util.Util;
-import show.*;
 import websocket.WebsocketInterface;
-
-
-import java.io.File;
-import java.util.*;
-
 
 public class TesseractMain extends PApplet {
 
