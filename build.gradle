@@ -18,30 +18,36 @@ sourceSets {
 }
 
 dependencies {
-  // Declare dependencies here
-  compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
+  // Groovy - used to compile Groovy projects.  This is what allows IntelliJ to provide groovy code completion & introspection
   compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.6'
 
+  // Common lib for logging
   // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
 
+  // Common lib for logging
   // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
   compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.26'
 
+  // Websocket library used to communicate with the UI
+  compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
+
+  // Core Processing Library
   // https://mvnrepository.com/artifact/org.processing/core
   compile group: 'org.processing', name: 'core', version: '3.3.6'
 
+  // OpenGL Java Bindings
+  // https://mvnrepository.com/artifact/org.jogamp.jogl/jogl-all-main
+  compile group: 'org.jogamp.jogl', name: 'jogl-all-main', version: '2.3.2'
+
   // Include all jar files in 'lib' automatically
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
-
-  // https://mvnrepository.com/artifact/org.processing/video
-  compile group: 'org.processing', name: 'video', version: '3.3.7'
 }
 
 task downloadProcessingVideoLibrary(type: Download) {
   println "Downloading processing video library"
-  src 'https://github.com/processing/processing-video/releases/download/latest/video.zip'
-  dest new File("${rootDir}/tmp", 'processing-video-lib.zip')
+  src 'https://github.com/processing/processing-video/releases/download/r5-v2.0-beta3/video-2.0-beta3.zip'
+  dest new File("${rootDir}/tmp", 'processing-video-lib-v2-beta-release-5.zip')
   onlyIfModified true
 }
 
