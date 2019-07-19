@@ -24,6 +24,8 @@ public class VideoClip extends AbstractClip{
     private int _videoW = 640;
     private int _videoH = 360;
 
+    // We have to define the field here too or Groovy tries to call setFilename when we do 'this.filename = filename' below, leading to an infinite loop.  Annoying
+    public filename;
 
     //constructor
     public VideoClip() {
@@ -91,9 +93,18 @@ public class VideoClip extends AbstractClip{
         int c = 0;
         if(movie != null) {
             //make sure we don't overrun the array which can happen when pixels go offscreen
+            // This is to handle a case when we are switching the video file and don't want to get exceptions
             if (loc >= 0 && loc < movie.pixels.length) {
-                // This is to handle a case when we are switching the video file and don't want to get exceptions
-                c = movie.pixels[loc];
+                // Unfortunately, with the upgraded video library, the 'pixels' array on the 'movie' object is never filled with data (all 0s)
+                //
+                // The movie object has no 'bufferSync' property, so it never fills the 'pixel' array with the pixes
+                // stored in 'copyPixels' (I stepped thru the code w/ a debugger).  It doesn't have a 'bufferSync' because
+                // an internal call to 'this.parent.g.getCache(this);' returns null
+                // I have no clue why any of this should be the case, or why the behavior differs from the v1 release of the library,
+                // but using copyPixels works for our purposes.  The file needs to be a .groovy file, so we can access the 'protected' field 'copyPixels'.
+                //
+                // Even more confused as to why the sign of the int is wrong, but negating the value seems to make the colors look correct
+                c = -movie.copyPixels[loc];
             }
         }
 
