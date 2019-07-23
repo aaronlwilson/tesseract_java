@@ -32,10 +32,6 @@ dependencies {
   // Websocket library used to communicate with the UI
   compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
 
-  // Core Processing Library
-  // https://mvnrepository.com/artifact/org.processing/core
-  compile group: 'org.processing', name: 'core', version: '3.3.6'
-
   // OpenGL Java Bindings
   // https://mvnrepository.com/artifact/org.jogamp.jogl/jogl-all-main
   compile group: 'org.jogamp.jogl', name: 'jogl-all-main', version: '2.3.2'
@@ -44,17 +40,74 @@ dependencies {
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
 }
 
-task downloadProcessingVideoLibrary(type: Download) {
-  println "Downloading processing video library"
-  src 'https://github.com/processing/processing-video/releases/download/r5-v2.0-beta3/video-2.0-beta3.zip'
-  dest new File("${rootDir}/tmp", 'processing-video-lib-v2-beta-release-5.zip')
-  onlyIfModified true
+task downloadProcessingVideoLibrary() {
+  doLast {
+    download {
+      println "Downloading processing video library"
+      src 'https://github.com/processing/processing-video/releases/download/r5-v2.0-beta3/video-2.0-beta3.zip'
+      dest new File("${rootDir}/tmp", 'processing-video-lib-v2-beta-release-5.zip')
+      onlyIfModified true
+    }
+  }
 }
 
-task unzipProcessingVideoLibrary(dependsOn: downloadProcessingVideoLibrary, type: Copy) {
-  println "Unzipping processing video library"
-  from zipTree(downloadProcessingVideoLibrary.dest)
-  into "${rootDir}/lib"
+task unzipProcessingVideoLibrary(dependsOn: downloadProcessingVideoLibrary) {
+  doLast {
+    copy {
+      println "Unzipping processing video library"
+      from zipTree("${rootDir}/tmp/processing-video-lib-v2-beta-release-5.zip")
+      into "${rootDir}/lib"
+    }
+  }
+}
+
+task downloadProcessingUdpLibrary() {
+  doLast {
+    download {
+      println "Downloading processing udp library"
+      src 'http://ubaa.net/shared/processing/udp/udp.zip'
+      dest new File("${rootDir}/tmp", 'udp.zip')
+      onlyIfModified true
+    }
+  }
+}
+
+task unzipProcessingUdpLibrary(dependsOn: downloadProcessingUdpLibrary) {
+  doLast {
+    copy {
+      println "Unzipping processing udp library"
+      from zipTree("${rootDir}/tmp/udp.zip")
+      into "${rootDir}/lib"
+    }
+  }
+}
+
+task downloadProcessingCoreLibrary() {
+  doLast {
+    download {
+      println "Downloading processing core library"
+      src 'http://download.processing.org/processing-3.5.3-linux64.tgz'
+      dest new File("${rootDir}/tmp", 'processing-3.5.3-linux64.tgz')
+      onlyIfModified true
+    }
+  }
+}
+
+task untarProcessingCoreLibrary(dependsOn: downloadProcessingCoreLibrary) {
+  doLast {
+    copy {
+      println "Untarring processing core library"
+      from tarTree("${rootDir}/tmp/processing-3.5.3-linux64.tgz")
+      into "${rootDir}/tmp"
+    }
+
+    copy {
+      from("${rootDir}/tmp/processing-3.5.3/core/library/core.jar")
+      into("${rootDir}/lib/processing-core")
+    }
+
+    delete "${rootDir}/tmp/processing-3.5.3"
+  }
 }
 
 // To do this, I googled 'gradle build fat jar' and copied this from the first link (with a couple modifications)
@@ -67,5 +120,3 @@ task fatJar(type: Jar) {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   with jar
 }
-
-build.dependsOn unzipProcessingVideoLibrary
