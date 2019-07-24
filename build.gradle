@@ -110,6 +110,17 @@ task untarProcessingCoreLibrary(dependsOn: downloadProcessingCoreLibrary) {
   }
 }
 
+task downloadJoglJar() {
+  doLast {
+    download {
+      println "Downloading jogl jar"
+      src 'https://public-deps.s3-us-west-2.amazonaws.com/jogamp-2.3.2-patched.jar'
+      dest new File("${rootDir}/lib/jogl-2.3.2-patched", 'jogamp-2.3.2-patched.jar')
+      onlyIfModified true
+    }
+  }
+}
+
 // To do this, I googled 'gradle build fat jar' and copied this from the first link (with a couple modifications)
 // https://www.baeldung.com/gradle-fat-jar
 task fatJar(type: Jar) {
@@ -120,3 +131,6 @@ task fatJar(type: Jar) {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   with jar
 }
+
+// Force downloading the dependencies before we compile the code
+compileGroovy.dependsOn unzipProcessingVideoLibrary, unzipProcessingUdpLibrary, untarProcessingCoreLibrary, downloadJoglJar
