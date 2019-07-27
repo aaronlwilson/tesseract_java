@@ -227,7 +227,7 @@ class StateManager {
     String playlistItemId = inData.activePlaylistItemId
     Playlist.PlayState playState = inData.playState as Playlist.PlayState
 
-    // if we're already playing the correct playlist and item and we're in the correct playstate, don't do anything
+    // if we're already playing the correct playlist and item and we're in the correct playState, don't do anything
     // this should prevent the playlist from restarting if we click it again in the UI and we're already on it
     if (playlistId == PlaylistManager.get().getCurrentPlaylist().getId()
             && playlistItemId == PlaylistManager.get().getCurrentPlaylist().getCurrentItem()?.getId()
@@ -243,7 +243,7 @@ class StateManager {
       return
     }
 
-    // If we made it this far, we should play the incoming playlist, item, and playstate
+    // If we made it this far, we should play the incoming playlist, item, and playState
     PlaylistManager.get().play(playlistId, playlistItemId, playState)
   }
 }

@@ -8,6 +8,7 @@ import processing.core.PApplet;
 import processing.video.Movie;
 import show.Playlist;
 import show.PlaylistManager;
+import stores.ConfigStore;
 import stores.PlaylistStore;
 import stores.SceneStore;
 import util.AppSettings;
@@ -70,9 +71,13 @@ public class TesseractMain extends PApplet {
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
 
+    // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install
+    ConfigStore.get();
+
     // Initialize websocket connection
     WebsocketInterface.get();
 
+    // Clear screen
     clear();
 
     // Start listening for UDP messages.  Handles sending/receiving all UDP data
@@ -96,12 +101,15 @@ public class TesseractMain extends PApplet {
     // Tell the PlaylistManager which channel to play playlists in
     PlaylistManager.get().setChannel(this.channel1);
 
-    // Play the playlist with id = 1, play the first item in the playlist, and start in the 'looping' state
-    PlaylistManager.get().play(2, null, Playlist.PlayState.LOOP_SCENE);
+    // Get initial playlist & playState from config
+    Playlist initialPlaylist = PlaylistStore.get().find("displayName", ConfigStore.get().getString("initialPlaylist"));
+    Playlist.PlayState initialPlayState = Util.getPlayState(ConfigStore.get().getString("initialPlayState"));
 
-    // The shutdown hook will let us clean up when the application is killed
+    // Play the playlist w/ the playState defined in our configuration
+    PlaylistManager.get().play(initialPlaylist.getId(), null, initialPlayState);
+
+    // The shutdown hook will let us clean up when the application is killed.  It is very important to clean up the websocket server so we don't leave the port in use
     createShutdownHook();
-
   }
 
   @Override
