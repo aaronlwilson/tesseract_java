@@ -3,6 +3,7 @@ plugins {
 }
 
 // This allows us to compile either groovy or java from the same set of directories
+apply plugin: 'java'
 apply plugin: 'groovy'
 
 repositories {
@@ -42,6 +43,41 @@ dependencies {
 
   // Include all jar files in 'lib' automatically
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
+
+  //////////////// For unit/integration tests
+
+  // https://mvnrepository.com/artifact/junit/junit
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+
+  // Mocking library
+  // https://mvnrepository.com/artifact/org.mockito/mockito-core
+  testCompile group: 'org.mockito', name: 'mockito-core', version: '2.28.2'
+
+  // Lets us mock even harder.  To the max
+  // https://mvnrepository.com/artifact/org.powermock/powermock-core
+  testCompile group: 'org.powermock', name: 'powermock-core', version: '2.0.2'
+
+  // https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4
+  testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.2'
+
+  // https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2
+  testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.2'
+
+  // Hamcrest junit matchers
+  // https://mvnrepository.com/artifact/org.hamcrest/java-hamcrest
+  testCompile group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
+
+  // Hamcrest junit matchers
+  // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit
+  testCompile group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0'
+
+  // Allows capturing logs and exit status from commands
+  // https://mvnrepository.com/artifact/com.github.stefanbirkner/system-rules
+  testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.19.0'
+
+  // Some random io utilities
+  // https://mvnrepository.com/artifact/commons-io/commons-io
+  compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
 
 task downloadProcessingVideoLibrary() {
@@ -134,4 +170,9 @@ task fatJar(type: Jar) {
   baseName = 'TesseractFatJar'
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   with jar
+}
+
+test {
+  dependsOn cleanTest
+  testLogging.showStandardStreams = true
 }
