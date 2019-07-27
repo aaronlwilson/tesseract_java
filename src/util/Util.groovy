@@ -136,29 +136,29 @@ public class Util {
   public static void createBuiltInPlaylists() {
     // Arrays.asList makes an immutable list, creating a new LinkedList with those items will make it mutable which we need
     List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Color Wash'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 5),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 7)
+        new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 4),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 10),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Red', 3),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 4),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 4),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Purple', 4),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 4),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Red', 3),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 5),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 4),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Purple', 5),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Red', 7)
     ));
 
     Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
     PlaylistStore.get().addOrUpdate(playlist1);
 
     List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'PerlinNoise'), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Particles'), 10),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
-        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4)
+        new PlaylistItem(UUID.randomUUID().toString(), 'PerlinNoise', 10),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Particles', 10),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Purple', 4),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Red', 3),
+        new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 4)
     ));
 
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
@@ -171,7 +171,7 @@ public class Util {
     if (allVideoScenes.size() > 0) {
       // Create playlist of all videos
       List<PlaylistItem> playlist3Items = allVideoScenes
-          .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene, 60 * 1) }
+          .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene.getDisplayName(), 60 * 1) }
 
       PlaylistStore.get().addOrUpdate(new Playlist(3, "All Videos", 60 * 1, playlist3Items))
     } else {
@@ -198,6 +198,8 @@ public class Util {
         new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
     ]
 
+    scenes.each { SceneStore.get().addOrUpdate(it); }
+
     // Check to see if we have videos before blindly trying to create scenes.  TODO: improve this logic.  do better at removing scenes for video files that no longer exist
     List<String> allVideos = MediaStore.get().getMediaOfType('videos')
     if (allVideos.size() > 0) {
@@ -210,13 +212,15 @@ public class Util {
       }
 
       scenes.addAll(videoScenes)
-
-      scenes.each { SceneStore.get().addOrUpdate(it); }
     } else {
       // remove all video scenes.  this should be improved, we should remove any scenes for videos that don't exist
       SceneStore.get().getItems()
           .findAll { scene -> scene.clip.clipId == 'video' }
           .each { scene -> SceneStore.get().remove(scene) }
     }
+  }
+
+  public static void throwException(String msg) {
+    throw new RuntimeException(msg)
   }
 }
