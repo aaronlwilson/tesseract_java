@@ -3,6 +3,7 @@ package util
 import app.TesseractMain
 import groovy.json.JsonBuilder
 import show.Playlist
+import show.Playlist.PlayState
 import show.PlaylistItem
 import show.Scene
 import stores.MediaStore
@@ -222,5 +223,10 @@ public class Util {
 
   public static void throwException(String msg) {
     throw new RuntimeException(msg)
+  }
+
+  // Transform a string playState to the enum.  Way easier to do it here than in Java
+  public static PlayState getPlayState(String playStateStr) {
+    playStateStr as PlayState
   }
 }

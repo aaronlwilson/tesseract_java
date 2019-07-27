@@ -32,6 +32,10 @@ dependencies {
   // Websocket library used to communicate with the UI
   compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
 
+  // YAML parser used for reading config files
+  // https://mvnrepository.com/artifact/org.yaml/snakeyaml
+  compile group: 'org.yaml', name: 'snakeyaml', version: '1.24'
+
   // Include all jar files in 'lib' automatically
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
 }

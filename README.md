@@ -73,3 +73,29 @@ Running `./bin/start_macos.sh` will automatically build the jar if it doesn't ex
 ### linux
 
 The process is largely the same for Linux.  The same scripts may even work, but they are untested on Linux.
+
+## Configuration
+
+Tesseract Java is configured via a YAML configuration file named 'tesseract-config.yml'.
+
+By default, it will look in the location `./config/tesseract-config.yml`.  If it doesn't exist, the app will print a warning and use default values.
+
+You can pass in a path to your configuration file via the system property `configPath` (e.g., `java -DconfigPath=/path/to/config/tesseract-config.yml`).
+
+The repo contains a configuration file in `<repo>/config/tesseract-config.yml` that you can use as an example.  This is the file that will be used when running the application via your IDE.
+
+### Configuration options
+
+#### initialPlaylist
+
+This option controls which playlist will load by default when the application starts.  Specify the 'displayName' property of the playlist.  If the playlist doesn't exist, the application will throw an error and exit.  These values are case-sensitive.
+
+#### initialPlayState
+
+This option controls the initial 'playState' of the application.  Applicable values are `loop_scene`, `playing`, or `stopped`.  These values are case-insensitive and will be converted to all caps internally.
+
+`loop_scene` will simply continue playing the first scene continuously forever.
+
+`playing` will advance scenes in the playlist according to the specified duration.
+
+`stopped` will not play anything (the LEDs will be dark)
