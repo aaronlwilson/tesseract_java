@@ -13,14 +13,14 @@ public class Util {
 
   // This function will add several functions to the String class, allowing us to print messages w/ colors
   public static enableColorization() {
-    String.metaClass.color_code = { code -> "${(char)27}[${code}m" }
-    String.metaClass.colorize   = { code -> "${delegate.color_code(code)}${delegate.replace(delegate.color_code(0), delegate.color_code(code))}${delegate.color_code(0)}" }
-    String.metaClass.red        = { -> delegate.colorize(31) }
-    String.metaClass.green      = { -> delegate.colorize(32) }
-    String.metaClass.yellow     = { -> delegate.colorize(33) }
-    String.metaClass.blue       = { -> delegate.colorize(34) }
-    String.metaClass.magenta    = { -> delegate.colorize(35) }
-    String.metaClass.cyan       = { -> delegate.colorize(36) }
+    String.metaClass.color_code = { code -> "${(char) 27}[${code}m" }
+    String.metaClass.colorize = { code -> "${delegate.color_code(code)}${delegate.replace(delegate.color_code(0), delegate.color_code(code))}${delegate.color_code(0)}" }
+    String.metaClass.red = { -> delegate.colorize(31) }
+    String.metaClass.green = { -> delegate.colorize(32) }
+    String.metaClass.yellow = { -> delegate.colorize(33) }
+    String.metaClass.blue = { -> delegate.colorize(34) }
+    String.metaClass.magenta = { -> delegate.colorize(35) }
+    String.metaClass.cyan = { -> delegate.colorize(36) }
   }
 
   // Ensure data dir exists
@@ -73,6 +73,12 @@ public class Util {
   // returns relative paths to all files in the directory (relative to the root directory)
   public static getMediaFileList(String type) {
     String rootPath = "${Util.getRootDataDir()}/${type}"
+
+    // Return empty array if video directory doesn't exist
+    if (!new File(rootPath).isDirectory()) {
+      return []
+    }
+
     List<String> res = []
 
     new File(rootPath).eachFileRecurse(groovy.io.FileType.FILES) { File file ->
@@ -90,12 +96,12 @@ public class Util {
   public static int getClipEnumValue(String clipId) {
     // map of clipId to ENUM value
     Map clipIdMap = [
-        color_wash : TesseractMain.COLORWASH,
-        node_scan  : TesseractMain.NODESCAN,
-        solid_color: TesseractMain.SOLID,
-        video     : TesseractMain.VIDEO,
-        particle_clip     : TesseractMain.PARTICLE,
-        perlin_noise     : TesseractMain.PERLINNOISE,
+        color_wash   : TesseractMain.COLORWASH,
+        node_scan    : TesseractMain.NODESCAN,
+        solid_color  : TesseractMain.SOLID,
+        video        : TesseractMain.VIDEO,
+        particle_clip: TesseractMain.PARTICLE,
+        perlin_noise : TesseractMain.PERLINNOISE,
     ]
 
     Integer enumVal = clipIdMap[clipId]
@@ -148,22 +154,32 @@ public class Util {
     PlaylistStore.get().addOrUpdate(playlist1);
 
     List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
-            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'PerlinNoise'), 10),
-            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Particles'), 10),
-            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
-            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
-            new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4)
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'PerlinNoise'), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Particles'), 10),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Red'), 3),
+        new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Yellow'), 4)
     ));
 
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
     PlaylistStore.get().addOrUpdate(playlist2);
 
-    // Create playlist of all videos
-    List<PlaylistItem> playlist3Items = SceneStore.get().getItems()
+    // Determine if there are any videos loaded.  If so, create a playlist containing them all.  If not, delete the playlist if it exists
+    List<Scene> allVideoScenes = SceneStore.get().getItems()
         .findAll { scene -> scene.clip.clipId == 'video' }
-        .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene, 60 * 1) }
 
-    PlaylistStore.get().addOrUpdate(new Playlist(3, "All Videos", 60 * 1, playlist3Items))
+    if (allVideoScenes.size() > 0) {
+      // Create playlist of all videos
+      List<PlaylistItem> playlist3Items = allVideoScenes
+          .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene, 60 * 1) }
+
+      PlaylistStore.get().addOrUpdate(new Playlist(3, "All Videos", 60 * 1, playlist3Items))
+    } else {
+      // delete video playlist
+      Playlist videoPlaylist = PlaylistStore.get().find('displayName', 'All Videos')
+      PlaylistStore.get().getItems().remove(videoPlaylist)
+    }
+
 
     // Save the created data to disk so we persist our manually created scenes/playlists
     // This also has the effect of resetting any changes we make to them in the UI once we start the backend
@@ -182,15 +198,25 @@ public class Util {
         new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
     ]
 
-    int nextIdx = 8
-    List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
-      Scene s = new Scene(nextIdx, videoPath, TesseractMain.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
-      nextIdx++
-      s
+    // Check to see if we have videos before blindly trying to create scenes.  TODO: improve this logic.  do better at removing scenes for video files that no longer exist
+    List<String> allVideos = MediaStore.get().getMediaOfType('videos')
+    if (allVideos.size() > 0) {
+      int nextIdx = 8
+
+      List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
+        Scene s = new Scene(nextIdx, videoPath, TesseractMain.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
+        nextIdx++
+        s
+      }
+
+      scenes.addAll(videoScenes)
+
+      scenes.each { SceneStore.get().addOrUpdate(it); }
+    } else {
+      // remove all video scenes.  this should be improved, we should remove any scenes for videos that don't exist
+      SceneStore.get().getItems()
+          .findAll { scene -> scene.clip.clipId == 'video' }
+          .each { scene -> SceneStore.get().remove(scene) }
     }
-
-    scenes.addAll(videoScenes)
-
-    scenes.each { SceneStore.get().addOrUpdate(it); }
   }
 }
