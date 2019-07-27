@@ -54,8 +54,22 @@ Now every time you open the project, you can run it easily by pressing the 'play
 
 A fat jar file is a jar (compiled java application) that contains all necessary dependencies to be run independently.
 
-To build a far jar, run the command `./gradlew fatJar` in the repo directory.
+To build a far jar, run the command `./gradlew unzipProcessingVideoLibrary unzipProcessingUdpLibrary untarProcessingCoreLibrary downloadJoglJar fatJar` in the repo directory.
+
+The unzip/untar commands add a bit to the application startup time when running in IntelliJ, so they don't automatically run by default and must be run manually.
 
 The jar will be created in the `./build/libs` directory.
 
 To run the resulting jar: `java -jar ./build/libs TesseractFatJar`.
+
+### macos
+
+There are helper scripts in the `bin` directory to enable you to easily build and run the application.  
+
+Use `./bin/build_macos.sh` to build the jar and `./bin/start_macos.sh` to run the application.
+
+Running `./bin/start_macos.sh` will automatically build the jar if it doesn't exist.
+
+### linux
+
+The process is largely the same for Linux.  The same scripts may even work, but they are untested on Linux.
