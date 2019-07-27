@@ -10,14 +10,11 @@ import util.Util
 
 class PlaylistStore extends BaseStore implements IJsonPersistable {
   public static PlaylistStore instance
-  public SceneStore sceneStore
 
   // List of PlaylistItems
   private List<Playlist> items = []
 
   public PlaylistStore() {
-    this.sceneStore = SceneStore.get()
-
     List<Map> data = this.loadDataFromDisk()
     refreshFromJS(data)
 
@@ -65,7 +62,7 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
   public Playlist createPlaylistFromJson(jsonObj) {
     List<PlaylistItem> playlistItems = jsonObj.items.collect { Map playlistItem ->
       // Find scene in scene store
-      Scene scene = this.sceneStore.find 'id', playlistItem.sceneId
+      Scene scene = SceneStore.get().find 'id', playlistItem.sceneId
 
       // create new id for playlist item if one doesn't exist
       String playlistItemId = playlistItem.id ?: UUID.randomUUID();

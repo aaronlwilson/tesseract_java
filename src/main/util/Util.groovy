@@ -49,7 +49,7 @@ public class Util {
   // Returns the directory we are going to use to store json files
   // 'group' will be a way we can have different sets of files
   // creates any necessary directories to ensure the path exists
-  public static getDataDir(String group = 'default') {
+  public static String getDataDir(String group = 'default') {
     // this returns '<repo dir>/data/<group>'
     String dirPath = "${new File(".").getAbsoluteFile().getParent()}/data/${group}"
     File dir = new File(dirPath)
@@ -57,7 +57,7 @@ public class Util {
       dir.mkdirs()
     }
 
-    dir
+    dir.getCanonicalPath()
   }
 
   // Get the data file path for a type

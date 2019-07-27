@@ -77,7 +77,7 @@ dependencies {
 
   // Some random io utilities
   // https://mvnrepository.com/artifact/commons-io/commons-io
-  compile group: 'commons-io', name: 'commons-io', version: '2.6'
+  testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
 }
 
 task downloadProcessingVideoLibrary() {
