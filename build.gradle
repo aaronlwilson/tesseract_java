@@ -32,10 +32,6 @@ dependencies {
   // Websocket library used to communicate with the UI
   compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
 
-  // OpenGL Java Bindings
-  // https://mvnrepository.com/artifact/org.jogamp.jogl/jogl-all-main
-  compile group: 'org.jogamp.jogl', name: 'jogl-all-main', version: '2.3.2'
-
   // Include all jar files in 'lib' automatically
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
 }
@@ -133,4 +129,4 @@ task fatJar(type: Jar) {
 }
 
 // Force downloading the dependencies before we compile the code
-compileGroovy.dependsOn unzipProcessingVideoLibrary, unzipProcessingUdpLibrary, untarProcessingCoreLibrary, downloadJoglJar
+//compileGroovy.dependsOn unzipProcessingVideoLibrary, unzipProcessingUdpLibrary, untarProcessingCoreLibrary, downloadJoglJar
