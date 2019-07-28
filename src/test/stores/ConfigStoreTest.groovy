@@ -7,6 +7,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.contrib.java.lang.system.RestoreSystemProperties
+import org.junit.contrib.java.lang.system.SystemErrRule
+import org.junit.contrib.java.lang.system.SystemOutRule
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
@@ -16,6 +18,7 @@ import testUtil.TestUtil
 import util.Util
 
 import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.Matchers.matchesPattern
 import static org.hamcrest.junit.MatcherAssert.assertThat
 
 @RunWith(PowerMockRunner.class)
@@ -37,6 +40,12 @@ class ConfigStoreTest {
   // Allows us to set env vars that are automatically cleaned up between tests
   @Rule
   public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+
+  @Rule
+  public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+
+  @Rule
+  public final SystemErrRule systemErrRule = new SystemErrRule().enableLog();
 
   @Before
   void setUp() {
@@ -197,5 +206,15 @@ class ConfigStoreTest {
 
     assertThat ConfigStore.get().getString('initialPlaylist'), equalTo(mockPlaylistName1)
     assertThat ConfigStore.get().getString('initialPlayState'), equalTo('PLAYING')
+  }
+
+  // Verify we print a warning for unrecognized configuration options
+  @Test
+  void testUnrecognizedConfigOptionsPrintWarning() {
+    TestUtil.mockConfigFile(tmpDir, [heyIsThatAFish: 'probably not'])
+
+    ConfigStore.get()
+
+    assertThat systemOutRule.getLog(), matchesPattern(TestUtil.preparePartialMatchPattern("WARNING: Unrecognized configuration option 'heyIsThatAFish'.  This value will be ignored"))
   }
 }

@@ -7,7 +7,6 @@ public class AppSettings {
 
   // Default values for the settings
   private static defaults = [
-      STAGE_TYPE: 'CUBOTRON',
       NUM_TEENSIES: '0',
       NUM_RABBITS: '0',
   ]

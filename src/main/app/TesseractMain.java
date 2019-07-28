@@ -89,8 +89,8 @@ public class TesseractMain extends PApplet {
     // The stage is the LED mapping
     stage = new Stage(this);
 
-    // Get the configured stage value.  Controlled via environment variable
-    String stageType = AppSettings.get("STAGE_TYPE");
+    // Get the configured stage value.  Controlled via configuration option
+    String stageType = ConfigStore.get().getString("stageType");
 
     // eventually we might load a saved project which is a playlist and environment together
     stage.buildStage(stageType);

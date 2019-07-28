@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.Yaml
 import util.Util
 
 import java.nio.charset.Charset
+import java.util.regex.Pattern
 
 import static org.mockito.Mockito.when
 
@@ -54,5 +55,10 @@ class TestUtil {
 
     // Set the config path for the application
     System.setProperty('configPath', configFile.getCanonicalPath())
+  }
+
+  // Converts a string literal into a pattern suitable for partial matching (basically a string contains)
+  public static Pattern preparePartialMatchPattern(String s) {
+    ~/[\s\S]*${Pattern.quote(s)}[\s\S]*/
   }
 }

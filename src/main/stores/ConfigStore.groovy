@@ -23,7 +23,7 @@ class ConfigStore extends BaseStore {
           validateFailMsgFn: { "Playlist '${it}' does not exist" }
       ],
       initialPlayState: [
-          defaultValue     : 'loop_scene',
+          defaultValue     : 'LOOP_SCENE',
           transformValueFn : { it.toUpperCase() },
           validateFn       : { String playStateStr ->
             try {
@@ -32,7 +32,13 @@ class ConfigStore extends BaseStore {
               return false
             }
           },
-          validateFailMsgFn: { "PlayState '${it}' is invalid.  Must be one of 'playing', 'loop_scene', or 'stopped'" },
+          validateFailMsgFn: { "PlayState '${it}' is invalid.  Must be one of 'PLAYING', 'LOOP_SCENE', or 'STOPPED'" },
+      ],
+      stageType       : [
+          defaultValue     : 'CUBOTRON',
+          transformValueFn : { it.toUpperCase() },
+          validateFn       : { ['CUBOTRON', 'TESSERACT', 'DRACO'].contains(it) },
+          validateFailMsgFn: { "stageType '${it}' is invalid.  Must be one of 'CUBOTRON', 'TESSERACT', or 'DRACO'" },
       ],
   ]
 
@@ -68,11 +74,18 @@ class ConfigStore extends BaseStore {
       println("WARNING: No configuration file found at '${configFile.getCanonicalPath()}'")
     }
 
+    // Verify all of the options are valid/recognized and print warnings if they are not
+    fileConfigValues.each { String k, v ->
+      if (!this.configOptions.containsKey(k)) {
+        println "WARNING: Unrecognized configuration option '${k}'.  This value will be ignored".yellow()
+      }
+    }
+
     fileConfigValues
   }
 
   public String getEnvVarNameForConfigOption(String optionKey) {
-    "TESSERACT_${optionKey.replaceAll(/(\B[A-Z])/,'_$1')}".toUpperCase()
+    "TESSERACT_${optionKey.replaceAll(/(\B[A-Z])/, '_$1')}".toUpperCase()
   }
 
   // Loads the configuration data, transforms the values, validates the values, then populates the maps we use to retrieve the values
