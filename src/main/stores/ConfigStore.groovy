@@ -77,11 +77,6 @@ class ConfigStore extends BaseStore {
         value = optionData.transformValueFn(value)
       }
 
-      // Validate the options with the validateFn function, print errors with the validateFailMsgFn
-      if (optionData.validateFn != null && !optionData.validateFn(value)) {
-        Util.throwException("ERROR: Failed validation of option '${optionKey}': ${optionData.validateFailMsgFn(value)}")
-      }
-
       this.configData[optionKey] = value
     }
   }
@@ -102,6 +97,12 @@ class ConfigStore extends BaseStore {
     if (!(type.isInstance(value))) {
       Util.throwException("ERROR: config option with key '${key}' is not type '${type.toString()}'")
     }
+
+    // Validate the options with the validateFn function, print errors with the validateFailMsgFn
+    if (this.configOptions[key].validateFn != null && !this.configOptions[key].validateFn(value)) {
+      Util.throwException("ERROR: Failed validation of option '${key}': ${this.configOptions[key].validateFailMsgFn(value)}")
+    }
+
     value
   }
 }
