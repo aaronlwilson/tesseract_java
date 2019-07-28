@@ -112,7 +112,7 @@ class ConfigStoreTest {
 
     // Expect an exception to be thrown w/ a specific msg
     thrown.expect(RuntimeException.class);
-    thrown.expectMessage("ERROR: Failed validation of option 'initialPlayState': PlayState 'SOME_RANDOM_THING' is invalid.  Must be one of 'playing', 'loop_scene', or 'stopped'");
+    thrown.expectMessage("ERROR: Failed validation of option 'initialPlayState': PlayState 'SOME_RANDOM_THING' is invalid.  Must be one of 'PLAYING', 'LOOP_SCENE', or 'STOPPED'");
 
     ConfigStore.get().getString('initialPlayState')
   }
@@ -216,5 +216,27 @@ class ConfigStoreTest {
     ConfigStore.get()
 
     assertThat systemOutRule.getLog(), matchesPattern(TestUtil.preparePartialMatchPattern("WARNING: Unrecognized configuration option 'heyIsThatAFish'.  This value will be ignored"))
+  }
+
+  //////// config path tests
+  @Test
+  void testCanConfigureConfigFilePathViaSystemProperty() {
+    String path = 'a/b/c'
+    System.setProperty("configPath", path)
+
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo(path)
+  }
+
+  @Test
+  void testCanConfigureConfigFilePathViaEnvVar() {
+    String path = 'a/b/c'
+    environmentVariables.set("TESSERACT_CONFIG_PATH", path)
+
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo(path)
+  }
+
+  @Test
+  void testDefaultConfigPath() {
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo('config/tesseract-config.yml')
   }
 }

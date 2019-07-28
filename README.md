@@ -94,7 +94,8 @@ Tesseract Java is configured via a YAML configuration file named 'tesseract-conf
 
 By default, it will look in the location `./config/tesseract-config.yml`.  If it doesn't exist, the app will print a warning.
 
-You can pass in a path to your configuration file via the system property `configPath` (e.g., `java -DconfigPath=/path/to/config/tesseract-config.yml`).
+You can pass in a path to your configuration file via the system property `configPath` (e.g., `java -DconfigPath=/path/to/config/tesseract-config.yml -jar TesseractFatJar.jar`).  You can also set this via the environment 
+variable `TESSERACT_CONFIG_PATH`, e.g., `TESSERACT_CONFIG_PATH=/path/to/config/tesseract-config.yml java -jar TesseractFatJar.jar`.
 
 The repo contains a configuration file in `<repo>/config/tesseract-config.yml` that you can use as an example.  This is the file that will be used when running the application via your IDE.
 

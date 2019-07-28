@@ -55,9 +55,20 @@ class ConfigStore extends BaseStore {
     this.loadConfigData()
   }
 
+  // Returns the path to the configuration file
+  public String getConfigFilePath() {
+    String path = System.getProperty('configPath')
+
+    path = path ?: System.getenv(getEnvVarNameForConfigOption('configPath'))
+
+    path = path ?: 'config/tesseract-config.yml'
+
+    path
+  }
+
   private Map loadConfigFile() {
     // read in configuration file.  defaults to config/tesseract-config.yml
-    String configPath = System.getProperty("configPath") ?: 'config/tesseract-config.yml'
+    String configPath = getConfigFilePath()
 
     File configFile = new File(configPath)
 
