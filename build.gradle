@@ -174,5 +174,9 @@ task fatJar(type: Jar) {
 
 test {
   dependsOn cleanTest
-  testLogging.showStandardStreams = true
+  testLogging {
+    showStandardStreams = true
+    events "passed", "skipped", "failed"
+    exceptionFormat = 'full'
+  }
 }

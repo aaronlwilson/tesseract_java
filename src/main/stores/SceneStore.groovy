@@ -8,7 +8,7 @@ import state.IJsonPersistable
 import util.Util
 
 class SceneStore extends BaseStore implements IJsonPersistable {
-  private static SceneStore instance
+  public static SceneStore instance
   private List<Scene> items = []
 
   public SceneStore() {
