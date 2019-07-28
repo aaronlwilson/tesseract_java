@@ -5,6 +5,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.contrib.java.lang.system.RestoreSystemProperties
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
@@ -21,15 +22,21 @@ import static org.hamcrest.junit.MatcherAssert.assertThat
 @PrepareForTest([TesseractMain.class, Util.class])
 class ConfigStoreTest {
 
+  // Creates a temporary directory that is cleaned up after the test suite
   @Rule
   public TemporaryFolder tmpDir = new TemporaryFolder()
 
+  // Allows us to make detailed assertions about thrown exceptions
   @Rule
   public ExpectedException thrown = ExpectedException.none()
 
+  // This rule automatically restores any system properties we set in test cases
   @Rule
   public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
+  // Allows us to set env vars that are automatically cleaned up between tests
+  @Rule
+  public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
   @Before
   void setUp() {
@@ -109,5 +116,86 @@ class ConfigStoreTest {
 
     assertThat ConfigStore.get().getString('initialPlaylist'), equalTo('Color Cube')
     assertThat ConfigStore.get().getString('initialPlayState'), equalTo('LOOP_SCENE')
+  }
+
+  @Test
+  void testConfigStoreUsesDefaultValueIfConfigOptionNotDefined() {
+    TestUtil.createMockPlaylists(displayName: 'Color Cube')
+
+    TestUtil.mockConfigFile(tmpDir, [initialPlayState: 'some_random_thing'])
+
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo('Color Cube')
+  }
+
+  // Tests the conversion of the 'optionKey' which is camel case to the environment variable name which is prefixed with
+  // 'TESSERACT_', converted to snake case, and converted to all uppercase
+  @Test
+  void testGetEnvVarNameForConfigOption() {
+    assertThat ConfigStore.get().getEnvVarNameForConfigOption('initialPlaylist'), equalTo('TESSERACT_INITIAL_PLAYLIST')
+    assertThat ConfigStore.get().getEnvVarNameForConfigOption('initialPlayState'), equalTo('TESSERACT_INITIAL_PLAY_STATE')
+  }
+
+  @Test
+  void testConfigStoreCanReadConfigFromSystemProperties() {
+    String mockPlaylistName = 'some random playlist name'
+    TestUtil.createMockPlaylists(displayName: mockPlaylistName)
+    System.setProperty('initialPlaylist', mockPlaylistName)
+    System.setProperty('initialPlayState', 'stopped')
+
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo(mockPlaylistName)
+    assertThat ConfigStore.get().getString('initialPlayState'), equalTo('STOPPED')
+  }
+
+  @Test
+  void testConfigStoreCanReadConfigFromEnvVars() {
+    String mockPlaylistName = 'some random playlist name'
+    TestUtil.createMockPlaylists(displayName: mockPlaylistName)
+
+    environmentVariables.set('TESSERACT_INITIAL_PLAYLIST', mockPlaylistName)
+    environmentVariables.set('TESSERACT_INITIAL_PLAY_STATE', 'stopped')
+
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo(mockPlaylistName)
+    assertThat ConfigStore.get().getString('initialPlayState'), equalTo('STOPPED')
+  }
+
+  @Test
+  void testSystemPropertiesTakePrecedenceOverEnvironmentVariables() {
+    String mockPlaylistName1 = 'some random playlist name'
+    TestUtil.createMockPlaylists(displayName: mockPlaylistName1)
+
+    System.setProperty('initialPlaylist', mockPlaylistName1)
+
+    environmentVariables.set('TESSERACT_INITIAL_PLAYLIST', 'non-existent playlist')
+
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo(mockPlaylistName1)
+  }
+
+  @Test
+  void testEnvVarsTakePrecedenceOverConfigFile() {
+    String mockPlaylistName1 = 'some random playlist name'
+    TestUtil.createMockPlaylists(displayName: mockPlaylistName1)
+
+    environmentVariables.set('TESSERACT_INITIAL_PLAYLIST', mockPlaylistName1)
+
+    TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'non-existent playlist'])
+
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo(mockPlaylistName1)
+  }
+
+  // Here we define some of the options in multiple ways and ensure everything works out with the correct precedence
+  @Test
+  void testCanReadConfigsFromBothSystemPropertiesAndEnvVars() {
+    String mockPlaylistName1 = 'some random playlist name'
+    TestUtil.createMockPlaylists(displayName: mockPlaylistName1)
+
+    environmentVariables.set('TESSERACT_INITIAL_PLAYLIST', mockPlaylistName1)
+
+    System.setProperty('initialPlayState', 'playing')
+
+    // Both of these should be ignored
+    TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'non-existent playlist', initialPlayState: 'stopped'])
+
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo(mockPlaylistName1)
+    assertThat ConfigStore.get().getString('initialPlayState'), equalTo('PLAYING')
   }
 }
