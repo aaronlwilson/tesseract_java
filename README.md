@@ -107,10 +107,14 @@ This option controls which playlist will load by default when the application st
 
 #### initialPlayState
 
-This option controls the initial 'playState' of the application.  Applicable values are `loop_scene`, `playing`, or `stopped`.  These values are case-insensitive and will be converted to all caps internally.
+This option controls the initial 'playState' of the application.  Applicable values are `LOOP_SCENE`, `PLAYING`, or `STOPPED`.  These values are case-insensitive and will be converted to all caps internally.
 
 `loop_scene` will simply continue playing the first scene continuously forever.
 
 `playing` will advance scenes in the playlist according to the specified duration.
 
 `stopped` will not play anything (the LEDs will be dark)
+
+#### stageType
+
+Chooses which stage to initialize in the application.  Current values are 'CUBOTRON', 'DRACO', and 'TESSERACT'.  Default is 'CUBOTRON'.

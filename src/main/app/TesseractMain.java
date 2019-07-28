@@ -11,7 +11,6 @@ import show.PlaylistManager;
 import stores.ConfigStore;
 import stores.PlaylistStore;
 import stores.SceneStore;
-import util.AppSettings;
 import util.Util;
 import websocket.WebsocketInterface;
 

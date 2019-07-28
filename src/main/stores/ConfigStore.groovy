@@ -40,6 +40,13 @@ class ConfigStore extends BaseStore {
           validateFn       : { ['CUBOTRON', 'TESSERACT', 'DRACO'].contains(it) },
           validateFailMsgFn: { "stageType '${it}' is invalid.  Must be one of 'CUBOTRON', 'TESSERACT', or 'DRACO'" },
       ],
+      // These are the controllers, e.g. rabbits, teensies, or pixelpushers
+      numRabbits       : [
+          defaultValue     : 0,
+      ],
+      numTeensies       : [
+          defaultValue     : 0,
+      ],
   ]
 
   // Singleton
@@ -133,6 +140,11 @@ class ConfigStore extends BaseStore {
   // Get a String config value
   public String getString(String key) {
     this.getOption(String, key)
+  }
+
+  // Get an Integer config value
+  public Integer getInt(String key) {
+    this.getOption(Integer, key) as Integer
   }
 
   // Internal method that does some type checking
