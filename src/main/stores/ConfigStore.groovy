@@ -16,7 +16,7 @@ class ConfigStore extends BaseStore {
   // validateFn - a function to validate the config option.  returns true if its valid, otherwise false
   // validateFailMsgFn - a function that returns the error message to print when validation fails.  The function is passed the value that caused the validation to fail.  This is REQUIRED if validateFn is defined
   // EVERY option must have an entry in this map, or we won't load it!
-  private Map configOptions = [
+  private Map<String, Object> configOptions = [
       initialPlaylist : [
           defaultValue     : 'Color Cube',
           validateFn       : { PlaylistStore.get().find('displayName', it) != null },
@@ -49,28 +49,48 @@ class ConfigStore extends BaseStore {
     this.loadConfigData()
   }
 
-  // Loads the configuration data, transforms the values, validates the values, then populates the maps we use to retrieve the values
-  private loadConfigData() {
+  private Map loadConfigFile() {
     // read in configuration file.  defaults to config/tesseract-config.yml
     String configPath = System.getProperty("configPath") ?: 'config/tesseract-config.yml'
 
     File configFile = new File(configPath)
 
     // The config options we've loaded from the file
-    Map loadedConfigData = [:]
+    Map<String, Object> fileConfigValues = [:]
 
     // Final storage place for the config options
     this.configData = [:]
 
     if (configFile.exists()) {
       println "Reading config file from ${configFile.getCanonicalPath().cyan()}".yellow()
-      loadedConfigData = new Yaml().load(configFile.text)
+      fileConfigValues = new Yaml().load(configFile.text)
     } else {
-      println("WARNING: No configuration file found at '${configFile.getCanonicalPath()}'.  Using default values")
+      println("WARNING: No configuration file found at '${configFile.getCanonicalPath()}'")
     }
 
-    this.configOptions.each { optionKey, optionData ->
-      def value = loadedConfigData[optionKey] ?: optionData.defaultValue
+    fileConfigValues
+  }
+
+  public String getEnvVarNameForConfigOption(String optionKey) {
+    "TESSERACT_${optionKey.replaceAll(/(\B[A-Z])/,'_$1')}".toUpperCase()
+  }
+
+  // Loads the configuration data, transforms the values, validates the values, then populates the maps we use to retrieve the values
+  private void loadConfigData() {
+    Map fileConfigValues = loadConfigFile()
+
+    this.configOptions.each { String optionKey, optionData ->
+      // First check to see if the configuration option is defined in a system property
+      def value = System.getProperty(optionKey)
+
+      // If that is null, check for an environment variable
+      value = value ?: System.getenv(getEnvVarNameForConfigOption(optionKey))
+
+      // If both the system property and environment variable are null, check the configuration file
+      value = value ?: fileConfigValues[optionKey]
+
+      // If none of system property, env var, and config file contain a value for this key, use the default from this file
+      value = value ?: optionData.defaultValue
 
       // Transform values if the transformValueFn function is defined
       if (optionData.transformValueFn != null) {
@@ -92,8 +112,10 @@ class ConfigStore extends BaseStore {
   }
 
   // Internal method that does some type checking
+  // We will look in 3 places for configuration options: system properties, environment variables, and the configuration file
+  // That is also the order of precedence, meaning system properties will override environment variables, which will override options in the configuration file
   private getOption(Class type, String key) {
-    def value = this.configData[key] ?: this.defaultConfigValues[key]
+    def value = this.configData[key]
     if (!(type.isInstance(value))) {
       Util.throwException("ERROR: config option with key '${key}' is not type '${type.toString()}'")
     }

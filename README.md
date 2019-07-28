@@ -76,9 +76,23 @@ The process is largely the same for Linux.  The same scripts may even work, but 
 
 ## Configuration
 
+There are 3 ways to define configuration options for the application: Java system properties, environment variables, or a configuration file.  This is also the order of precedence: system properties 
+take precedence over environment variables, which take precedence over values defined in the config file.
+
+### System properties
+
+Java system properties are passed to the Java command with the `-D` command line argument.  For example, `java "-DinitialPlaylist=All Videos" -jar TesseractFatJar.jar`.
+
+### Environment variables
+
+You can also use environment variables to configure the application.  The environment variable names are prefixed with `TESSERACT_` and converted to all-caps snake case.  If you want to set the `initialPlayState`
+option via environment variable, you would do something like this: `TESSERACT_INITIAL_PLAY_STATE=playing java -jar TesseractFatJar.jar`
+
+### Configuration file
+
 Tesseract Java is configured via a YAML configuration file named 'tesseract-config.yml'.
 
-By default, it will look in the location `./config/tesseract-config.yml`.  If it doesn't exist, the app will print a warning and use default values.
+By default, it will look in the location `./config/tesseract-config.yml`.  If it doesn't exist, the app will print a warning.
 
 You can pass in a path to your configuration file via the system property `configPath` (e.g., `java -DconfigPath=/path/to/config/tesseract-config.yml`).
 
