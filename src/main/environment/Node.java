@@ -18,7 +18,7 @@ public class Node  {
   public Tile fixture;
 
   public int nodeType;
-  
+
   public int r;
   public int g;
   public int b;
@@ -35,4 +35,4 @@ public class Node  {
   }
 
 
-} 
+}
