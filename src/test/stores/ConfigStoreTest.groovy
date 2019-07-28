@@ -1,18 +1,16 @@
 package stores
 
 import app.TesseractMain
-import org.apache.commons.io.FileUtils
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import testUtil.TestUtil
 import util.Util
-
-import java.nio.charset.Charset
 
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.junit.MatcherAssert.assertThat
@@ -21,15 +19,11 @@ import static org.hamcrest.junit.MatcherAssert.assertThat
 @PrepareForTest([TesseractMain.class, Util.class])
 class ConfigStoreTest {
 
-  public TesseractMain mockMain
-
-  public String testConfigFile = """
-    initialPlaylist: Something
-    initialPlayState: loop_scene
-  """.stripIndent()
+  @Rule
+  public TemporaryFolder tmpDir = new TemporaryFolder()
 
   @Rule
-  public TemporaryFolder tmpDir = new TemporaryFolder();
+  public ExpectedException thrown = ExpectedException.none()
 
   @Before
   void setUp() {
@@ -37,21 +31,67 @@ class ConfigStoreTest {
 
     TestUtil.mockUtilClass(tmpDir)
 
-    TestUtil.createMockPlaylist()
-
     TestUtil.mockTesseractMain()
   }
 
   @Test
   void testConfigStoreReadsFileAtConfigPath() {
-    File configFile = tmpDir.newFile()
-    FileUtils.writeStringToFile(configFile, this.testConfigFile, Charset.defaultCharset())
+    TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'Something'])
 
-    // Set the config path for the application
-    System.setProperty('configPath', configFile.getCanonicalPath())
+    TestUtil.createMockPlaylists()
 
-    ConfigStore store = ConfigStore.get()
+    // Don't use singleton or it affects every test!
+    ConfigStore store = new ConfigStore()
 
     assertThat store.getString('initialPlaylist'), equalTo('Something')
+  }
+
+  @Test
+  void testConfigStoreThrowsErrorIfPlaylistDoesNotExist() {
+    TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'non-existent playlist'])
+
+    TestUtil.createMockPlaylists()
+
+    // Expect an exception to be thrown w/ a specific msg
+    thrown.expect(RuntimeException.class);
+    thrown.expectMessage("ERROR: Failed validation of option 'initialPlaylist': Playlist 'non-existent playlist' does not exist");
+
+    // This will cause the exception to be thrown
+    new ConfigStore()
+  }
+
+  @Test
+  void testConfigStoreReadsConfigFileInRepoByDefault() {
+    TestUtil.createMockPlaylists(displayName: 'Color Cube')
+    assertThat new ConfigStore().getString('initialPlaylist'), equalTo('Color Cube')
+  }
+
+  @Test
+  void testConfigStoreTransformsInitialPlayStateToUppercase() {
+    TestUtil.createMockPlaylists(displayName: 'Color Cube')
+    TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'Color Cube', initialPlayState: 'loop_scene'])
+    assertThat new ConfigStore().getString('initialPlayState'), equalTo('LOOP_SCENE')
+  }
+
+  @Test
+  void testConfigStoreThrowsExceptionForInvalidPlayStateValue() {
+    TestUtil.createMockPlaylists(displayName: 'Color Cube')
+    TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'Color Cube', initialPlayState: 'some_random_thing'])
+
+    // Expect an exception to be thrown w/ a specific msg
+    thrown.expect(RuntimeException.class);
+    thrown.expectMessage("ERROR: Failed validation of option 'initialPlayState': PlayState 'SOME_RANDOM_THING' is invalid.  Must be one of 'playing', 'loop_scene', or 'stopped'");
+
+    new ConfigStore()
+  }
+
+  @Test
+  void testConfigStoreUsesDefaultValuesIfConfigFileNotFound() {
+    TestUtil.createMockPlaylists(displayName: 'Color Cube')
+
+    System.setProperty("configPath", '/some/totally/non-existent/path')
+
+    assertThat new ConfigStore().getString('initialPlaylist'), equalTo('Color Cube')
+    assertThat new ConfigStore().getString('initialPlayState'), equalTo('LOOP_SCENE')
   }
 }

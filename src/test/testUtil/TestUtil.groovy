@@ -2,9 +2,13 @@ package testUtil
 
 import app.TesseractMain
 import groovy.json.JsonBuilder
+import org.apache.commons.io.FileUtils
 import org.junit.rules.TemporaryFolder
 import org.powermock.api.mockito.PowerMockito
+import org.yaml.snakeyaml.Yaml
 import util.Util
+
+import java.nio.charset.Charset
 
 import static org.mockito.Mockito.when
 
@@ -23,17 +27,31 @@ class TestUtil {
     PowerMockito.stub(PowerMockito.method(Util.class, "getDataDir")).toReturn(dataDir);
   }
 
-  public static void createMockPlaylist() {
-    def jsonObj = [
-        [
-            id         : 1,
-            displayName: 'Something',
-            items      : []
-        ]
-    ]
+  public static Map getMockPlaylist(Map data) {
+    [
+        id         : 1,
+        displayName: 'Something',
+        items      : []
+    ] + data
+  }
+
+  public static void createMockPlaylists(Map playlistData) {
+    TestUtil.createMockPlaylists([playlistData])
+  }
+
+  public static void createMockPlaylists(List<Map> playlistData = [[:]]) {
+    List<Map> playlists = playlistData.collect { getMockPlaylist(it) }
 
     String playlistJsonPath = Util.getDataFilePath('playlist')
 
-    new File(playlistJsonPath).write "${new JsonBuilder(jsonObj).toPrettyString()}\n"
+    new File(playlistJsonPath).write "${new JsonBuilder(playlists).toPrettyString()}\n"
+  }
+
+  public static void mockConfigFile(tmpDir, Map configData) {
+    File configFile = tmpDir.newFile()
+    FileUtils.writeStringToFile(configFile, new Yaml().dump(configData), Charset.defaultCharset())
+
+    // Set the config path for the application
+    System.setProperty('configPath', configFile.getCanonicalPath())
   }
 }
