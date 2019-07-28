@@ -22,6 +22,9 @@ public class Util {
     String.metaClass.blue = { -> delegate.colorize(34) }
     String.metaClass.magenta = { -> delegate.colorize(35) }
     String.metaClass.cyan = { -> delegate.colorize(36) }
+
+    // Method to strip colors from output
+    String.metaClass.stripColors = { -> delegate.replaceAll("\u001B\\[[;\\d]*m", "") }
   }
 
   // Ensure data dir exists
