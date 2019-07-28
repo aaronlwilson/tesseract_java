@@ -13,7 +13,11 @@ repositories {
 sourceSets {
   main {
     java { srcDirs = [] }
-    groovy { srcDirs += ['src'] }
+    groovy { srcDirs += ['src/main'] }
+  }
+  test {
+    java { srcDirs = [] }
+    groovy { srcDirs += ['src/test'] }
   }
 }
 
