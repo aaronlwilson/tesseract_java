@@ -1,9 +1,11 @@
 package stores
 
 import app.TesseractMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.contrib.java.lang.system.RestoreSystemProperties
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
@@ -25,6 +27,10 @@ class ConfigStoreTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none()
 
+  @Rule
+  public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+
+
   @Before
   void setUp() {
     Util.enableColorization()
@@ -34,6 +40,16 @@ class ConfigStoreTest {
     TestUtil.mockTesseractMain()
   }
 
+  @After
+  void teardown() {
+    // Reset all singleton instances so we have fresh ones for each test
+    // We will need to do this in every test suite.  Maybe do something like this: https://igorski.co/java/junit/run-stuff-before-and-after-each-test-in-junit4/
+    ConfigStore.instance = null
+    MediaStore.instance = null
+    PlaylistStore.instance = null
+    SceneStore.instance = null
+  }
+
   @Test
   void testConfigStoreReadsFileAtConfigPath() {
     TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'Something'])
@@ -41,7 +57,7 @@ class ConfigStoreTest {
     TestUtil.createMockPlaylists()
 
     // Don't use singleton or it affects every test!
-    ConfigStore store = new ConfigStore()
+    ConfigStore store = ConfigStore.get()
 
     assertThat store.getString('initialPlaylist'), equalTo('Something')
   }
@@ -57,20 +73,20 @@ class ConfigStoreTest {
     thrown.expectMessage("ERROR: Failed validation of option 'initialPlaylist': Playlist 'non-existent playlist' does not exist");
 
     // This will cause the exception to be thrown
-    new ConfigStore()
+    ConfigStore.get().getString('initialPlaylist')
   }
 
   @Test
   void testConfigStoreReadsConfigFileInRepoByDefault() {
     TestUtil.createMockPlaylists(displayName: 'Color Cube')
-    assertThat new ConfigStore().getString('initialPlaylist'), equalTo('Color Cube')
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo('Color Cube')
   }
 
   @Test
   void testConfigStoreTransformsInitialPlayStateToUppercase() {
     TestUtil.createMockPlaylists(displayName: 'Color Cube')
     TestUtil.mockConfigFile(tmpDir, [initialPlaylist: 'Color Cube', initialPlayState: 'loop_scene'])
-    assertThat new ConfigStore().getString('initialPlayState'), equalTo('LOOP_SCENE')
+    assertThat ConfigStore.get().getString('initialPlayState'), equalTo('LOOP_SCENE')
   }
 
   @Test
@@ -82,7 +98,7 @@ class ConfigStoreTest {
     thrown.expect(RuntimeException.class);
     thrown.expectMessage("ERROR: Failed validation of option 'initialPlayState': PlayState 'SOME_RANDOM_THING' is invalid.  Must be one of 'playing', 'loop_scene', or 'stopped'");
 
-    new ConfigStore()
+    ConfigStore.get().getString('initialPlayState')
   }
 
   @Test
@@ -91,7 +107,7 @@ class ConfigStoreTest {
 
     System.setProperty("configPath", '/some/totally/non-existent/path')
 
-    assertThat new ConfigStore().getString('initialPlaylist'), equalTo('Color Cube')
-    assertThat new ConfigStore().getString('initialPlayState'), equalTo('LOOP_SCENE')
+    assertThat ConfigStore.get().getString('initialPlaylist'), equalTo('Color Cube')
+    assertThat ConfigStore.get().getString('initialPlayState'), equalTo('LOOP_SCENE')
   }
 }
