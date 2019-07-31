@@ -7,6 +7,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.contrib.java.lang.system.RestoreSystemProperties
+import org.junit.contrib.java.lang.system.SystemErrRule
+import org.junit.contrib.java.lang.system.SystemOutRule
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
@@ -16,6 +18,7 @@ import testUtil.TestUtil
 import util.Util
 
 import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.Matchers.matchesPattern
 import static org.hamcrest.junit.MatcherAssert.assertThat
 
 @RunWith(PowerMockRunner.class)
@@ -37,6 +40,12 @@ class ConfigStoreTest {
   // Allows us to set env vars that are automatically cleaned up between tests
   @Rule
   public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+
+  @Rule
+  public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+
+  @Rule
+  public final SystemErrRule systemErrRule = new SystemErrRule().enableLog();
 
   @Before
   void setUp() {
@@ -103,7 +112,7 @@ class ConfigStoreTest {
 
     // Expect an exception to be thrown w/ a specific msg
     thrown.expect(RuntimeException.class);
-    thrown.expectMessage("ERROR: Failed validation of option 'initialPlayState': PlayState 'SOME_RANDOM_THING' is invalid.  Must be one of 'playing', 'loop_scene', or 'stopped'");
+    thrown.expectMessage("ERROR: Failed validation of option 'initialPlayState': PlayState 'SOME_RANDOM_THING' is invalid.  Must be one of 'PLAYING', 'LOOP_SCENE', or 'STOPPED'");
 
     ConfigStore.get().getString('initialPlayState')
   }
@@ -197,5 +206,37 @@ class ConfigStoreTest {
 
     assertThat ConfigStore.get().getString('initialPlaylist'), equalTo(mockPlaylistName1)
     assertThat ConfigStore.get().getString('initialPlayState'), equalTo('PLAYING')
+  }
+
+  // Verify we print a warning for unrecognized configuration options
+  @Test
+  void testUnrecognizedConfigOptionsPrintWarning() {
+    TestUtil.mockConfigFile(tmpDir, [heyIsThatAFish: 'probably not'])
+
+    ConfigStore.get()
+
+    assertThat systemOutRule.getLog(), matchesPattern(TestUtil.preparePartialMatchPattern("WARNING: Unrecognized configuration option 'heyIsThatAFish'.  This value will be ignored"))
+  }
+
+  //////// config path tests
+  @Test
+  void testCanConfigureConfigFilePathViaSystemProperty() {
+    String path = 'a/b/c'
+    System.setProperty("configPath", path)
+
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo(path)
+  }
+
+  @Test
+  void testCanConfigureConfigFilePathViaEnvVar() {
+    String path = 'a/b/c'
+    environmentVariables.set("TESSERACT_CONFIG_PATH", path)
+
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo(path)
+  }
+
+  @Test
+  void testDefaultConfigPath() {
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo('config/tesseract-config.yml')
   }
 }

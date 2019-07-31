@@ -49,7 +49,7 @@ public class Stage {
     }
   }
 
-    private void buildTesseractStage(){
+    private void buildTesseractStage() {
         int counter = 0;
 
 
