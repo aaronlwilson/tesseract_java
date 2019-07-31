@@ -71,16 +71,14 @@ public class ParticleClip  extends AbstractClip {
 
     }
 
-    public static float randFloatRange(float min, float max) {
-        Random rand = new Random();
-        float result = rand.nextFloat() * (max - min) + min;
-        return result;
-    }
 
     public void addParticle(){
 
-        //birthing point
-        PVector theLoc = new PVector(0.0f, -30.0f, 0.0f);
+        //birthing point, find the center of all the nodes, radiate outward
+        float locX = _myMain.stage.minX+(_myMain.stage.maxW /2);
+        float locY = _myMain.stage.minY+(_myMain.stage.maxH /2);
+        float locZ = _myMain.stage.minZ+(_myMain.stage.maxD /2);
+        PVector theLoc = new PVector(locX, locY, locZ);
 
         //int theC = _myMain.color(255, 255, 255);
 
@@ -95,7 +93,7 @@ public class ParticleClip  extends AbstractClip {
         float lowVel = -_pSpeed;
         float highVel = _pSpeed;
 
-        PVector theSpeed = new PVector(randFloatRange(lowVel,highVel), randFloatRange(lowVel,highVel), randFloatRange(lowVel,highVel));
+        PVector theSpeed = new PVector(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
         PVector theAccel = new PVector(0.01f, 0.01f, 0.01f);
 
         _particles.add(new Particle(theLoc, theC,_pSize, _pRamp, theSpeed, theAccel));

@@ -106,6 +106,7 @@ public class Util {
         video        : TesseractMain.VIDEO,
         particle_clip: TesseractMain.PARTICLE,
         perlin_noise : TesseractMain.PERLINNOISE,
+        lines_clip     : TesseractMain.LINESCLIP,
     ]
 
     Integer enumVal = clipIdMap[clipId]
@@ -131,6 +132,11 @@ public class Util {
     return c & 0xFF;
   }
 
+  public static float randFloatRange(float min, float max) {
+    Random rand = new Random();
+    float result = rand.nextFloat() * (max - min) + min;
+    return result;
+  }
 
   public static float getPercent(int loaded, int total) {
     return ((float) loaded / total) * 100;
