@@ -54,8 +54,67 @@ Now every time you open the project, you can run it easily by pressing the 'play
 
 A fat jar file is a jar (compiled java application) that contains all necessary dependencies to be run independently.
 
-To build a far jar, run the command `./gradlew fatJar` in the repo directory.
+To build a far jar, run the command `./gradlew unzipProcessingVideoLibrary unzipProcessingUdpLibrary untarProcessingCoreLibrary downloadJoglJar fatJar` in the repo directory.
+
+The unzip/untar commands add a bit to the application startup time when running in IntelliJ, so they don't automatically run by default and must be run manually.
 
 The jar will be created in the `./build/libs` directory.
 
 To run the resulting jar: `java -jar ./build/libs TesseractFatJar`.
+
+### macos
+
+There are helper scripts in the `bin` directory to enable you to easily build and run the application.  
+
+Use `./bin/build_macos.sh` to build the jar and `./bin/start_macos.sh` to run the application.
+
+Running `./bin/start_macos.sh` will automatically build the jar if it doesn't exist.
+
+### linux
+
+The process is largely the same for Linux.  The same scripts may even work, but they are untested on Linux.
+
+## Configuration
+
+There are 3 ways to define configuration options for the application: Java system properties, environment variables, or a configuration file.  This is also the order of precedence: system properties 
+take precedence over environment variables, which take precedence over values defined in the config file.
+
+### System properties
+
+Java system properties are passed to the Java command with the `-D` command line argument.  For example, `java "-DinitialPlaylist=All Videos" -jar TesseractFatJar.jar`.
+
+### Environment variables
+
+You can also use environment variables to configure the application.  The environment variable names are prefixed with `TESSERACT_` and converted to all-caps snake case.  If you want to set the `initialPlayState`
+option via environment variable, you would do something like this: `TESSERACT_INITIAL_PLAY_STATE=playing java -jar TesseractFatJar.jar`
+
+### Configuration file
+
+Tesseract Java is configured via a YAML configuration file named 'tesseract-config.yml'.
+
+By default, it will look in the location `./config/tesseract-config.yml`.  If it doesn't exist, the app will print a warning.
+
+You can pass in a path to your configuration file via the system property `configPath` (e.g., `java -DconfigPath=/path/to/config/tesseract-config.yml -jar TesseractFatJar.jar`).  You can also set this via the environment 
+variable `TESSERACT_CONFIG_PATH`, e.g., `TESSERACT_CONFIG_PATH=/path/to/config/tesseract-config.yml java -jar TesseractFatJar.jar`.
+
+The repo contains a configuration file in `<repo>/config/tesseract-config.yml` that you can use as an example.  This is the file that will be used when running the application via your IDE.
+
+### Configuration options
+
+#### initialPlaylist
+
+This option controls which playlist will load by default when the application starts.  Specify the 'displayName' property of the playlist.  If the playlist doesn't exist, the application will throw an error and exit.  These values are case-sensitive.
+
+#### initialPlayState
+
+This option controls the initial 'playState' of the application.  Applicable values are `LOOP_SCENE`, `PLAYING`, or `STOPPED`.  These values are case-insensitive and will be converted to all caps internally.
+
+`loop_scene` will simply continue playing the first scene continuously forever.
+
+`playing` will advance scenes in the playlist according to the specified duration.
+
+`stopped` will not play anything (the LEDs will be dark)
+
+#### stageType
+
+Chooses which stage to initialize in the application.  Current values are 'CUBOTRON', 'DRACO', and 'TESSERACT'.  Default is 'CUBOTRON'.
