@@ -9,7 +9,7 @@ import processing.core.PApplet;
 
 import hardware.*;
 import environment.Node;
-import util.AppSettings;
+import stores.ConfigStore;
 
 
 public class UDPModel {
@@ -73,14 +73,14 @@ public class UDPModel {
 
     // Initialize the rabbit controllers.  Number of controllers is set in env var NUM_RABBITS.  default is 0
     private void initRabbits() {
-        Integer numRabbits = Integer.parseInt(AppSettings.get("NUM_RABBITS"));
+        Integer numRabbits = ConfigStore.get().getInt("numRabbits");
         rabbits = new Rabbit[numRabbits];
         // TODO: need to initialize from values in env vars
     }
 
     // Initialize the teensy (draco) controllers.  Number of controllers is set in env var NUM_TEENSIES.  default is 0
     private void initTeensies() {
-        Integer numTeensies = Integer.parseInt(AppSettings.get("NUM_TEENSIES"));
+        Integer numTeensies = ConfigStore.get().getInt("numTeensies");
         teensies = new Teensy[numTeensies];
         // TODO: need to objects initialize from values in env vars
     }
