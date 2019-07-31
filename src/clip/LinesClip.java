@@ -15,7 +15,7 @@ import util.Util;
 
 
 
-public class ParticleClip  extends AbstractClip {
+public class LinesClip  extends AbstractClip {
 
     private ArrayList<Particle> _particles;
 
@@ -31,18 +31,20 @@ public class ParticleClip  extends AbstractClip {
 
 
     //constructor
-    public ParticleClip() {
+    public LinesClip() {
     }
 
     public void init() {
 
-        clipId = "particle_clip";
+        clipId = "lines_clip";
         super.init();
 
         _particles = new ArrayList<Particle>();
     }
 
     public void run() {
+
+        /*
 
         //map local vars to abstract clip parameters
         _pSize = p1*200.0f;
@@ -68,17 +70,15 @@ public class ParticleClip  extends AbstractClip {
             addParticle();
         }
 
-
+        */
     }
+
 
 
     public void addParticle(){
 
-        //birthing point, find the center of all the nodes, radiate outward
-        float locX = _myMain.stage.minX+(_myMain.stage.maxW /2);
-        float locY = _myMain.stage.minY+(_myMain.stage.maxH /2);
-        float locZ = _myMain.stage.minZ+(_myMain.stage.maxD /2);
-        PVector theLoc = new PVector(locX, locY, locZ);
+        //birthing point
+        PVector theLoc = new PVector(0.0f, -30.0f, 0.0f);
 
         //int theC = _myMain.color(255, 255, 255);
 
@@ -104,6 +104,7 @@ public class ParticleClip  extends AbstractClip {
 
         int[] nodestate = new int[3];
 
+        /*
         float brightness = 0.0f;
 
         int newRed = 0;
@@ -141,7 +142,11 @@ public class ParticleClip  extends AbstractClip {
         if(newRed > 0) nodestate[0] = newRed;
         if(newGreen > 0) nodestate[1] = newGreen;
         if(newBlue > 0) nodestate[2] = newBlue;
+        */
 
+        nodestate[0] = 255;
+        nodestate[1] = 255;
+        nodestate[2] = 255;
 
         return nodestate;
     }

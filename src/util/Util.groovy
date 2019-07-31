@@ -96,6 +96,7 @@ public class Util {
         video     : TesseractMain.VIDEO,
         particle_clip     : TesseractMain.PARTICLE,
         perlin_noise     : TesseractMain.PERLINNOISE,
+        lines_clip     : TesseractMain.LINESCLIP,
     ]
 
     Integer enumVal = clipIdMap[clipId]
@@ -121,6 +122,11 @@ public class Util {
     return c & 0xFF;
   }
 
+  public static float randFloatRange(float min, float max) {
+    Random rand = new Random();
+    float result = rand.nextFloat() * (max - min) + min;
+    return result;
+  }
 
   public static float getPercent(int loaded, int total) {
     return ((float) loaded / total) * 100;
@@ -148,6 +154,7 @@ public class Util {
     PlaylistStore.get().addOrUpdate(playlist1);
 
     List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
+
             new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'PerlinNoise'), 10),
             new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Particles'), 10),
             new PlaylistItem(UUID.randomUUID().toString(), SceneStore.get().find("displayName", 'Purple'), 4),
@@ -180,6 +187,7 @@ public class Util {
         new Scene(5, "Node Scanner", TesseractMain.NODESCAN, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
         new Scene(6, "Particles", TesseractMain.PARTICLE, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
         new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
+
     ]
 
     int nextIdx = 8

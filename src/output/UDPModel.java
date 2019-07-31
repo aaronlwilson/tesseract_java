@@ -155,7 +155,7 @@ public class UDPModel {
 
 
         for (Teensy teensy : teensies) {
-            sendTeensyNodesAsPanels(teensy);
+            //sendTeensyNodesAsPanels(teensy);
 
             //swap command, makes all the tiles change at once
             byte[] data = new byte[1];
