@@ -202,8 +202,6 @@ public class Util {
         new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
     ]
 
-    scenes.each { SceneStore.get().addOrUpdate(it); }
-
     // Check to see if we have videos before blindly trying to create scenes.  TODO: improve this logic.  do better at removing scenes for video files that no longer exist
     List<String> allVideos = MediaStore.get().getMediaOfType('videos')
     if (allVideos.size() > 0) {
@@ -222,6 +220,8 @@ public class Util {
           .findAll { scene -> scene.clip.clipId == 'video' }
           .each { scene -> SceneStore.get().remove(scene) }
     }
+
+    scenes.each { SceneStore.get().addOrUpdate(it); }
   }
 
   public static void throwException(String msg) {
