@@ -40,6 +40,8 @@ It also allows us to transparently integrate code written in other JVM languages
 
 If you've created the project from scratch, you can create the 'run configuration' easily.  This allows you to click the green 'play' button near the top right of the screen to launch the application.
 
+**IMPORTANT:** First, you'll need to ensure you have all of the dependencies.  Run `./gradlew unzipProcessingVideoLibrary unzipProcessingUdpLibrary untarProcessingCoreLibrary downloadJoglJar` to install them.
+
 - Open the project
 - Open the file TesseractMain.java
 - Find the 'main' method
