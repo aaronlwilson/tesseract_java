@@ -114,6 +114,9 @@ public class Scene {
             case TesseractMain.PERLINNOISE:
                 newClip = new PerlinNoiseClip();
                 break;
+            case TesseractMain.LINESCLIP:
+                newClip = new LinesClip();
+                break;
 
 
             default:

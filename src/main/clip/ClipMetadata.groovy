@@ -9,6 +9,8 @@ class ClipMetadata {
     }
   }
 
+    //TODO, can we make a checkbox aka boolean control type? like an on/off?
+
   // Only 'solid_color' is hooked up right now, so the controls for the other clips are dummy data that will be
   // replaced later
   public static List<Map> getClipMetadata() {
@@ -58,9 +60,9 @@ class ClipMetadata {
                         [displayName: 'Speed',        type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
                         [displayName: 'Acceleration', type: 'slider', defaultValue: 0.0, fieldName: 'p4'],
                         [displayName: 'Density',      type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
-                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
-                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
-                        [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
+                        [displayName: 'BounceX', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                        [displayName: 'BounceY', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
+                        [displayName: 'BounceZ', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
 
                 ],
         ],
@@ -76,6 +78,21 @@ class ClipMetadata {
                         [displayName: 'X',          type: 'knob', defaultValue: 0.0, fieldName: 'p6'],
                         [displayName: 'Y',          type: 'knob', defaultValue: 0.0, fieldName: 'p7'],
                         [displayName: 'Z',          type: 'knob', defaultValue: 0.0, fieldName: 'p8']
+
+                ],
+        ],
+        [
+                displayName: 'Lines Clip',
+                clipId     : 'lines_clip',
+                controls   : [
+                        [displayName: 'Size',         type: 'slider', defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Ramp',         type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Speed',        type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'Acceleration', type: 'slider', defaultValue: 0.0, fieldName: 'p4'],
+                        [displayName: 'Density',      type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
+                        [displayName: 'BounceX', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                        [displayName: 'BounceY', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
+                        [displayName: 'BounceZ', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
 
                 ],
         ],

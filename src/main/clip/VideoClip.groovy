@@ -103,8 +103,9 @@ public class VideoClip extends AbstractClip{
                 // I have no clue why any of this should be the case, or why the behavior differs from the v1 release of the library,
                 // but using copyPixels works for our purposes.  The file needs to be a .groovy file, so we can access the 'protected' field 'copyPixels'.
                 //
-                // Even more confused as to why the sign of the int is wrong, but negating the value seems to make the colors look correct
-                c = -movie.copyPixels[loc];
+                // Colors from copyPixels are inverted. Using the - (negative) sign results in strange results, because its 32 bit and does not account for alpha. Using the -, the videos certainly did not look correct so lets leave it like this for now.
+                // We will add some master filters like "invert", and "hue wheel"
+                c = movie.copyPixels[loc];
             }
         }
 
@@ -118,8 +119,6 @@ public class VideoClip extends AbstractClip{
 
     public void die() {
         movie.stop();
-
-        System.out.printf("VIDEO DIE \n");
 
         super.die();
     }

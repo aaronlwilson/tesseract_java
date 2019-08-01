@@ -52,6 +52,16 @@ public class OnScreen {
         p.line(0,0,0,0,0,size);
     }
 
+    private void drawBoundingBox(){
+        p.stroke(60,60,60);
+        p.noFill();
+
+        p.pushMatrix();
+        p.translate(_myMain.stage.minX+(_myMain.stage.maxW /2), _myMain.stage.minY+(_myMain.stage.maxH /2), _myMain.stage.minZ+(_myMain.stage.maxD /2));
+        p.box(_myMain.stage.maxW, _myMain.stage.maxH, _myMain.stage.maxD);
+        p.popMatrix();
+    }
+
     public void draw() {
 
         p.background(20);
@@ -87,6 +97,8 @@ public class OnScreen {
         p.rotateY(p.map(_xrot,0, p.width, p.PI, -p.PI));
 
         drawAxes(600);
+
+        drawBoundingBox();
 
 
         p.pushMatrix();
@@ -137,7 +149,6 @@ public class OnScreen {
     public void mousePressed() {
         _xStart = p.mouseX;
         _yStart = p.mouseY;
-        //p.println(_xStart);
     }
 
     public void mouseReleased() {

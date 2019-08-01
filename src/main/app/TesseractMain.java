@@ -27,8 +27,9 @@ public class TesseractMain extends PApplet {
   public static final int VIDEO = 3;
   public static final int PARTICLE = 4;
   public static final int PERLINNOISE = 5;
+  public static final int LINESCLIP = 6;
 
-  private OnScreen onScreen;
+  private OnScreen onScreen;//only the main class gets to draw
   public UDPModel udpModel;
   public Stage stage;
   public Channel channel1;
