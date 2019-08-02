@@ -1,14 +1,21 @@
-package environment;
+package hardware;
 
 
+import environment.Node;
 import processing.core.PApplet;
 import hardware.*;
 
-public class StrandPanel {
+public class StrandPanel extends Fixture{
 
     private PApplet p;
 
     private int _scale = 10;
+
+    public int pinNum;
+    public Teensy teensy;
+
+    public Node[] strandNodeArray;
+
 
 
     //Arrays for strand mapping Draco panels
@@ -17,11 +24,16 @@ public class StrandPanel {
 
 
     public StrandPanel(PApplet pApplet) {
+        super(0);
+        strandNodeArray = new Node[0];
         p = pApplet;
     }
 
 
-    public Node[] buildPanel(Teensy teensy, int pinNum, int panelSpecies, int globalIndex, int startX, int startY, int startZ, int rotation){
+    public Node[] buildPanel(Teensy theTeensy, int thePinNum, int panelSpecies, int globalIndex, int startX, int startY, int startZ, int rotation){
+
+        teensy = theTeensy;
+        pinNum = thePinNum;
 
         int panelMap[][] = panelOneMap;
 
@@ -42,6 +54,8 @@ public class StrandPanel {
 
             planeNodes[i] = node;
         }
+
+        strandNodeArray = planeNodes;
 
         return planeNodes;
     }

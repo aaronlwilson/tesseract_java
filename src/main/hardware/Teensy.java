@@ -1,9 +1,12 @@
 package hardware;
-import environment.Node;
+
+import java.util.ArrayList;
 
 public class Teensy extends Controller {
 
-    public Node[] nodeArray;
+
+    public ArrayList<StrandPanel> strandPanelArray;
+
 
     //constructor
     public Teensy(String theIp, int theId, String theMac) {
@@ -11,7 +14,15 @@ public class Teensy extends Controller {
         id = theId;
         mac = theMac;
 
-        nodeArray = new Node[8];
+        strandPanelArray = new ArrayList<StrandPanel>();
     }
+
+
+    public void addStrandPanel(StrandPanel strandPanel){
+        strandPanelArray.add(strandPanel);
+
+    }
+
+
 
 }
