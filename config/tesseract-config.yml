@@ -1,6 +1,6 @@
 initialPlaylist: Color Cube
 initialPlayState: loop_scene
-stageType: tesseract
+stageType: draco
 
 # this is temporary.  eventually we'll just have a list of controllers or whatever makes sense, e.g.
 # controllers:

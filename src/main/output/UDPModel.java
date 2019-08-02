@@ -85,7 +85,7 @@ public class UDPModel {
         // TODO: need to objects initialize from values in env vars
     }
 
-    void createNodeMap(){
+    private void createNodeMap(){
         for (int k=0; k<12; k++){//y
             for (int j=0; j<12; j++){//x
 
@@ -135,7 +135,6 @@ public class UDPModel {
        }
      }
     */
-
     }
 
     public void send() {
@@ -156,6 +155,8 @@ public class UDPModel {
 
         for (Teensy teensy : teensies) {
             //sendTeensyNodesAsPanels(teensy);
+
+            sendPanelFrame(teensy);
 
             //swap command, makes all the tiles change at once
             byte[] data = new byte[1];
@@ -204,6 +205,55 @@ public class UDPModel {
 
 
     // Send data to the Draco panels via Teensy
+    public void sendFlameTest(int pin, int on) {
+
+        for (Teensy teensy : teensies) {
+            System.out.printf("FIRE TEENSY IP: %s \n", teensy.ip);
+
+            //fire command
+            byte[] data = new byte[3];
+            data[0] = (byte) ('f');
+            data[1] = (byte) pin;
+            data[2] = (byte) on;
+            udp.send(data, teensy.ip, teensyPort);
+        }
+    }
+
+
+    // Send data to the Draco panels via Teensy
+    public void sendPanelFrame(Teensy teensy) {
+
+        //octo pin order is orange, blue, green, brown
+
+        for(StrandPanel strandPanel : teensy.strandPanelArray) {
+
+            int l = strandPanel.strandNodeArray.length;
+
+            byte[] data = new byte[(l*3) + 2];
+
+            data[0] = (byte) ('l'); //LIGHTS command
+            data[1] = (byte) strandPanel.pinNum; //pin address, once again we are doing one node per pin
+
+            for (int i=0; i<l; i++){
+                Node node = strandPanel.strandNodeArray[i];
+
+                data[(i*3) + 0 +2] = (byte) node.r;
+                data[(i*3) + 1 +2] = (byte) node.g;
+                data[(i*3) + 2 +2] = (byte) node.b;
+
+                //for the love of god, something please just happen on the lights so I know my life isn't a complete sham.
+                //data[(i*3) + 0 +2] = (byte) (PApplet.unhex("FF"));
+                //data[(i*3) + 1 +2] = (byte) (PApplet.unhex("FF"));
+                //data[(i*3) + 2 +2] = (byte) (PApplet.unhex("FF"));
+            }
+
+            // send the bytes for each tile separately
+            udp.send( data, teensy.ip, teensyPort );
+        }
+    }//end sendPanelFrame
+
+    /*
+    // Send data to the Draco panels via Teensy
     public void sendTeensyNodesAsPanels(Teensy teensy) {
 
         int length = teensy.nodeArray.length;
@@ -232,14 +282,13 @@ public class UDPModel {
 
             // send the bytes for each tile separately
             udp.send( data, teensy.ip, teensyPort );
-
         }
-
     }
+    */
 
 
 
-    public void sendTest() {
+    public void sendRabbitTest() {
 
         for (int t=0; t<numTiles; t++){
             int nodeCount = 0;

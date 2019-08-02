@@ -3,6 +3,7 @@ package environment;
 
 import app.TesseractMain;
 import hardware.Rabbit;
+import hardware.StrandPanel;
 import hardware.Teensy;
 import processing.core.PApplet;
 
@@ -113,10 +114,13 @@ public class Stage {
         int w = 8; //number of pins per OCTO
 
         _myMain.udpModel.teensies = new Teensy[h];
-        _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
+        Teensy teensyOne = new Teensy("192.168.1.200", 1, "mac_address");
+        _myMain.udpModel.teensies[0] = teensyOne;
+
         _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
         _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
+
 
         /*//OLD APOGAEA setup
         nodes = new Node[h*w];
@@ -131,21 +135,27 @@ public class Stage {
         }
         */
 
-        StrandPanel panel = new StrandPanel(p);
-
-        nodes = panel.buildPanel(_myMain.udpModel.teensies[0], 1, 1, counter, 0, 0, 0, 0);
+        StrandPanel panelOne = new StrandPanel(p);
+        nodes = panelOne.buildPanel(teensyOne, 1, 1, counter, 0, 0, 0, 0);
+        teensyOne.addStrandPanel(panelOne);
         counter = nodes.length;
 
-        Node[] panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 2, 2, counter, -150, 0, 0, 0);
+        StrandPanel panelTwo = new StrandPanel(p);
+        Node[] panelNodes = panelTwo.buildPanel(teensyOne, 2, 2, counter, -150, 0, 0, 0);
         nodes = (Node[]) p.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelTwo);
         counter = nodes.length;
 
-        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 3, 1, counter, 100, 0, 0, 0);
+        StrandPanel panelThree = new StrandPanel(p);
+        panelNodes = panelThree.buildPanel(teensyOne, 5, 1, counter, 100, 0, 0, 0);
         nodes = (Node[]) p.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelThree);
         counter = nodes.length;
 
-        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, 2, counter, 200, 0, 0, 0);
+        StrandPanel panelFour = new StrandPanel(p);
+        panelNodes = panelFour.buildPanel(teensyOne, 6, 2, counter, 200, 0, 0, 0);
         nodes = (Node[]) p.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelFour);
 
     }
 
