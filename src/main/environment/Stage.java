@@ -9,8 +9,6 @@ import processing.core.PApplet;
 
 public class Stage {
 
-    private PApplet p;
-
     //used to automatically define bounding box
     public int maxX;
     public int maxY;
@@ -32,8 +30,7 @@ public class Stage {
 
 
 
-    public Stage(PApplet pApplet) {
-        p = pApplet;
+    public Stage() {
         _myMain = TesseractMain.getMain();
     }
 
@@ -63,16 +60,16 @@ public class Stage {
     maxH = maxY + Math.abs(_myMain.stage.minY);
     maxD = maxZ + Math.abs(_myMain.stage.minZ);
 
-    p.println("maxW: " + maxW);
-    p.println("maxH: " + maxH);
-    p.println("maxD: " + maxD);
+    _myMain.println("maxW: " + maxW);
+    _myMain.println("maxH: " + maxH);
+    _myMain.println("maxD: " + maxD);
   }
 
     private void buildTesseractStage() {
         int counter = 0;
 
 
-        PixelPlane plane = new PixelPlane(p);
+        PixelPlane plane = new PixelPlane(_myMain);
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
         _myMain.udpModel.rabbits = new Rabbit[6];
@@ -89,19 +86,19 @@ public class Stage {
         nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,0,-72,0, 0, false );
 
         Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,(72*3),-72,0, 0, false );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,(72*6),-72,0, 0, false );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,-(72*3),-72,0, 0, false  );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,-(72*6),-72,0, 0, true );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,-(72*9),-72,0, 0, false );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
     }
 
@@ -131,22 +128,27 @@ public class Stage {
         }
         */
 
-        StrandPanel panel = new StrandPanel(p);
+        StrandPanel panel = new StrandPanel();
 
-        nodes = panel.buildPanel(_myMain.udpModel.teensies[0], 1, 1, counter, 0, 0, 0, 0);
+        nodes = panel.buildPanel(_myMain.udpModel.teensies[0], 1, "center_pillar_level_1_A", counter, 0, 0, 0, 0);
         counter = nodes.length;
 
-        Node[] panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 2, 2, counter, -150, 0, 0, 0);
-        nodes = (Node[]) p.concat( nodes, panelNodes );
+        Node[] panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 2, "center_pillar_level_1_B", counter, -150, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
         counter = nodes.length;
 
-        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 3, 1, counter, 100, 0, 0, 0);
-        nodes = (Node[]) p.concat( nodes, panelNodes );
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 3, "center_pillar_level_1_A", counter, 100, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
         counter = nodes.length;
 
-        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, 2, counter, 200, 0, 0, 0);
-        nodes = (Node[]) p.concat( nodes, panelNodes );
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_1_B", counter, 200, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_bottom", counter, 300, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_top", counter, 300, 50, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
     }
 
     private void buildCubotron() {

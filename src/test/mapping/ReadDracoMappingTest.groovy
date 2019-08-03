@@ -15,7 +15,6 @@ import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.junit.MatcherAssert.assertThat
 
-@RunWith(PowerMockRunner.class)
 @PrepareForTest([TesseractMain.class, Util.class])
 class ReadDracoMappingTest {
 

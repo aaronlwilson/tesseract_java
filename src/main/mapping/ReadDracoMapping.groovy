@@ -8,14 +8,16 @@ package mapping
 // - metadata cells
 //   - these cells can contain key/value pairs separated by a ':'
 //   - they can contain anything except ',' or ':'
-//   - could be useful to define the name/id of the panel or something
+//   - we use this to define the panel species
 //   - access via result.metadata (a map of key/value pairs)
 // - all other cells
 //   - these are all saved into a list on the result
 //   - access via result.unstructured (a list)
 
 // IMPORTANT THINGS
-// - The
+// - The code directly translates the row and column of a cell into x y coordinates.  Cell A1 is (1, 1), B2 is (2, 2), etc
+//   If your block of node indexes isn't at origin in the spreadsheet, that is reflected in the returned results
+// - There really isn't much error handling.  You can probably break this if you try
 
 class ReadDracoMapping {
 
@@ -26,9 +28,7 @@ class ReadDracoMapping {
     // collect calls a function once for each list element, creating a new list of the same length with the result of the function
     // its useful to transform one list into another, for example here we are transforming a list of CSV paths (String) into a list of nodes (Map)
     // groovy automatically returns the last expression in a function, so no 'return' statement is necessary
-    csvPaths.collect { String path ->
-      parseCsv(new File(path).text, path)
-    }
+    csvPaths.collect { String path -> parseCsv(new File(path).text, path) }
   }
 
   // we just pass the path in so we can print a better error, really.  the error checking should be moved
@@ -83,7 +83,7 @@ class ReadDracoMapping {
       // 1 based indexing
       Integer currentX = i + 1
 
-      // metadata will just get added to the results, we can use it later, e.g., to define a panel by name
+      // metadata will just get added to the results, we can use it later, e.g., to define a panel species
       if (cell.contains(':')) {
         // groovy has this 'multiple assignment' thing.  sometimes useful
         def (metadataKey, metadataValue) = cell.split(':')
