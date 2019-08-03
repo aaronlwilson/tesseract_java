@@ -25,7 +25,7 @@ class ReadDracoMapping {
   public static List<Map> parseCsvs(csvDir) {
     List<String> csvPaths = new FileNameFinder().getFileNames(csvDir, '**/*.csv')
 
-    // collect calls a function once for each list element, creating a new list of the same length with the result of the function
+    // 'collect' calls a function once for each list element, creating a new list of the same length with the result of the function
     // its useful to transform one list into another, for example here we are transforming a list of CSV paths (String) into a list of nodes (Map)
     // groovy automatically returns the last expression in a function, so no 'return' statement is necessary
     csvPaths.collect { String path -> parseCsv(new File(path).text, path) }

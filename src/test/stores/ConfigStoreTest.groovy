@@ -224,7 +224,7 @@ class ConfigStoreTest {
     String path = 'a/b/c'
     System.setProperty("configPath", path)
 
-    assertThat ConfigStore.get().getConfigFilePath(), equalTo(path)
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo(new File(path).getCanonicalPath())
   }
 
   @Test
@@ -232,11 +232,11 @@ class ConfigStoreTest {
     String path = 'a/b/c'
     environmentVariables.set("TESSERACT_CONFIG_PATH", path)
 
-    assertThat ConfigStore.get().getConfigFilePath(), equalTo(path)
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo(new File(path).getCanonicalPath())
   }
 
   @Test
   void testDefaultConfigPath() {
-    assertThat ConfigStore.get().getConfigFilePath(), equalTo('config/tesseract-config.yml')
+    assertThat ConfigStore.get().getConfigFilePath(), equalTo(new File('config/tesseract-config.yml').getCanonicalPath())
   }
 }
