@@ -38,16 +38,14 @@ class ReadDracoMappingTest {
       (1..numCols).collect { j -> j + ((i - 1) * numCols) }.join(',')
     }.join('\n')
 
-    String metadataStr = metadata.collect { k, v ->
-      "${k}: ${v}"
-    }.join(',')
+    String metadataStr = metadata.collect { k, v -> "${k}: ${v}" }.join(',')
 
     "${mappingData}\n${metadataStr}"
   }
 
   @Test
   void testCanParseSimpleCsv() {
-    String csv = createSimpleCsv([panelName: 'talon-small-1'])
+    String csv = createSimpleCsv()
     tmpDir.newFile('mapping-1.csv').write(csv)
 
     List<Map> results = ReadDracoMapping.parseCsvs(tmpDir.getRoot().getCanonicalPath())
@@ -85,12 +83,10 @@ class ReadDracoMappingTest {
 
     assertThat result.metadata, notNullValue()
 
-    metadata.each { k, v ->
-      assertThat result.metadata[k], equalTo(v)
-    }
+    metadata.each { k, v -> assertThat result.metadata[k], equalTo(v) }
   }
 
-  // These next two test cases take the lists directly from StrandPanel and the results of parsing the CSV match the existing data
+  // These next two test cases take the lists directly from StrandPanel and verify the results of parsing the CSV match the existing data
   @Test
   void testCanParseCentralPillarLevel1A() {
     // these are in a format where the first element is the strandIndex, the second element is y value and the third element is the x value
@@ -105,11 +101,7 @@ class ReadDracoMappingTest {
 
       // Find the node with the same strandIdx
       Map node = results.nodes.find { n -> n.strandIdx == expectedIdx }
-      assert node, notNullValue()
-
-      if (node.x != expectedX || node.y != expectedY) {
-        println "Node did not match expected value"
-      }
+      assertThat node, notNullValue()
 
       assertThat node.x, equalTo(expectedX)
       assertThat node.y, equalTo(expectedY)
@@ -130,7 +122,7 @@ class ReadDracoMappingTest {
 
       // Find the node with the same strandIdx
       Map node = results.nodes.find { n -> n.strandIdx == expectedIdx }
-      assert node, notNullValue()
+      assertThat node, notNullValue()
 
       assertThat node.x, equalTo(expectedX)
       assertThat node.y, equalTo(expectedY)

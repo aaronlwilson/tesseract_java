@@ -1,14 +1,16 @@
 package environment
 
-import mapping.ReadDracoMapping;
+import mapping.ReadDracoMapping
 import hardware.*
-import util.Util;
+import util.Util
 
 public class StrandPanel {
 
-    private int _scale = 10;
+    private int _scale = 10
 
-    public Node[] buildPanel(Teensy teensy, int pinNum, String panelSpecies, int globalIndex, int startX, int startY, int startZ, int rotation) {
+    // If we don't specify environment.Node[] (instead of just Node[]), it was conflicting with an existing Node[] class in groovy
+    // Strangly it would run in IntelliJ, but when I compiled the app with gradle it complained
+    public environment.Node[] buildPanel(Teensy teensy, int pinNum, String panelSpecies, int globalIndex, int startX, int startY, int startZ, int rotation) {
         // Parse the draco csv files
         String csvDir = "${Util.getRootDataDir()}/mapping/draco_csv"
         List<Map> mappings = ReadDracoMapping.parseCsvs(csvDir)
