@@ -50,7 +50,7 @@ class TesseractAppTest {
         'Wrote Scene Data to Disk',
         'Writing Playlist Data to Disk',
         'Wrote Playlist Data to Disk',
-        'Reading config file from /Users/fry/code/tesseract_java/config/tesseract-config.yml',
+        "Reading config file from ${ConfigStore.get().getConfigFilePath()}",
         'WebsocketInterface started on port: 8883',
         'Websocket server started',
         "[Playlist] Playing scene 'PerlinNoise' on playlist 'Color Cube' (Playstate: LOOP_SCENE)",
@@ -65,7 +65,7 @@ class TesseractAppTest {
     // Assert that nothings been printed to stderr
     assertThat stderr.size(), equalTo(0)
 
-    // The application will die immediately when this application finishes.  Use a 'sleep' if we want it to stay up longer
+    // The application will die immediately when this test finishes.  Use a 'sleep' if we want it to stay up longer
     // for any particular reason
     // sleep 1000 * 1
   }
