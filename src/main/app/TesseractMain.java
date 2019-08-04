@@ -87,7 +87,7 @@ public class TesseractMain extends PApplet {
     onScreen = new OnScreen(this);
 
     // The stage is the LED mapping
-    stage = new Stage(this);
+    stage = new Stage();
 
     // Get the configured stage value.  Controlled via configuration option
     String stageType = ConfigStore.get().getString("stageType");

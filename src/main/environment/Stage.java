@@ -10,8 +10,6 @@ import processing.core.PApplet;
 
 public class Stage {
 
-    private PApplet p;
-
     //used to automatically define bounding box
     public int maxX;
     public int maxY;
@@ -33,8 +31,7 @@ public class Stage {
 
 
 
-    public Stage(PApplet pApplet) {
-        p = pApplet;
+    public Stage() {
         _myMain = TesseractMain.getMain();
     }
 
@@ -64,16 +61,16 @@ public class Stage {
     maxH = maxY + Math.abs(_myMain.stage.minY);
     maxD = maxZ + Math.abs(_myMain.stage.minZ);
 
-    p.println("maxW: " + maxW);
-    p.println("maxH: " + maxH);
-    p.println("maxD: " + maxD);
+    _myMain.println("maxW: " + maxW);
+    _myMain.println("maxH: " + maxH);
+    _myMain.println("maxD: " + maxD);
   }
 
     private void buildTesseractStage() {
         int counter = 0;
 
 
-        PixelPlane plane = new PixelPlane(p);
+        PixelPlane plane = new PixelPlane(_myMain);
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
         _myMain.udpModel.rabbits = new Rabbit[6];
@@ -105,6 +102,7 @@ public class Stage {
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,(72*6),startY,0, 0, false );
         nodes = (Node[]) p.concat( nodes, planeNodes );
 
+
     }
 
 
@@ -121,6 +119,7 @@ public class Stage {
         _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
         _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
+
 
 
         StrandPanel panelOne = new StrandPanel(p);
@@ -145,6 +144,43 @@ public class Stage {
         nodes = (Node[]) p.concat( nodes, panelNodes );
         teensyOne.addStrandPanel(panelFour);
 
+        /*//OLD APOGAEA setup
+        nodes = new Node[h*w];
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                Node dracoNode = new Node(30 * i, 40 * j, 0, counter, null);
+                nodes[counter] = dracoNode;
+                _myMain.udpModel.teensies[i].nodeArray[j] = dracoNode;
+                counter++;
+            }
+        }
+        */
+
+  /*
+        StrandPanel panel = new StrandPanel();
+
+        nodes = panel.buildPanel(_myMain.udpModel.teensies[0], 1, "center_pillar_level_1_A", counter, 0, 0, 0, 0);
+        counter = nodes.length;
+
+        Node[] panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 2, "center_pillar_level_1_B", counter, -150, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+        counter = nodes.length;
+
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 3, "center_pillar_level_1_A", counter, 100, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+        counter = nodes.length;
+
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_1_B", counter, 200, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_bottom", counter, 300, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+
+
+        panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_top", counter, 300, 50, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+      */
     }
 
     private void buildCubotron() {

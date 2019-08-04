@@ -70,7 +70,7 @@ class ConfigStore extends BaseStore {
 
     path = path ?: 'config/tesseract-config.yml'
 
-    path
+    new File(path).getCanonicalPath()
   }
 
   private Map loadConfigFile() {
