@@ -157,18 +157,20 @@ public class Util {
         new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 5),
         new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 4),
         new PlaylistItem(UUID.randomUUID().toString(), 'Purple', 5),
-        new PlaylistItem(UUID.randomUUID().toString(), 'Red', 7)
+        new PlaylistItem(UUID.randomUUID().toString(), 'Red', 7),
     ));
 
     Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
     PlaylistStore.get().addOrUpdate(playlist1);
 
     List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
+            new PlaylistItem(UUID.randomUUID().toString(), 'LinesClip', 10),
         new PlaylistItem(UUID.randomUUID().toString(), 'PerlinNoise', 10),
         new PlaylistItem(UUID.randomUUID().toString(), 'Particles', 10),
         new PlaylistItem(UUID.randomUUID().toString(), 'Purple', 4),
         new PlaylistItem(UUID.randomUUID().toString(), 'Red', 3),
-        new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 4)
+        new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 4),
+            new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 4),
     ));
 
     Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
@@ -206,12 +208,13 @@ public class Util {
         new Scene(5, "Node Scanner", TesseractMain.NODESCAN, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
         new Scene(6, "Particles", TesseractMain.PARTICLE, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
         new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
+        new Scene(8, "LinesClip", TesseractMain.LINESCLIP, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
     ]
 
     // Check to see if we have videos before blindly trying to create scenes.  TODO: improve this logic.  do better at removing scenes for video files that no longer exist
     List<String> allVideos = MediaStore.get().getMediaOfType('videos')
     if (allVideos.size() > 0) {
-      int nextIdx = 8
+      int nextIdx = 9
 
       List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
         Scene s = new Scene(nextIdx, videoPath, TesseractMain.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)

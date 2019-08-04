@@ -320,7 +320,10 @@ public class UDPModel {
             }
 
             // send the message for each tile
-            udp.send( data, broadcastIp, rabbitPort );
+            //udp.send( data, broadcastIp, rabbitPort );
+            udp.send( data, "192.168.1.105", rabbitPort );
+
+
         }//end for num tiles
 
         //swap command
