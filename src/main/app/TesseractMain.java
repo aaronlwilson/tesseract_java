@@ -143,8 +143,8 @@ public class TesseractMain extends PApplet {
 
     onScreen.draw();
 
-    //push packets out to LEDS
-    //udpModel.sendTest();
+    //push dummy packets out to LEDS
+    //udpModel.sendRabbitTest();
 
 
     //PUT BACK
@@ -182,13 +182,18 @@ public class TesseractMain extends PApplet {
   //calls happen on pApplet, then can be routed to the proper place in our code
   @Override
   public void mousePressed() {
+    udpModel.sendFlameTest(4, 1);
+
     onScreen.mousePressed();
   }
 
   @Override
   public void mouseReleased() {
+    udpModel.sendFlameTest(4, 0);
+
     onScreen.mouseReleased();
   }
+  
 
   //Custom event handler on pApplet for video library
   public void movieEvent(Movie movie) { movie.read(); }

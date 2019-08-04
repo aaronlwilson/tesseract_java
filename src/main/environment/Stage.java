@@ -3,6 +3,7 @@ package environment;
 
 import app.TesseractMain;
 import hardware.Rabbit;
+import hardware.StrandPanel;
 import hardware.Teensy;
 import processing.core.PApplet;
 
@@ -75,30 +76,32 @@ public class Stage {
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.1.101", 1, "mac_address");
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.1.100", 2, "mac_address");
-        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.1.102", 3, "mac_address");
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.1.103", 4, "mac_address");
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.1.105", 5, "mac_address");
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.1.104", 6, "mac_address");
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.1.100", 1, "mac_address");
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.1.105", 2, "mac_address");
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.1.104", 3, "mac_address");
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.1.102", 4, "mac_address");
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.1.101", 5, "mac_address");
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.1.103", 6, "mac_address");
 
+        int startY = -72;
 
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,0,-72,0, 0, false );
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,-(72*9),startY,0, 0, false );
 
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,(72*3),-72,0, 0, false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,-(72*6),startY,0, 0, true );
+        nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,(72*6),-72,0, 0, false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,-(72*3),startY,0, 0, false );
+        nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,-(72*3),-72,0, 0, false  );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,0,startY,0, 0, false  );
+        nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,-(72*6),-72,0, 0, true );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,(72*3),startY,0, 0, false );
+        nodes = (Node[]) p.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,-(72*9),-72,0, 0, false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,(72*6),startY,0, 0, false );
+        nodes = (Node[]) p.concat( nodes, planeNodes );
+
 
     }
 
@@ -110,10 +113,36 @@ public class Stage {
         int w = 8; //number of pins per OCTO
 
         _myMain.udpModel.teensies = new Teensy[h];
-        _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
+        Teensy teensyOne = new Teensy("192.168.1.200", 1, "mac_address");
+        _myMain.udpModel.teensies[0] = teensyOne;
+
         _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
         _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
+
+
+
+        StrandPanel panelOne = new StrandPanel(p);
+        nodes = panelOne.buildPanel(teensyOne, 1, 1, counter, 0, 0, 0, 0);
+        teensyOne.addStrandPanel(panelOne);
+        counter = nodes.length;
+
+        StrandPanel panelTwo = new StrandPanel(p);
+        Node[] panelNodes = panelTwo.buildPanel(teensyOne, 2, 2, counter, -150, 0, 0, 0);
+        nodes = (Node[]) p.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelTwo);
+        counter = nodes.length;
+
+        StrandPanel panelThree = new StrandPanel(p);
+        panelNodes = panelThree.buildPanel(teensyOne, 5, 1, counter, 100, 0, 0, 0);
+        nodes = (Node[]) p.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelThree);
+        counter = nodes.length;
+
+        StrandPanel panelFour = new StrandPanel(p);
+        panelNodes = panelFour.buildPanel(teensyOne, 6, 2, counter, 200, 0, 0, 0);
+        nodes = (Node[]) p.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelFour);
 
         /*//OLD APOGAEA setup
         nodes = new Node[h*w];
@@ -128,6 +157,7 @@ public class Stage {
         }
         */
 
+  /*
         StrandPanel panel = new StrandPanel();
 
         nodes = panel.buildPanel(_myMain.udpModel.teensies[0], 1, "center_pillar_level_1_A", counter, 0, 0, 0, 0);
@@ -147,8 +177,10 @@ public class Stage {
         panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_bottom", counter, 300, 0, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
+
         panelNodes = panel.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_top", counter, 300, 50, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+      */
     }
 
     private void buildCubotron() {
