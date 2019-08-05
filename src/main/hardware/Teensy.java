@@ -1,6 +1,9 @@
 package hardware;
 
+import environment.StrandPanel;
+
 import java.util.ArrayList;
+
 
 public class Teensy extends Controller {
 

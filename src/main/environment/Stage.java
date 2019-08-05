@@ -3,10 +3,7 @@ package environment;
 
 import app.TesseractMain;
 import hardware.Rabbit;
-import hardware.StrandPanel;
 import hardware.Teensy;
-import processing.core.PApplet;
-
 
 public class Stage {
 
@@ -88,19 +85,19 @@ public class Stage {
         nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,-(72*9),startY,0, 0, false );
 
         Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,-(72*6),startY,0, 0, true );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,-(72*3),startY,0, 0, false );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,0,startY,0, 0, false  );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,(72*3),startY,0, 0, false );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,(72*6),startY,0, 0, false );
-        nodes = (Node[]) p.concat( nodes, planeNodes );
+        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
 
     }
@@ -110,7 +107,7 @@ public class Stage {
 
         int counter = 0;
         int h = 4; //number of teensies
-        int w = 8; //number of pins per OCTO
+        //int w = 8; //number of pins per OCTO
 
         _myMain.udpModel.teensies = new Teensy[h];
         Teensy teensyOne = new Teensy("192.168.1.200", 1, "mac_address");
@@ -121,41 +118,43 @@ public class Stage {
         _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
 
 
-
-        StrandPanel panelOne = new StrandPanel(p);
-        nodes = panelOne.buildPanel(teensyOne, 1, 1, counter, 0, 0, 0, 0);
+        //first call here is different than the others because it initializes the node array, the others concat to it.
+        StrandPanel panelOne = new StrandPanel();
+        nodes = panelOne.buildPanel(_myMain.udpModel.teensies[0], 1, "center_pillar_level_1_A", counter, -400, 0, 0, 0);
         teensyOne.addStrandPanel(panelOne);
         counter = nodes.length;
 
-        StrandPanel panelTwo = new StrandPanel(p);
-        Node[] panelNodes = panelTwo.buildPanel(teensyOne, 2, 2, counter, -150, 0, 0, 0);
-        nodes = (Node[]) p.concat( nodes, panelNodes );
+        StrandPanel panelTwo = new StrandPanel();
+        Node[] panelNodes = panelTwo.buildPanel(_myMain.udpModel.teensies[0], 2, "center_pillar_level_1_B", counter, -400, -100, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
         teensyOne.addStrandPanel(panelTwo);
         counter = nodes.length;
 
-        StrandPanel panelThree = new StrandPanel(p);
-        panelNodes = panelThree.buildPanel(teensyOne, 5, 1, counter, 100, 0, 0, 0);
-        nodes = (Node[]) p.concat( nodes, panelNodes );
+        StrandPanel panelThree = new StrandPanel();
+        panelNodes = panelThree.buildPanel(_myMain.udpModel.teensies[0], 3, "center_pillar_level_1_A", counter, 200, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
         teensyOne.addStrandPanel(panelThree);
         counter = nodes.length;
 
-        StrandPanel panelFour = new StrandPanel(p);
-        panelNodes = panelFour.buildPanel(teensyOne, 6, 2, counter, 200, 0, 0, 0);
-        nodes = (Node[]) p.concat( nodes, panelNodes );
+        StrandPanel panelFour = new StrandPanel();
+        panelNodes = panelFour.buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_1_B", counter, 200, -100, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
         teensyOne.addStrandPanel(panelFour);
+        counter = nodes.length;
 
-        /*//OLD APOGAEA setup
-        nodes = new Node[h*w];
+/*
+        StrandPanel panelThree = new StrandPanel();
+        panelNodes = panelThree.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_bottom", counter, 300, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelThree);
+        counter = nodes.length;
 
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                Node dracoNode = new Node(30 * i, 40 * j, 0, counter, null);
-                nodes[counter] = dracoNode;
-                _myMain.udpModel.teensies[i].nodeArray[j] = dracoNode;
-                counter++;
-            }
-        }
-        */
+        StrandPanel panelFour = new StrandPanel();
+        panelNodes = panelFour.buildPanel(_myMain.udpModel.teensies[0], 4, "talon_top", counter, 600, 0, 0, 0);
+        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+        teensyOne.addStrandPanel(panelFour);
+    */
+
 
   /*
         StrandPanel panel = new StrandPanel();
