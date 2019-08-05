@@ -1,6 +1,7 @@
 package output;
 
 
+import environment.StrandPanel;
 import hardware.Tile;
 import hypermedia.net.UDP;
 //import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
