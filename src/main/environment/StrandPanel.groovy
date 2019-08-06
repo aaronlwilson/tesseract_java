@@ -10,7 +10,7 @@ public class StrandPanel {
 
     public int pinNum;
     public Teensy teensy;
-    public Node[] strandNodeArray;
+    public environment.Node[] strandNodeArray;
 
 
 
