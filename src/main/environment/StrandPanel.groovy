@@ -6,7 +6,7 @@ import util.Util
 
 public class StrandPanel {
 
-    private int _scale = 10;
+    private int _scale = 6;
 
     public int pinNum;
     public Teensy teensy;
@@ -23,8 +23,12 @@ public class StrandPanel {
     // Strangly it would run in IntelliJ, but when I compiled the app with gradle it complained
     public environment.Node[] buildPanel(Teensy theTeensy, int thePinNum, String panelSpecies, int globalIndex, int startX, int startY, int startZ, int rotation) {
 
+        //used for sending UDP data for this strand
         teensy = theTeensy
         pinNum = thePinNum
+
+        //for each teensy, we loop over all the attached Strands to send UDP, so give it a reference to this one
+        teensy.addStrandPanel this
 
         // Parse the draco csv files
         String csvDir = "${Util.getRootDataDir()}/mapping/draco_csv"
