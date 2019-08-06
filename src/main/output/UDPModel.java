@@ -155,6 +155,8 @@ public class UDPModel {
 
 
         for (Teensy teensy : teensies) {
+            if (teensy == null) continue;
+
             //sendTeensyNodesAsPanels(teensy);
 
             sendPanelFrame(teensy);
@@ -208,16 +210,16 @@ public class UDPModel {
     // Send data to the Draco panels via Teensy
     public void sendFlameTest(int pin, int on) {
 
-        for (Teensy teensy : teensies) {
-            System.out.printf("FIRE TEENSY IP: %s \n", teensy.ip);
-
-            //fire command
-            byte[] data = new byte[3];
-            data[0] = (byte) ('f');
-            data[1] = (byte) pin;
-            data[2] = (byte) on;
-            udp.send(data, teensy.ip, teensyPort);
-        }
+//        for (Teensy teensy : teensies) {
+//            System.out.printf("FIRE TEENSY IP: %s \n", teensy.ip);
+//
+//            //fire command
+//            byte[] data = new byte[3];
+//            data[0] = (byte) ('f');
+//            data[1] = (byte) pin;
+//            data[2] = (byte) on;
+//            udp.send(data, teensy.ip, teensyPort);
+//        }
     }
 
 
@@ -225,6 +227,15 @@ public class UDPModel {
     public void sendPanelFrame(Teensy teensy) {
 
         //octo pin order is orange, blue, green, brown
+
+
+        if (teensy == null) {
+            return;
+        }
+
+        if (teensy.strandPanelArray == null) {
+            return;
+        }
 
         for(StrandPanel strandPanel : teensy.strandPanelArray) {
 
@@ -237,6 +248,9 @@ public class UDPModel {
 
             for (int i=0; i<l; i++){
                 Node node = strandPanel.strandNodeArray[i];
+                if (node == null) {
+                    continue;
+                }
 
                 data[(i*3) + 0 +2] = (byte) node.r;
                 data[(i*3) + 1 +2] = (byte) node.g;
@@ -249,6 +263,9 @@ public class UDPModel {
             }
 
             // send the bytes for each tile separately
+
+//            System.out.println(data);
+
             udp.send( data, teensy.ip, teensyPort );
         }
     }//end sendPanelFrame

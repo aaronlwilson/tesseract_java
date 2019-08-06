@@ -113,9 +113,9 @@ public class Stage {
         _myMain.udpModel.teensies = new Teensy[h];
 
         _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
-        _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
-        _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
-        _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
+//        _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
+//        _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
+//        _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
 
 
 
@@ -132,22 +132,20 @@ public class Stage {
 //        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_1_B", nodes.length, 200, -100, 0, 0);
 //        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
+      Node[] panelNodes = new Node[]{};
 
+//        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 2, "talon_top_mirrored", nodes.length, 40, -100, 0, 0);
+//        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
         nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 2, "talon_bottom", nodes.length, 0, 0, 0, 0);
-        //nodes = (Node[]) _myMain.concat( nodes, panelNodes );
-
-        Node[] panelNodes = new Node[]{};
-
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 1, "talon_top_mirrored", nodes.length, 40, -100, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
-
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 6, "talon_bottom_mirrored", nodes.length, -140, 0, 0, 0);
-        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
-
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 5, "talon_top", nodes.length, -140, -100, 0, 0);
-        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
-
+//
+//        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 6, "talon_top", nodes.length, -140, -100, 0, 0);
+//        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+//
+//        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 5, "talon_bottom_mirrored", nodes.length, -140, 0, 0, 0);
+//        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+//
 
 
 
