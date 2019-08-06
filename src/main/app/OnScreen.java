@@ -105,7 +105,7 @@ public class OnScreen {
 
         //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
         //we want to translate the object on multiple axes using the current global coordinates.
-        float valueX = 45, valueY = 0, valueZ = 35.3f;
+        //float valueX = 45, valueY = 0, valueZ = 35.3f;
 
         //for Tesseract only
         //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
