@@ -30,6 +30,7 @@ public class Stage {
 
     public Stage() {
         _myMain = TesseractMain.getMain();
+        nodes = new Node[]{};
     }
 
   public void buildStage(String stageType) {
@@ -118,35 +119,46 @@ public class Stage {
 
 
 
+
         //first call here is different than the others because it initializes the node array, the others concat to it.
-        nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 1, "center_pillar_level_1_A", 0, -400, 0, 0, 0);
+//        nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 1, "center_pillar_level_1_A", 0, -400, 0, 0, 0);
+//
+//        Node[] panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 2, "center_pillar_level_1_B", nodes.length, -400, -100, 0, 0);
+//        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+//
+//        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 3, "center_pillar_level_1_A", nodes.length, 200, 0, 0, 0);
+//        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+//
+//        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_1_B", nodes.length, 200, -100, 0, 0);
+//        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
-        Node[] panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 2, "center_pillar_level_1_B", nodes.length, -400, -100, 0, 0);
+
+
+        nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 2, "talon_bottom", nodes.length, 0, 0, 0, 0);
+        //nodes = (Node[]) _myMain.concat( nodes, panelNodes );
+
+        Node[] panelNodes = new Node[]{};
+
+        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 1, "talon_top_mirrored", nodes.length, 40, -100, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 3, "center_pillar_level_1_A", nodes.length, 200, 0, 0, 0);
+        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 6, "talon_bottom_mirrored", nodes.length, -140, 0, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_1_B", nodes.length, 200, -100, 0, 0);
-        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
-
-
-
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "talon_bottom", nodes.length, 0, 0, 0, 0);
+        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 5, "talon_top", nodes.length, -140, -100, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
 
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "talon_top", nodes.length, 0, -100, 0, 0);
+
+
+/*
+        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_2", nodes.length, -220, 0, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
 
 
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_2", nodes.length, -100, 0, 0, 0);
+        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_3", nodes.length, -220, -100, 0, 0);
         nodes = (Node[]) _myMain.concat( nodes, panelNodes );
-
-
-        panelNodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 4, "center_pillar_level_3", nodes.length, -100, -100, 0, 0);
-        nodes = (Node[]) _myMain.concat( nodes, panelNodes );
-
+*/
     }
 
     private void buildCubotron() {
