@@ -111,7 +111,7 @@ public class Stage {
 
         _myMain.udpModel.teensies = new Teensy[h];
 
-        _myMain.udpModel.teensies[0] = new Teensy("192.168.1.200", 1, "mac_address");
+        _myMain.udpModel.teensies[0] = new Teensy("192.168.0.200", 1, "mac_address");
         _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
         _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
@@ -122,8 +122,9 @@ public class Stage {
         //pins are 0 -orange, 2 -blue, 4 -orange, 6 -blue
 
         //test "head"
-        //nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 0, "center_pillar_level_4", 0, 0, 0, 0, 0);
+        nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 0, "center_pillar_level_4", 0, 0, 0, 0, 0);
 
+        /*
         Node[] talonNodes = buildSmallTalon(_myMain.udpModel.teensies[0], -450,0, 300);
         nodes = (Node[]) _myMain.concat( nodes, talonNodes );
 
@@ -140,7 +141,7 @@ public class Stage {
         //center tower
         Node[] towerNodes = buildCenterTower(_myMain.udpModel.teensies[4], 0,0 , 0);
         nodes = (Node[]) _myMain.concat( nodes, towerNodes );
-
+        */
 
     }
 
