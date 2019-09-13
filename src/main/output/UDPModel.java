@@ -227,8 +227,6 @@ public class UDPModel {
     public void sendPanelFrame(Teensy teensy) {
 
         //octo pin order is orange, blue, green, brown
-
-
         if (teensy == null) {
             return;
         }
@@ -244,7 +242,7 @@ public class UDPModel {
             byte[] data = new byte[(l*3) + 2];
 
             data[0] = (byte) ('l'); //LIGHTS command
-            data[1] = (byte) strandPanel.pinNum; //pin address, once again we are doing one node per pin
+            data[1] = (byte) strandPanel.pinNum;
 
             for (int i=0; i<l; i++){
                 Node node = strandPanel.strandNodeArray[i];
@@ -262,9 +260,10 @@ public class UDPModel {
                 //data[(i*3) + 2 +2] = (byte) (PApplet.unhex("FF"));
             }
 
-            // send the bytes for each tile separately
+            // send the bytes for each panel separately
+            //String s = new String(data);
+            //System.out.println(strandPanel.pinNum);
 
-//            System.out.println(data);
 
             udp.send( data, teensy.ip, teensyPort );
         }
