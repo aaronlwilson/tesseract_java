@@ -61,7 +61,7 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
-    frameRate( 30 );
+    frameRate( 25 );
 
     Util.enableColorization();
 
@@ -165,9 +165,9 @@ public class TesseractMain extends PApplet {
 
 
     //apply channel brightness
-    rgb1[0] = (int)rgb1[0];
-    rgb1[1] = (int)rgb1[1];
-    rgb1[2] = (int)rgb1[2];
+    rgb1[0] = (int)Math.round(rgb1[0]);
+    rgb1[1] = (int)Math.round(rgb1[1]);
+    rgb1[2] = (int)Math.round(rgb1[2]);
 
     //TODO mix the 2 channels together
 
@@ -188,14 +188,14 @@ public class TesseractMain extends PApplet {
   //calls happen on pApplet, then can be routed to the proper place in our code
   @Override
   public void mousePressed() {
-    udpModel.sendFlameTest(4, 1);
+    //udpModel.sendFlameTest(4, 1);
 
     onScreen.mousePressed();
   }
 
   @Override
   public void mouseReleased() {
-    udpModel.sendFlameTest(4, 0);
+    //udpModel.sendFlameTest(4, 0);
 
     onScreen.mouseReleased();
   }

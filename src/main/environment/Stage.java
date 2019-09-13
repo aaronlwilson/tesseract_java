@@ -67,19 +67,18 @@ public class Stage {
     private void buildTesseractStage() {
         int counter = 0;
 
-
         PixelPlane plane = new PixelPlane(_myMain);
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.1.100", 1, "mac_address");
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.1.105", 2, "mac_address");
-        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.1.104", 3, "mac_address");
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.1.102", 4, "mac_address");
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.1.101", 5, "mac_address");
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.1.103", 6, "mac_address");
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.100", 1, "mac_address");
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.105", 2, "mac_address");
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.104", 3, "mac_address");
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.102", 4, "mac_address");
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address");
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.103", 6, "mac_address");
 
         int startY = -72;
 
@@ -116,14 +115,14 @@ public class Stage {
         _myMain.udpModel.teensies[1] = new Teensy("192.168.1.201", 2, "mac_address");
         _myMain.udpModel.teensies[2] = new Teensy("192.168.1.202", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.1.203", 4, "mac_address");
-
-        _myMain.udpModel.teensies[4] = new Teensy("192.168.1.204", 4, "mac_address");
+        //center tower
+        _myMain.udpModel.teensies[4] = new Teensy("192.168.1.204", 5, "mac_address");
 
 
         //pins are 0 -orange, 2 -blue, 4 -orange, 6 -blue
 
-
-
+        //test "head"
+        //nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 0, "center_pillar_level_4", 0, 0, 0, 0, 0);
 
         Node[] talonNodes = buildSmallTalon(_myMain.udpModel.teensies[0], -450,0, 300);
         nodes = (Node[]) _myMain.concat( nodes, talonNodes );
@@ -136,7 +135,6 @@ public class Stage {
 
         talonNodes = buildSmallTalon(_myMain.udpModel.teensies[3], 450,0 , 300);
         nodes = (Node[]) _myMain.concat( nodes, talonNodes );
-
 
 
         //center tower
@@ -169,17 +167,19 @@ public class Stage {
 
         Node[] towerNodes = new Node[0];
 
-        Node[] panelNodes = new StrandPanel().buildPanel(teensy, 3, "center_pillar_all", towerNodes.length, startX-130, startY, startZ, 0);
+        Node[] panelNodes = new StrandPanel().buildPanel(teensy, 1, "center_pillar_all", towerNodes.length, startX-130, startY, startZ, 0);
         towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
 
-        panelNodes = new StrandPanel().buildPanel(teensy, 2, "center_pillar_all", towerNodes.length, startX, startY, startZ, 0);
+        //panelNodes = new StrandPanel().buildPanel(teensy, 2, "center_pillar_all", towerNodes.length, startX, startY, startZ, 0);
+        //towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
+
+        /*
+        panelNodes = new StrandPanel().buildPanel(teensy, 3, "center_pillar_all", towerNodes.length, startX+130, startY, startZ, 0);
         towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
 
-        panelNodes = new StrandPanel().buildPanel(teensy, 1, "center_pillar_all", towerNodes.length, startX+130, startY, startZ, 0);
+        panelNodes = new StrandPanel().buildPanel(teensy, 4, "center_pillar_all", towerNodes.length, startX+260, startY, startZ, 0);
         towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
-
-        panelNodes = new StrandPanel().buildPanel(teensy, 0, "center_pillar_all", towerNodes.length, startX+260, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
+        */
 
         return  towerNodes;
     }
