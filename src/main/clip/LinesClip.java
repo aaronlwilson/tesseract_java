@@ -3,6 +3,7 @@ package clip;
 import java.util.*;
 
 
+import hardware.Tile;
 import processing.core.PVector;
 import static processing.core.PApplet.dist;
 import static processing.core.PApplet.map;
@@ -111,7 +112,6 @@ public class LinesClip  extends AbstractClip {
         int newGreen = 0;
         int newBlue = 0;
 
-
         for(Particle particle : _particles) {
 
             PVector l = particle.position;
@@ -144,9 +144,13 @@ public class LinesClip  extends AbstractClip {
         if(newBlue > 0) nodestate[2] = newBlue;
         */
 
-        nodestate[0] = 255;
-        nodestate[1] = 255;
-        nodestate[2] = 255;
+        Tile t = node.fixture;
+
+        int c = t.numberPImage.pixels[node.index];
+
+        nodestate[0] = Util.getR(c);
+        nodestate[1] = Util.getG(c);
+        nodestate[2] = Util.getB(c);
 
         return nodestate;
     }

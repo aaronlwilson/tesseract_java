@@ -1,12 +1,16 @@
 package hardware;
 
 import environment.Node;
+import processing.core.PImage;
 
 public class Tile extends Fixture {
 
     public Rabbit parentRabbit;
+
     //public int[][] numberPImageArray;
     //public int[][] rotatedPImageArray;
+
+    public PImage numberPImage;
 
     //this tile holds references to all its nodes, and where they are mapped considering rotation
     public Node[][] tileNodeArray = new Node[12][12];
@@ -14,11 +18,7 @@ public class Tile extends Fixture {
 
     private int xSpacing = 6;
     private int ySpacing = 6;
-    private int xOff = 0;
-    private int yOff = 0;
 
-    public int snapX = -1;// -1 means its outside of the tilegrid
-    public int snapY = -1;
     public int rotation = 0;
 
     //this is a work-around to correct one v1 tile that has swapped blue and green channels
@@ -32,11 +32,11 @@ public class Tile extends Fixture {
         parentRabbit = theParentRabbit;
         id = theId;
 
-        /*
-        String imagePath = "ui/pixel_number_"+id+".gif";
-        PImage numberPImage = loadImage(imagePath);
-        numberPImageArray = new int[12][12];
+        String imagePath = "tiles/pixel_number_"+id+".gif";
+        numberPImage = app.TesseractMain.getMain().loadImage(imagePath);
 
+        /*
+        numberPImageArray = new int[12][12];
         //convert the image to a 2d array so that it can be rotated
         int loc = 0;
         for (int j=0; j<12; j++){
@@ -47,7 +47,8 @@ public class Tile extends Fixture {
             }
         }//end convert
         rotatedPImageArray = numberPImageArray;
-         */
+        */
+
 
     }//end constructor
 
@@ -88,7 +89,8 @@ public class Tile extends Fixture {
                 }
 
                 //TODO map node z position
-                Node node = new Node(xPos+xOffset-3, yPos+yOffset+3, 0, globalIndex,this);
+                //Node node = new Node(xPos+xOffset-3, yPos+yOffset+3, 0, globalIndex,this);
+                Node node = new Node(xPos+xOffset-3, yPos+yOffset+3, 0, index,this);
                 globalIndex++;
 
                 tileNodeArray[i][j] = node;

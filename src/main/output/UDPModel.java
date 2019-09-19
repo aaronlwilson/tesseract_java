@@ -86,6 +86,7 @@ public class UDPModel {
         // TODO: need to objects initialize from values in env vars
     }
 
+    //for rabbit test
     private void createNodeMap(){
         for (int k=0; k<12; k++){//y
             for (int j=0; j<12; j++){//x
@@ -123,7 +124,7 @@ public class UDPModel {
                 //we now have serialport chipadress and node number
                 //now we need to calculate the corresponding address in the outbuff
                 int OUTBUFF_position = ((chip_address*6*9)+node_number*9);//this is the base chip position
-                OUTBUFF_position = OUTBUFF_position+serial_port;// offset by the corrct amount for the correct serial port.
+                OUTBUFF_position = OUTBUFF_position+serial_port;// offset by the correct amount for the correct serial port.
                 nodeMap[k][j] = OUTBUFF_position;
 
             }
@@ -141,6 +142,8 @@ public class UDPModel {
     public void send() {
         for (Rabbit rabbit : rabbits) {
             //System.out.printf("RABBIT IP: %s \n", rabbit.ip);
+            if (rabbit == null)
+                continue;
 
             for (Tile tile : rabbit.tileArray) {
                 sendTileFrame(tile);
@@ -155,9 +158,8 @@ public class UDPModel {
 
 
         for (Teensy teensy : teensies) {
-            if (teensy == null) continue;
-
-            //sendTeensyNodesAsPanels(teensy);
+            if (teensy == null)
+                continue;
 
             sendPanelFrame(teensy);
 
@@ -183,7 +185,7 @@ public class UDPModel {
         //node map for one tile
         for (int y=0; y<12; y++){
             for (int x=0; x<12; x++){
-                //one node, set each channel
+                //get node that belongs to this tile
                 Node node = tile.tileNodeArray[x][y];
 
                 data[nodeMap[y][x]+4] = (byte)node.g;
@@ -199,10 +201,7 @@ public class UDPModel {
         }
         // send the message for 1 tile
         String ip = tile.parentRabbit.ip;
-
-        //if(app.BROADCAST && ip!="X.X.X.X"){
-            udp.send( data, ip, rabbitPort );
-        //}
+        udp.send( data, ip, rabbitPort );
 
     }//end sendTileFrame
 
@@ -269,41 +268,6 @@ public class UDPModel {
         }
     }//end sendPanelFrame
 
-    /*
-    // Send data to the Draco panels via Teensy
-    public void sendTeensyNodesAsPanels(Teensy teensy) {
-
-        int length = teensy.nodeArray.length;
-
-        //basically a node is an entire panel or tile
-        for (int t=0; t<length; t++){
-
-            Node node =  teensy.nodeArray[t];
-            int ledPerPin = 100;
-
-            byte[] data = new byte[(ledPerPin*3) + 2];
-
-            data[0] = (byte) ('l'); //LIGHTS command
-            data[1] = (byte) t; //pin address, once again we are doing one node per pin
-
-            for (int i=0; i<ledPerPin; i++){
-                data[(i*3) + 0 +2] = (byte) node.r;
-                data[(i*3) + 1 +2] = (byte) node.g;
-                data[(i*3) + 2 +2] = (byte) node.b;
-
-                //for the love of god, something please just happen on the lights so I know my life isn't a complete sham.
-                //data[(i*3) + 0 +2] = (byte) (PApplet.unhex("FF"));
-                //data[(i*3) + 1 +2] = (byte) (PApplet.unhex("FF"));
-                //data[(i*3) + 2 +2] = (byte) (PApplet.unhex("FF"));
-            }
-
-            // send the bytes for each tile separately
-            udp.send( data, teensy.ip, teensyPort );
-        }
-    }
-    */
-
-
 
     public void sendRabbitTest() {
 
@@ -319,6 +283,8 @@ public class UDPModel {
 
             for (int y=0; y<12; y++){
                 for (int x=0; x<12; x++){
+
+                    //scanning behavior
                     if(nodeCount != currentNode){
 
                         data[nodeMap[y][x]+4] = (byte) (PApplet.unhex("00"));
@@ -331,15 +297,12 @@ public class UDPModel {
                         data[nodeMap[y][x]+3+4] = (byte) c[count + 0]; //r
                         data[nodeMap[y][x]+6+4] = (byte) c[count + 2]; //g
                     }
-
                     nodeCount++;
                 }
             }
 
             // send the message for each tile
-            //udp.send( data, broadcastIp, rabbitPort );
-            udp.send( data, "192.168.1.105", rabbitPort );
-
+            udp.send( data, broadcastIp, rabbitPort );
 
         }//end for num tiles
 

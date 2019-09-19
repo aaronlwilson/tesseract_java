@@ -52,7 +52,7 @@ public class TesseractMain extends PApplet {
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
     //https://github.com/processing/processing/issues/5476
 
-    System.setProperty("jogl.disable.openglcore", "false");
+    //System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
