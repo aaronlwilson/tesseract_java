@@ -122,9 +122,9 @@ public class Stage {
         //pins are 0 -orange, 2 -blue, 4 -orange, 6 -blue
 
         //test "head"
-        nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 0, "center_pillar_level_4", 0, 0, 0, 0, 0);
+        //nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 0, "center_pillar_level_4", 0, 0, 0, 0, 0);
 
-        /*
+
         Node[] talonNodes = buildSmallTalon(_myMain.udpModel.teensies[0], -450,0, 300);
         nodes = (Node[]) _myMain.concat( nodes, talonNodes );
 
@@ -141,7 +141,7 @@ public class Stage {
         //center tower
         Node[] towerNodes = buildCenterTower(_myMain.udpModel.teensies[4], 0,0 , 0);
         nodes = (Node[]) _myMain.concat( nodes, towerNodes );
-        */
+
 
     }
 
@@ -171,16 +171,16 @@ public class Stage {
         Node[] panelNodes = new StrandPanel().buildPanel(teensy, 1, "center_pillar_all", towerNodes.length, startX-130, startY, startZ, 0);
         towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
 
-        //panelNodes = new StrandPanel().buildPanel(teensy, 2, "center_pillar_all", towerNodes.length, startX, startY, startZ, 0);
-        //towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
+        panelNodes = new StrandPanel().buildPanel(teensy, 2, "center_pillar_all", towerNodes.length, startX, startY, startZ, 0);
+        towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
 
-        /*
+
         panelNodes = new StrandPanel().buildPanel(teensy, 3, "center_pillar_all", towerNodes.length, startX+130, startY, startZ, 0);
         towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
 
         panelNodes = new StrandPanel().buildPanel(teensy, 4, "center_pillar_all", towerNodes.length, startX+260, startY, startZ, 0);
         towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
-        */
+        
 
         return  towerNodes;
     }
