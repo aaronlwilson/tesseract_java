@@ -118,26 +118,29 @@ public class Stage {
         _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address");
         _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.103", 6, "mac_address");
 
-        int centerize = 108;
+        int ctr = 108;
+        int ts = 72;
 
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, centerize, -72,0,0,0,0,0,false );
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, ctr-ts, -ctr,0,0,0,0,false );
 
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, centerize, -72, (72*3),0,0,0,0,false );
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, ctr-ts, ctr,0,0,0,0,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, centerize,(72*2),0,0,1,0,0,false );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr,(ts*2)-ctr, ctr,0,1,0,0,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, centerize,(72*2),(-72*3),0,1,0,0,false );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr,(ts*2)-ctr,(-ts*3)+ctr,0,1,0,0,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, centerize,-72,0,0,2,0,0,false );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr,ctr-ts, ctr,0,2,0,0,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, centerize,-72,(72*3),0,2,0,0,false );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr,ctr-ts, -ctr,0,2,0,0,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+
+
 
     }
 

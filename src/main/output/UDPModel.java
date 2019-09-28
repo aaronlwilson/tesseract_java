@@ -174,6 +174,9 @@ public class UDPModel {
 
     // Send tile to Tesseract
     public void sendTileFrame(Tile tile){
+        if(tile == null)
+            return;
+
         //data for one tile, one frame
         byte[] data = new byte[(432+4)]; //144 nodes * 3 channels per node = 432
 

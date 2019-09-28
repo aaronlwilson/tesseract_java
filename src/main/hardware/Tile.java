@@ -204,7 +204,7 @@ public class Tile extends Fixture {
         for (int k = 0; k < 144; k++) {
             if (id == 1) {
                 Node n = nodeArray[k];
-                System.out.println(n.index);
+                //System.out.println(n.index);
             }
         }
 
