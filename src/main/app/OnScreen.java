@@ -83,6 +83,9 @@ public class OnScreen {
             _yDelta = 0;
         }
 
+        //TODO get x rotation from 1024 rotary encoder
+        //_xMove += 1;
+
         _newXrot = _xMove - _xDelta;
         _newYrot = _yMove - _yDelta;
 
@@ -93,26 +96,28 @@ public class OnScreen {
         diff = _yrot-_newYrot;
         if (Math.abs(diff) >  0.01) { _yrot -= diff/6.0; }
 
-        p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI));
-        p.rotateY(p.map(_xrot,0, p.width, p.PI, -p.PI));
+        p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI) + p.PI);
+        p.rotateY(p.map(_xrot,0, p.width,  p.PI, -p.PI) + p.PI);
+
 
         drawAxes(600);
 
-        drawBoundingBox();
+
 
 
         p.pushMatrix();
 
         //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
         //we want to translate the object on multiple axes using the current global coordinates.
-        //float valueX = 45, valueY = 0, valueZ = 35.3f;
+        float valueX = 45, valueY = 0, valueZ = 35.3f;
 
         //for Tesseract only
         //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
 
+        drawBoundingBox();
 
         //draw nodes
-        p.strokeWeight(4);
+        p.strokeWeight(6);
 
         if(_myMain.stage.nodes != null) {
             int l = _myMain.stage.nodes.length;

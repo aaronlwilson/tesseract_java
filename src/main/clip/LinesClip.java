@@ -144,13 +144,24 @@ public class LinesClip  extends AbstractClip {
         if(newBlue > 0) nodestate[2] = newBlue;
         */
 
-        Tile t = node.fixture;
+        // Checking if t.equals null or works fine.
+        try
+        {
+            // This line of code throws NullPointerException
+            // because t is null
+            Tile t = node.fixture;
+            int c = t.numberPImage.pixels[node.index];
 
-        int c = t.numberPImage.pixels[node.index];
+            nodestate[0] = Util.getR(c);
+            nodestate[1] = Util.getG(c);
+            nodestate[2] = Util.getB(c);
+        }
+        catch(NullPointerException e)
+        {
+            //System.out.println("NullPointerException Caught");
+        }
 
-        nodestate[0] = Util.getR(c);
-        nodestate[1] = Util.getG(c);
-        nodestate[2] = Util.getB(c);
+
 
         return nodestate;
     }
