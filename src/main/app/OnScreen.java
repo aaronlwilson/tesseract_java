@@ -84,7 +84,7 @@ public class OnScreen {
         }
 
         //TODO get x rotation from 1024 rotary encoder
-        //_xMove += 1;
+        _xMove += 3;
 
         _newXrot = _xMove - _xDelta;
         _newYrot = _yMove - _yDelta;
@@ -104,7 +104,6 @@ public class OnScreen {
 
 
 
-
         p.pushMatrix();
 
         //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
@@ -112,7 +111,9 @@ public class OnScreen {
         float valueX = 45, valueY = 0, valueZ = 35.3f;
 
         //for Tesseract only
-        //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+
+
 
         drawBoundingBox();
 
