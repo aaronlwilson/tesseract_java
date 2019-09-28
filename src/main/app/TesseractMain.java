@@ -52,7 +52,7 @@ public class TesseractMain extends PApplet {
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
     //https://github.com/processing/processing/issues/5476
 
-    //System.setProperty("jogl.disable.openglcore", "false");
+    System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
@@ -61,7 +61,7 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
-    frameRate( 25 );
+    frameRate( 30 );
 
     Util.enableColorization();
 
@@ -83,14 +83,9 @@ public class TesseractMain extends PApplet {
     // Initialize websocket connection
     WebsocketInterface.get();
 
-    // Clear screen
-    clear();
 
     // Start listening for UDP messages.  Handles sending/receiving all UDP data
     udpModel = new UDPModel(this);
-
-    // Draw the on-screen visualization
-    onScreen = new OnScreen(this);
 
     // The stage is the LED mapping
     stage = new Stage();
@@ -116,6 +111,10 @@ public class TesseractMain extends PApplet {
 
     // The shutdown hook will let us clean up when the application is killed.  It is very important to clean up the websocket server so we don't leave the port in use
     createShutdownHook();
+
+
+    // Draw the on-screen visualization
+    onScreen = new OnScreen(this);
   }
 
   @Override
