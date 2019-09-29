@@ -150,7 +150,8 @@ public class LinesClip  extends AbstractClip {
             // This line of code throws NullPointerException
             // because t is null
             Tile t = node.fixture;
-            int c = t.numberPImage.pixels[node.index];
+            //int c = t.numberPImage.pixels[node.index];
+            int c = t.numberColorForNodeIndex(node.index);
 
             nodestate[0] = Util.getR(c);
             nodestate[1] = Util.getG(c);

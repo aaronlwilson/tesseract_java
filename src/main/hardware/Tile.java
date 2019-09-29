@@ -7,9 +7,7 @@ public class Tile extends Fixture {
 
     public Rabbit parentRabbit;
 
-    //public int[][] numberPImageArray;
-    //public int[][] rotatedPImageArray;
-
+    public int[][] numberPImageArray;
     public PImage numberPImage;
 
     //this tile holds references to all its nodes, and where they are mapped considering rotation
@@ -38,7 +36,7 @@ public class Tile extends Fixture {
         String imagePath = "tiles/pixel_number_"+id+".gif";
         numberPImage = app.TesseractMain.getMain().loadImage(imagePath);
 
-        /*
+
         numberPImageArray = new int[12][12];
         //convert the image to a 2d array so that it can be rotated
         int loc = 0;
@@ -49,14 +47,12 @@ public class Tile extends Fixture {
                 loc++;
             }
         }//end convert
-        rotatedPImageArray = numberPImageArray;
-        */
 
 
     }//end constructor
 
 
-    static void flipMatrixVertical(Node mat[][])
+    static void flipMatrixHorizontal(Node mat[][])
     {
         int N = mat.length;
 
@@ -69,13 +65,39 @@ public class Tile extends Fixture {
         }
     }
 
-    static void flipMatrixHorizontal(Node mat[][])
+    static void flipImageMatrixHorizontal(int mat[][])
+    {
+        int N = mat.length;
+
+        for (int i = 0; i < N / 2; i++) {
+            for (int j = 0; j < mat[i].length; j++) {
+                int temp = mat[i][j];
+                mat[i][j] = mat[N - 1 - i][j];
+                mat[N - 1 -i][j] = temp;
+            }
+        }
+    }
+
+    static void flipMatrixVertical(Node mat[][])
     {
         int N = mat.length;
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < mat[i].length / 2; j++) {
                 Node temp = mat[i][j];
+                mat[i][j] = mat[i][mat[i].length - 1 - j];
+                mat[i][mat[i].length - 1 -j] = temp;
+            }
+        }
+    }
+
+    static void flipImageMatrixVertical(int mat[][])
+    {
+        int N = mat.length;
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < mat[i].length / 2; j++) {
+                int temp = mat[i][j];
                 mat[i][j] = mat[i][mat[i].length - 1 - j];
                 mat[i][mat[i].length - 1 -j] = temp;
             }
@@ -110,6 +132,53 @@ public class Tile extends Fixture {
                 mat[N-1-y][x] = temp;
             }
         }
+    }
+
+    static void rotateImageMatrix(int mat[][])
+    {
+        int N = mat.length;
+
+        // Consider all squares one by one
+        for (int x = 0; x < N / 2; x++) {
+            // Consider elements in group of 4 in
+            // current square
+            for (int y = x; y < N-x-1; y++) {
+                // store current cell in temp variable
+                int temp = mat[x][y];
+
+                // move values from right to top
+                mat[x][y] = mat[y][N-1-x];
+
+                // move values from bottom to right
+                mat[y][N-1-x] = mat[N-1-x][N-1-y];
+
+                // move values from left to bottom
+                mat[N-1-x][N-1-y] = mat[N-1-y][x];
+
+                // assign temp to left
+                mat[N-1-y][x] = temp;
+            }
+        }
+    }
+
+    public int numberColorForNodeIndex(int index){
+        int row = indexToX(index,12);
+        int col = indexToY(index, 12);
+
+        return numberPImageArray[row][col];
+    }
+
+    // convert image xy to pixel index
+    private int xyToIndex(int x, int y, int width){
+        return ( y * width ) + x;
+    }
+    // convert pixel index to image x
+    private int indexToX(int i, int width){
+        return ( i % width );
+    }
+    // convert pixel index to image y
+    private int indexToY(int i, int width){
+        return ( i / width );
     }
 
     //called by sceneManager to construct a scene of nodes
@@ -190,7 +259,12 @@ public class Tile extends Fixture {
         }//end j
 
         //this.rotateMatrix(tileNodeArray);
-        //this.flipMatrixHorizontal(tileNodeArray);
+        //this.rotateMatrix(tileNodeArray);
+
+        this.flipMatrixVertical(tileNodeArray);
+        this.flipImageMatrixVertical(numberPImageArray);
+
+        //this.flipMatrixVertical(tileNodeArray);
 
 
         //return 2D array as 1D
@@ -198,13 +272,6 @@ public class Tile extends Fixture {
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
                 nodeArray[c++] = tileNodeArray[i][j];
-            }
-        }
-
-        for (int k = 0; k < 144; k++) {
-            if (id == 1) {
-                Node n = nodeArray[k];
-                //System.out.println(n.index);
             }
         }
 
