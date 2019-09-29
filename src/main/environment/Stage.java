@@ -106,8 +106,6 @@ public class Stage {
     private void buildTesseractStageCube() {
         int counter = 0;
 
-        PixelPlane plane = new PixelPlane(_myMain);
-
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
@@ -121,26 +119,34 @@ public class Stage {
         int ctr = 108;
         int ts = 72;
 
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, ctr-ts, -ctr,0,0,0,0,true );
+        //back;
+        PixelPlane plane = new PixelPlane(_myMain);
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, -ctr,0,0,true,false,true );
 
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, ctr-ts, ctr,0,0,0,0,false );
+        //front
+        plane = new PixelPlane(_myMain);
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, ctr,0,0,false,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr,(ts*2)-ctr, ctr,0,1,0,0,false );
+        //top
+        plane = new PixelPlane(_myMain);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr,0,1,false,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr,(ts*2)-ctr,(-ts*3)+ctr,0,1,0,0,false );
+        //bottom
+        plane = new PixelPlane(_myMain);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr,2,1,true,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr,ctr-ts, ctr,0,2,0,0,false );
+        //left
+        plane = new PixelPlane(_myMain);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr,0,2,false,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr,ctr-ts, -ctr,0,2,0,0,false );
+        //right
+        plane = new PixelPlane(_myMain);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr,0,2,true,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
-
-
 
     }
 
