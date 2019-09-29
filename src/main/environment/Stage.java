@@ -111,7 +111,7 @@ public class Stage {
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.100", 1, "mac_address");
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.100", 1, "mac_address");  //added reserved IP for this one, it has the v1 tile with blue and green swapped
         _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.105", 2, "mac_address");
         _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.104", 3, "mac_address");
         _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.102", 4, "mac_address");
@@ -121,7 +121,7 @@ public class Stage {
         int ctr = 108;
         int ts = 72;
 
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, ctr-ts, -ctr,0,0,0,0,false );
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, ctr-ts, -ctr,0,0,0,0,true );
 
         Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, ctr-ts, ctr,0,0,0,0,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );

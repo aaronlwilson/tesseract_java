@@ -84,7 +84,7 @@ public class OnScreen {
         }
 
         //TODO get x rotation from 1024 rotary encoder
-        _xMove += 3;
+        //_xMove += 3;
 
         _newXrot = _xMove - _xDelta;
         _newYrot = _yMove - _yDelta;
@@ -97,7 +97,7 @@ public class OnScreen {
         if (Math.abs(diff) >  0.01) { _yrot -= diff/6.0; }
 
         p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI) + p.PI);
-        p.rotateY(p.map(_xrot,0, p.width,  p.PI, -p.PI) + p.PI);
+        p.rotateY(p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI);
 
 
         drawAxes(600);
@@ -111,7 +111,7 @@ public class OnScreen {
         float valueX = 45, valueY = 0, valueZ = 35.3f;
 
         //for Tesseract only
-        rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
 
 
 
