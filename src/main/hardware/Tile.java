@@ -18,9 +18,11 @@ public class Tile extends Fixture {
     private int ySpacing = 6;
 
     public int rotation = 0;
-    public int flipHorizontal = 0;
-    public int flipVertical = 0;
+    public int panelRotation = 0;
     public int orientation = 0;
+
+    public boolean flipHorizontal;
+    public boolean flipVertical;
 
     //this is a work-around to correct one v1 tile that has swapped blue and green channels
     public boolean channelSwap;
@@ -52,7 +54,7 @@ public class Tile extends Fixture {
     }//end constructor
 
 
-    static void flipMatrixHorizontal(Node mat[][])
+    private static void flipNodeMatrixHorizontal(Node mat[][])
     {
         int N = mat.length;
 
@@ -65,7 +67,7 @@ public class Tile extends Fixture {
         }
     }
 
-    static void flipImageMatrixHorizontal(int mat[][])
+    private static void flipImageMatrixHorizontal(int mat[][])
     {
         int N = mat.length;
 
@@ -78,7 +80,7 @@ public class Tile extends Fixture {
         }
     }
 
-    static void flipMatrixVertical(Node mat[][])
+    private static void flipNodeMatrixVertical(Node mat[][])
     {
         int N = mat.length;
 
@@ -91,7 +93,7 @@ public class Tile extends Fixture {
         }
     }
 
-    static void flipImageMatrixVertical(int mat[][])
+    private static void flipImageMatrixVertical(int mat[][])
     {
         int N = mat.length;
 
@@ -107,7 +109,7 @@ public class Tile extends Fixture {
 
     // An Inplace function to rotate a N x N matrix
     // by 90 degrees in anti-clockwise direction
-    static void rotateMatrix(Node mat[][])
+    private static void rotateNodeMatrix(Node mat[][])
     {
         int N = mat.length;
 
@@ -134,7 +136,8 @@ public class Tile extends Fixture {
         }
     }
 
-    static void rotateImageMatrix(int mat[][])
+    //clockwise 90
+    private static void rotateImageMatrix(int mat[][])
     {
         int N = mat.length;
 
@@ -161,13 +164,6 @@ public class Tile extends Fixture {
         }
     }
 
-    public int numberColorForNodeIndex(int index){
-        int row = indexToX(index,12);
-        int col = indexToY(index, 12);
-
-        return numberPImageArray[row][col];
-    }
-
     // convert image xy to pixel index
     private int xyToIndex(int x, int y, int width){
         return ( y * width ) + x;
@@ -181,8 +177,14 @@ public class Tile extends Fixture {
         return ( i / width );
     }
 
+    public int numberColorForNodeIndex(int index){
+        int row = indexToX(index,12);
+        int col = indexToY(index, 12);
+        return numberPImageArray[row][col];
+    }
+
     //called by sceneManager to construct a scene of nodes
-    public Node[] getNodeLayout(int xOffset, int yOffset, int zOffset, int globalIndex)
+    public Node[] getNodeLayout(int xOffset, int yOffset, int zOffset)
     {
         //TODO this could be redone to use the rotation matrix
 
@@ -231,12 +233,9 @@ public class Tile extends Fixture {
                     nodeZ = xPos+xOffset-3;
                 }
 
-
                 Node node = new Node(nodeX, nodeY, nodeZ, index,this);
-                globalIndex++;
 
                 tileNodeArray[i][j] = node;
-                //nodeArray[index] = node;
                 index++;
 
             }//end i
@@ -258,13 +257,21 @@ public class Tile extends Fixture {
 
         }//end j
 
-        //this.rotateMatrix(tileNodeArray);
-        //this.rotateMatrix(tileNodeArray);
+        //apply matrix transformations at the tile level
+        if(this.flipVertical) {
+            flipNodeMatrixVertical(tileNodeArray);
+            flipImageMatrixVertical(numberPImageArray);
+        }
 
-        this.flipMatrixVertical(tileNodeArray);
-        this.flipImageMatrixVertical(numberPImageArray);
+        if(this.flipHorizontal){
+            flipNodeMatrixHorizontal(tileNodeArray);
+            flipImageMatrixHorizontal(numberPImageArray);
+        }
 
-        //this.flipMatrixVertical(tileNodeArray);
+        for(int r=0; r<panelRotation; r++) {
+            rotateNodeMatrix(tileNodeArray);
+            rotateImageMatrix(numberPImageArray);
+        }
 
 
         //return 2D array as 1D
@@ -275,9 +282,7 @@ public class Tile extends Fixture {
             }
         }
 
-
         return nodeArray;
-
 
     }//end getNodeLayout
 
