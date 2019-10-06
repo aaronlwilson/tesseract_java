@@ -1,6 +1,7 @@
 package app;
 
 import processing.core.PApplet;
+
 import environment.*;
 
 
@@ -96,8 +97,11 @@ public class OnScreen {
         diff = _yrot-_newYrot;
         if (Math.abs(diff) >  0.01) { _yrot -= diff/6.0; }
 
+        //PUT BACK
         p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI) + p.PI);
-        p.rotateY(p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI);
+
+        float totalY = (float) (p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI + _myMain.rotaryEncoderAngle);
+        p.rotateY(totalY);
 
 
         drawAxes(600);
@@ -111,7 +115,7 @@ public class OnScreen {
         float valueX = 45, valueY = 0, valueZ = 35.3f;
 
         //for Tesseract only
-        //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
 
 
 
