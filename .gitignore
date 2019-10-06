@@ -112,6 +112,7 @@ tesseract_java.iml
 #manually have to include this or have gradle download it separate from the repo
 
 lib/video/
+lib/serial/
 
 # temporary directory where we download dependencies before unpacking them
 tmp/

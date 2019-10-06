@@ -50,7 +50,7 @@ public class PixelPlane {
             }
         }
     }
-    
+
     private static int[][] rotateMatrixClockwise(int[][] mat){
         //rotate a 2D array
         int N = mat.length;

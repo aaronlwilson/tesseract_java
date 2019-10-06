@@ -1,11 +1,13 @@
 package app;
 
+import processing.core.PApplet;
+import processing.video.Movie;
+import processing.serial.*;
+
 import environment.Node;
 import environment.Stage;
 import model.Channel;
 import output.UDPModel;
-import processing.core.PApplet;
-import processing.video.Movie;
 import show.Playlist;
 import show.PlaylistManager;
 import stores.ConfigStore;
@@ -34,6 +36,14 @@ public class TesseractMain extends PApplet {
   public Stage stage;
   public Channel channel1;
 
+
+  //for Rotary Encoder readings
+  public Serial arduinoPort;    // The serial port
+  public int lf = 10;      // ASCII linefeed
+  public String inString;  // Input chars from serial port
+  public double rotaryEncoderAngle;
+
+
   //Click the arrow on the line below to run the program in .idea
   public static void main(String[] args) {
     PApplet.main("app.TesseractMain", args);
@@ -52,7 +62,7 @@ public class TesseractMain extends PApplet {
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
     //https://github.com/processing/processing/issues/5476
 
-    System.setProperty("jogl.disable.openglcore", "false");
+    //System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
@@ -111,6 +121,13 @@ public class TesseractMain extends PApplet {
 
     // The shutdown hook will let us clean up when the application is killed.  It is very important to clean up the websocket server so we don't leave the port in use
     createShutdownHook();
+
+
+
+    // Open the port you are using at the rate you want:
+    String portName = Serial.list()[1];
+    arduinoPort = new Serial(this, portName, 115200);
+    arduinoPort.bufferUntil(lf);
 
 
     // Draw the on-screen visualization
@@ -199,6 +216,22 @@ public class TesseractMain extends PApplet {
     onScreen.mouseReleased();
   }
 
+
+  //event handler for processing.serial
+  public void serialEvent(Serial p) {
+    //inString = p.readString();
+    inString = p.readStringUntil('\n');
+
+    if (inString != null) {
+      // trim off any whitespace:
+      inString = trim(inString);
+      // convert to an int and map to the screen height:
+      int pulses = Integer.parseInt(inString);	 //0 to 2048
+
+      //convert to radians
+      rotaryEncoderAngle = (pulses*(this.PI/1024));
+    }
+  }
 
   //Custom event handler on pApplet for video library
   public void movieEvent(Movie movie) { movie.read(); }
