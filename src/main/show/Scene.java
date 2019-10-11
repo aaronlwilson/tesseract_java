@@ -117,6 +117,9 @@ public class Scene {
             case TesseractMain.LINESCLIP:
                 newClip = new LinesClip();
                 break;
+            case TesseractMain.TILESTEST:
+                newClip = new TilesTestClip();
+                break;
 
 
             default:

@@ -97,6 +97,13 @@ class ClipMetadata {
                 ],
         ],
         [
+                displayName: 'Tiles Test',
+                clipId     : 'tiles_test_clip',
+                controls   : [
+                        [displayName: 'Size', type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
+                ],
+        ],
+        [
             displayName: 'Video',
             clipId     : 'video',
             controls   : [

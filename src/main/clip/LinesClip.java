@@ -3,7 +3,6 @@ package clip;
 import java.util.*;
 
 
-import hardware.Tile;
 import processing.core.PVector;
 import static processing.core.PApplet.dist;
 import static processing.core.PApplet.map;
@@ -46,7 +45,6 @@ public class LinesClip  extends AbstractClip {
     public void run() {
 
         /*
-
         //map local vars to abstract clip parameters
         _pSize = p1*200.0f;
         _pRamp = p2*200.0f;
@@ -105,7 +103,7 @@ public class LinesClip  extends AbstractClip {
 
         int[] nodestate = new int[3];
 
-        /*
+
         float brightness = 0.0f;
 
         int newRed = 0;
@@ -142,25 +140,6 @@ public class LinesClip  extends AbstractClip {
         if(newRed > 0) nodestate[0] = newRed;
         if(newGreen > 0) nodestate[1] = newGreen;
         if(newBlue > 0) nodestate[2] = newBlue;
-        */
-
-        // Checking if t.equals null or works fine.
-        try
-        {
-            // This line of code throws NullPointerException
-            // because t is null
-            Tile t = node.fixture;
-            //int c = t.numberPImage.pixels[node.index];
-            int c = t.numberColorForNodeIndex(node.index);
-
-            nodestate[0] = Util.getR(c);
-            nodestate[1] = Util.getG(c);
-            nodestate[2] = Util.getB(c);
-        }
-        catch(NullPointerException e)
-        {
-            //System.out.println("NullPointerException Caught");
-        }
 
 
 

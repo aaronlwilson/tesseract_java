@@ -30,6 +30,7 @@ public class TesseractMain extends PApplet {
   public static final int PARTICLE = 4;
   public static final int PERLINNOISE = 5;
   public static final int LINESCLIP = 6;
+  public static final int TILESTEST = 7;
 
   private OnScreen onScreen;//only the main class gets to draw
   public UDPModel udpModel;
@@ -181,9 +182,9 @@ public class TesseractMain extends PApplet {
 
 
     //apply channel brightness
-    rgb1[0] = (int)Math.round(rgb1[0]);
-    rgb1[1] = (int)Math.round(rgb1[1]);
-    rgb1[2] = (int)Math.round(rgb1[2]);
+    rgb1[0] = (int)Math.round(rgb1[0]/1);
+    rgb1[1] = (int)Math.round(rgb1[1]/1);
+    rgb1[2] = (int)Math.round(rgb1[2]/1);
 
     //TODO mix the 2 channels together
 
