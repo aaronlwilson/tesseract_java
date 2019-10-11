@@ -8,6 +8,7 @@ public class PixelPlane {
 
     private PApplet p;
 
+
     public Tile[][] panelTileArray = new Tile[3][3];
 
     // This layout corresponds to the physical construction of the pixel plane panels. I had to invert the matrix to get the transformations to work, not sure why... aliens
@@ -182,7 +183,8 @@ public class PixelPlane {
                 tile.flipVertical = flipVertical;
 
                 //hack for the old school pixel plane panel that has 8 of 9 tiles with rgb channels swapped
-                tile.channelSwap = channelSwap;
+                if(tileId!=1)
+                    tile.channelSwap = channelSwap;
 
                 rabbit.tileArray[tileId - 1] = tile;
 

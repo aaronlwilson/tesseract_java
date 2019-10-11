@@ -107,6 +107,7 @@ public class Util {
                 particle_clip: TesseractMain.PARTICLE,
                 perlin_noise : TesseractMain.PERLINNOISE,
                 lines_clip   : TesseractMain.LINESCLIP,
+                tiles_test_clip   : TesseractMain.TILESTEST,
         ]
 
         Integer enumVal = clipIdMap[clipId]
@@ -142,10 +143,13 @@ public class Util {
         return ((float) loaded / total) * 100;
     }
 
+
     //TODO move to another static class
     public static void createBuiltInPlaylists() {
         // Arrays.asList makes an immutable list, creating a new LinkedList with those items will make it mutable which we need
         List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
+                new PlaylistItem(UUID.randomUUID().toString(), 'Tiles Test', 30),
+                new PlaylistItem(UUID.randomUUID().toString(), 'Node Scanner', 30),
                 new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 4),
                 new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 10),
                 new PlaylistItem(UUID.randomUUID().toString(), 'Red', 3),
@@ -163,15 +167,14 @@ public class Util {
         Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
         PlaylistStore.get().addOrUpdate(playlist1);
 
+
+
         List<PlaylistItem> playlist2Items = new LinkedList<>(Arrays.asList(
                 new PlaylistItem(UUID.randomUUID().toString(), 'LinesClip', 30),
                 new PlaylistItem(UUID.randomUUID().toString(), 'PerlinNoise', 30),
                 new PlaylistItem(UUID.randomUUID().toString(), 'Particles', 30),
-                new PlaylistItem(UUID.randomUUID().toString(), 'Purple', 30),
-                new PlaylistItem(UUID.randomUUID().toString(), 'Red', 30),
-                new PlaylistItem(UUID.randomUUID().toString(), 'Yellow', 30),
                 new PlaylistItem(UUID.randomUUID().toString(), 'Color Wash', 30),
-                new PlaylistItem(UUID.randomUUID().toString(), 'Node Scanner', 30),
+
         ));
 
         Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
@@ -210,12 +213,13 @@ public class Util {
                 new Scene(6, "Particles", TesseractMain.PARTICLE, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
                 new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
                 new Scene(8, "LinesClip", TesseractMain.LINESCLIP, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
+                new Scene(9, "Tiles Test", TesseractMain.TILESTEST, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
         ]
 
         // Check to see if we have videos before blindly trying to create scenes.  TODO: improve this logic.  do better at removing scenes for video files that no longer exist
         List<String> allVideos = MediaStore.get().getMediaOfType('videos')
         if (allVideos.size() > 0) {
-            int nextIdx = 9
+            int nextIdx = 10
 
             List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
                 Scene s = new Scene(nextIdx, videoPath, TesseractMain.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
