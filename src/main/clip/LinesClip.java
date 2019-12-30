@@ -20,6 +20,8 @@ public class LinesClip  extends AbstractClip {
     private ArrayList<Particle> _particles;
 
 
+
+
     private float _pSize;
     private float _pRamp;
     private float _pSpeed;
@@ -40,6 +42,26 @@ public class LinesClip  extends AbstractClip {
         super.init();
 
         _particles = new ArrayList<Particle>();
+
+
+        //X
+        PVector xLoc = new PVector(200.0f, 0.0f, 0.0f);
+        int xC = _myMain.color(255, 0, 0);
+        _myMain.particleX = addParticle(xLoc, xC);
+
+        //Y
+        PVector yLoc = new PVector(0.0f, 200.0f, 0.0f);
+        int yC = _myMain.color(0, 255, 0);
+        _myMain.particleY = addParticle(yLoc, yC);
+
+        //Z
+        PVector zLoc = new PVector(0.0f, 0.0f, 200.0f);
+        int zC = _myMain.color(0, 0, 255);
+        _myMain.particleZ = addParticle(zLoc, zC);
+
+
+
+
     }
 
     public void run() {
@@ -68,35 +90,26 @@ public class LinesClip  extends AbstractClip {
             _counter = 0;
             addParticle();
         }
-
         */
     }
 
 
 
-    public void addParticle(){
-
-        //birthing point
-        PVector theLoc = new PVector(0.0f, -30.0f, 0.0f);
-
-        //int theC = _myMain.color(255, 255, 255);
-
-        //each particle is a little different
-        int rBlue = (int)(Math.random()*255);
-        int rRed =  (int)(Math.random()*255);
-        int rGreen = (int)(Math.random()*255);
-
-        int theC = _myMain.color(rRed, rBlue, rGreen);
-
+    public Particle addParticle(PVector theLoc, int theC ){
 
         float lowVel = -_pSpeed;
         float highVel = _pSpeed;
 
-        PVector theSpeed = new PVector(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
-        PVector theAccel = new PVector(0.01f, 0.01f, 0.01f);
+        //PVector theSpeed = new PVector(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
 
-        _particles.add(new Particle(theLoc, theC,_pSize, _pRamp, theSpeed, theAccel));
+        PVector theSpeed = new PVector(0.0f, 0.0f, 0.0f);
+        PVector theAccel = new PVector(0.0f, 0.0f, 0.0f);
 
+
+        Particle p = new Particle(theLoc, theC,_pSize, _pRamp, theSpeed, theAccel);
+        _particles.add(p);
+
+        return p;
     }
 
     public int[] drawNode(Node node) {

@@ -259,8 +259,10 @@ public class Tile extends Fixture {
 
         //apply matrix transformations at the tile level
         if(this.flipVertical) {
-            flipNodeMatrixVertical(tileNodeArray);
-            flipImageMatrixVertical(numberPImageArray);
+            //if(parentRabbit.ip != "192.168.0.108") {
+                flipNodeMatrixVertical(tileNodeArray);
+                flipImageMatrixVertical(numberPImageArray);
+            //}
         }
 
         if(this.flipHorizontal){

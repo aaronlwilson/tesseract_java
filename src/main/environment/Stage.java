@@ -67,39 +67,43 @@ public class Stage {
     private void buildTesseractStage() {
         int counter = 0;
 
-        PixelPlane plane = new PixelPlane(_myMain);
-        nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
-
+        //PixelPlane plane = new PixelPlane(_myMain);
+        //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.100", 1, "mac_address", 0);
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.105", 2, "mac_address", 0);
-        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.104", 3, "mac_address", 0);
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.102", 4, "mac_address", 0);
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address", 0);
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.103", 6, "mac_address", 0);
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.100", 1, "mac_address", 0xff0000);
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.101", 2, "mac_address", 0x00ff00);
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.102", 3, "mac_address", 0x0000ff);
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.103", 4, "mac_address", 0x111111);
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.104", 5, "mac_address", 0xff00ff);
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.105", 6, "mac_address", 0xffffff);
 
         int startY = -72;
 
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,-(72*9),startY,0, 0, 0,false,false,false );
+        PixelPlane plane = new PixelPlane(_myMain);
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,-(72*9),startY,0, 1, 0,false,false,false );
 
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,-(72*6),startY,0, 0, 0,false,false,true );
+        plane = new PixelPlane(_myMain);
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,-(72*6),startY,0, 0, 0,false,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,-(72*3),startY,0, 0,0,false,false, false );
+        plane = new PixelPlane(_myMain);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,-(72*3),startY,0, 0,0,false,false, true );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
+        plane = new PixelPlane(_myMain);
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,0,startY,0, 0,0,false,false, false  );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
+        plane = new PixelPlane(_myMain);
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,(72*3),startY,0, 0, 0,false,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
+        plane = new PixelPlane(_myMain);
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,(72*6),startY,0, 0, 0,false,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
-
 
     }
 
@@ -109,42 +113,44 @@ public class Stage {
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.108", 1, "mac_address",0xff0000);  //added reserved IP for this one, it has the v1 tile with blue and green swapped
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.105", 2, "mac_address",0x00ff00);
-        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.104", 3, "mac_address",0x0000ff);
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.102", 4, "mac_address",0xffffff);
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address",0xff00ff);
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.103", 6, "mac_address",0x111111);
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.0.103", 1, "mac_address",0xffcc11);
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.0.100", 2, "mac_address",0x00ff00);
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.0.102", 3, "mac_address",0x0000ff);
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.0.104", 4, "mac_address",0xff00ff);
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.0.101", 5, "mac_address",0xff0000);
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.0.105", 6, "mac_address",0xffffff);
 
         int ctr = 108;
 
-        //back;
+        //back //gray-yellow
         PixelPlane plane = new PixelPlane(_myMain);
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, -ctr,0,0,true,false,false );
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, -ctr,3,0,false,true,false );
 
-        //front
+
+        //front //green //needs hack //up
         plane = new PixelPlane(_myMain);
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, ctr,0,0,false,false,true );
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, ctr,1,0,true,true,true );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        //top
+
+        //top //blue //up
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr,0,1,false,false,false );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr,0,1,true,true,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        //bottom
+        //bottom //purps
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr,2,1,true,false,false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr,1,1,true,false,false);
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        //left
+        //left //red //up
         plane = new PixelPlane(_myMain);
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr,0,2,false,false,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
-        //right
+        //right //white
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr,0,2,true,false,false );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr,0,2,false,true,false );
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
     }

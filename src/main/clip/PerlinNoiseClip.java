@@ -59,9 +59,9 @@ public class PerlinNoiseClip  extends AbstractClip {
 
 
         // Calculate noise and scale by 255
-        float nX = (node.x - 1000) * _noiseScale;
-        float nY = node.y * _noiseScale;
-        float nZ = node.z * _noiseScale;
+        float nX = (node.screenX - 1000) * _noiseScale;
+        float nY = node.screenY * _noiseScale;
+        //float nZ = node.z * _noiseScale;
 
         _myMain.noiseDetail(_lod, _falloff);
 

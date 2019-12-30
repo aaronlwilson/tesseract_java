@@ -12,7 +12,7 @@ public class Particle
 
     public int color;
 
-    PVector position;
+    public PVector position;
     PVector velocity;
     PVector acceleration;
 
