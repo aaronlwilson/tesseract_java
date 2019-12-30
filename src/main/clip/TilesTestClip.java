@@ -44,6 +44,7 @@ public class TilesTestClip  extends AbstractClip {
 
             int c = t.numberColorForNodeIndex(node.index);
 
+            //different color for each panel
             if(Util.getR(c) > 2){
                 c = t.parentRabbit.testColor;
             }

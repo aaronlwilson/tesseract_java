@@ -1,5 +1,9 @@
 package app;
 
+//temp
+import clip.Particle;
+
+
 import processing.core.PApplet;
 import processing.video.Movie;
 import processing.serial.*;
@@ -20,6 +24,11 @@ public class TesseractMain extends PApplet {
 
   //single global instance
   private static TesseractMain _main;
+
+  public Particle particleX;
+  public Particle particleY;
+  public Particle particleZ;
+
 
 
   //CLIP CLASS ENUM

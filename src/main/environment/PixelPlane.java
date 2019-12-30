@@ -12,13 +12,7 @@ public class PixelPlane {
     public Tile[][] panelTileArray = new Tile[3][3];
 
     // This layout corresponds to the physical construction of the pixel plane panels. I had to invert the matrix to get the transformations to work, not sure why... aliens
-    int layoutMatrix[][] =
-            {
-                    {9, 4, 3},
-                    {8, 5, 2},
-                    {7, 6, 1}
-            };
-
+    //int layoutMatrix[][];
 
     public PixelPlane(PApplet pApplet) {
         p = pApplet;
@@ -64,6 +58,63 @@ public class PixelPlane {
         }
         return rotatedArray;
     }
+
+    /*
+//from geeks for geeks
+    // An Inplace function to rotate a N x N matrix
+    // by 90 degrees in anti-clockwise direction
+    static void rotateMatrixCounterClockwise(int mat[][])
+    {
+        int N = mat.length;
+
+        // Consider all squares one by one
+        for (int x = 0; x < N / 2; x++)
+        {
+            // Consider elements in group of 4 in
+            // current square
+            for (int y = x; y < N-x-1; y++)
+            {
+                // store current cell in temp variable
+                int temp = mat[x][y];
+
+                // move values from right to top
+                mat[x][y] = mat[y][N-1-x];
+
+                // move values from bottom to right
+                mat[y][N-1-x] = mat[N-1-x][N-1-y];
+
+                // move values from left to bottom
+                mat[N-1-x][N-1-y] = mat[N-1-y][x];
+
+                // assign temp to left
+                mat[N-1-y][x] = temp;
+            }
+        }
+    }
+
+
+    // Function to rotate the matrix 90 degree clockwise
+    static void rotate90Clockwise(int a[][])
+    {
+
+        // Traverse each cycle
+        for (int i = 0; i < N / 2; i++)
+        {
+            for (int j = i; j < N - i - 1; j++)
+            {
+
+                // Swap elements of each cycle
+                // in clockwise direction
+                int temp = a[i][j];
+                a[i][j] = a[N - 1 - j][i];
+                a[N - 1 - j][i] = a[N - 1 - i][N - 1 - j];
+                a[N - 1 - i][N - 1 - j] = a[j][N - 1 - i];
+                a[j][N - 1 - i] = temp;
+            }
+        }
+    }
+
+ */
 
 
     public Node[] buildFullCube(int startIndex, int startX, int startY, int startZ, int rotation){
@@ -153,25 +204,37 @@ public class PixelPlane {
         int inc = 6*12; //spacing 6 x 12 nodes
 
         //adjust the layoutMatrix prior to layout
+        int myMatrix[][] =
+                {
+                        {9, 4, 3},
+                        {8, 5, 2},
+                        {7, 6, 1}
+                };
 
         if(flipHorizontal)
-            flipMatrixHorizontal(layoutMatrix);
+            flipMatrixHorizontal(myMatrix);
 
         if(flipVertical)
-            flipMatrixVertical(layoutMatrix);
+            flipMatrixVertical(myMatrix);
 
-        for(int r=0; r<panelRotation; r++) {
-            layoutMatrix = rotateMatrixClockwise(layoutMatrix);
+        if(panelRotation >0) {
+            for (int r = 0; r < panelRotation; r++) {
+                myMatrix = rotateMatrixClockwise(myMatrix);
+            }
+
+        }else{
+            //myMatrix = rotateMatrixCounterClockwise(myMatrix);
+
         }
 
-
+        //layoutMatrix = myMatrix;
 
         for(int i=0; i<3; i++) {
             for(int j=0; j<3; j++) {
                 int xTilePos = startX + (inc*j);
                 int yTilePos = startY + (inc*i);
 
-                int tileId = layoutMatrix[j][i];
+                int tileId = myMatrix[j][i];
 
                 int tileRot = (tileId >3 && tileId <7) ? 2 : 0;
 
@@ -179,8 +242,11 @@ public class PixelPlane {
                 tile.rotation = tileRot;
                 tile.panelRotation = panelRotation;
                 tile.orientation = orientation;
-                tile.flipHorizontal = flipHorizontal;
-                tile.flipVertical = flipVertical;
+                //HACK
+                if(rabbit.ip != "192.168.0.100") {
+                    tile.flipHorizontal = flipHorizontal;
+                    tile.flipVertical = flipVertical;
+                }
 
                 //hack for the old school pixel plane panel that has 8 of 9 tiles with rgb channels swapped
                 if(tileId!=1)

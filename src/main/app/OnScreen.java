@@ -1,5 +1,9 @@
 package app;
 
+//temp
+import clip.Particle;
+
+
 import processing.core.PApplet;
 
 import environment.*;
@@ -84,8 +88,6 @@ public class OnScreen {
             _yDelta = 0;
         }
 
-        //TODO get x rotation from 1024 rotary encoder
-        //_xMove += 3;
 
         _newXrot = _xMove - _xDelta;
         _newYrot = _yMove - _yDelta;
@@ -97,14 +99,28 @@ public class OnScreen {
         diff = _yrot-_newYrot;
         if (Math.abs(diff) >  0.01) { _yrot -= diff/6.0; }
 
-        //PUT BACK
+
+
         p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI) + p.PI);
 
+        //add on the rotation from 1024 rotary encoder
         float totalY = (float) (p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI + _myMain.rotaryEncoderAngle);
         p.rotateY(totalY);
 
 
         drawAxes(600);
+
+
+        //temp, show absolute position of particles
+        p.strokeWeight(12);
+        p.stroke(_myMain.particleX.color);
+        p.point(_myMain.particleX.position.x, _myMain.particleX.position.y, _myMain.particleX.position.z);
+
+        p.stroke(_myMain.particleY.color);
+        p.point(_myMain.particleY.position.x, _myMain.particleY.position.y, _myMain.particleY.position.z);
+
+        p.stroke(_myMain.particleZ.color);
+        p.point(_myMain.particleZ.position.x, _myMain.particleZ.position.y, _myMain.particleZ.position.z);
 
 
 
@@ -118,11 +134,11 @@ public class OnScreen {
         rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
 
 
-
+        p.strokeWeight(1);
         drawBoundingBox();
 
         //draw nodes
-        p.strokeWeight(6);
+        p.strokeWeight(4);
 
         if(_myMain.stage.nodes != null) {
             int l = _myMain.stage.nodes.length;
