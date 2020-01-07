@@ -12,13 +12,14 @@ import util.Util;
 public class VideoClip extends AbstractClip{
 
     //CLASS VARS
+    private float _pThreshold;
 
     // Size of each cell in the grid, ratio of window size to video size
     private int _videoScale = 16;
     // Number of columns and rows in the system
     private int _cols, _rows;
 
-    // Step 1. Declare a Movie object.
+    //Declare a Movie object.
     public Movie movie;
 
     private int _videoW = 640;
@@ -61,6 +62,9 @@ public class VideoClip extends AbstractClip{
     }
 
     public void run() {
+
+        _pThreshold = p1*255.0f;
+
         if(movie != null) {
             if (!movie.playbin.isPlaying()) {
                 // Step 3. Start playing movie. To play just once play() can be used instead.
@@ -109,10 +113,18 @@ public class VideoClip extends AbstractClip{
             }
         }
 
+        int r = Util.getR(c);
+        int g = Util.getG(c);
+        int b = Util.getB(c);
+
+        if(r < _pThreshold) r = 0;
+        if(g < _pThreshold) g = 0;
+        if(b < _pThreshold) b = 0;
+
         //int values 0-255 for R G and B
-        nodestate[0] = Util.getR(c);
-        nodestate[1] = Util.getG(c);
-        nodestate[2] = Util.getB(c);
+        nodestate[0] = r;
+        nodestate[1] = g;
+        nodestate[2] = b;
 
         return nodestate;
     }
