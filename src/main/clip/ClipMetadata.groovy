@@ -108,6 +108,9 @@ class ClipMetadata {
             clipId     : 'video',
             controls   : [
                 [displayName: 'Video File', type: 'videoFile', defaultValue: '24K_loop-nosound.mp4', fieldName: 'filename'],
+
+                [displayName: 'threshold', type: 'knob', defaultValue: 0.15, fieldName: 'p1'],
+
             ],
         ],
     ]
