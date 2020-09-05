@@ -37,7 +37,9 @@ public class Stage {
         if (stageType.equals("CUBOTRON")) {
           buildCubotron();
         } else if (stageType.equals("TESSERACT")) {
-          buildTesseractStageCube();
+          //buildTesseractStageCube();
+            buildTesseractStage();
+
         } else if (stageType.equals("DRACO")) {
           buildDracoStage();
         } else {

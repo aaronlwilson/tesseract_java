@@ -72,7 +72,7 @@ public class TesseractMain extends PApplet {
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
     //https://github.com/processing/processing/issues/5476
 
-    //System.setProperty("jogl.disable.openglcore", "false");
+    System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
@@ -83,19 +83,38 @@ public class TesseractMain extends PApplet {
   public void setup() {
     frameRate( 30 );
 
+    _main = this;
+
     Util.enableColorization();
 
-    _main = this;
+
+    //PUT BACK everything with //^, working on a problem with both Mac and Windows:
+
+      /*
+      java.lang.RuntimeException: Waited 5000ms for: <734097cb, 7d8767d3>[count 2, qsz 0, owner <main-FPSAWTAnimator#00-Timer0>] - <main-FPSAWTAnimator#00-Timer0-FPSAWTAnimator#00-Timer1>
+	at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:410)
+	at java.lang.Thread.run(Thread.java:748)
+
+      /*
+      //I think wee need to move all of the setup code to a separate thread.
+
+      // If setup takes too long, JOGL will time out waiting for the GUI to draw something.
+      // moving the setup to a separate thread solves this. We just have to make sure not to
+      // start drawing until delayed setup is done.
+      //thread("delayedSetup");
+      */
+
 
     // Configure Data and Stores
 
     // Make some dummy data in the stores
-    Util.createBuiltInScenes();
-    Util.createBuiltInPlaylists();
+    //^ Util.createBuiltInScenes();
+    //^ Util.createBuiltInPlaylists();
 
     // Saves the default data
-    SceneStore.get().saveDataToDisk();
-    PlaylistStore.get().saveDataToDisk();
+    //^ SceneStore.get().saveDataToDisk();
+    //^ PlaylistStore.get().saveDataToDisk();
+
 
     // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install
     ConfigStore.get();
@@ -122,12 +141,14 @@ public class TesseractMain extends PApplet {
     // Tell the PlaylistManager which channel to play playlists in
     PlaylistManager.get().setChannel(this.channel1);
 
+
     // Get initial playlist & playState from config
     Playlist initialPlaylist = PlaylistStore.get().find("displayName", ConfigStore.get().getString("initialPlaylist"));
     Playlist.PlayState initialPlayState = Util.getPlayState(ConfigStore.get().getString("initialPlayState"));
 
     // Play the playlist w/ the playState defined in our configuration
     PlaylistManager.get().play(initialPlaylist.getId(), null, initialPlayState);
+
 
     // The shutdown hook will let us clean up when the application is killed.  It is very important to clean up the websocket server so we don't leave the port in use
     createShutdownHook();
@@ -138,6 +159,7 @@ public class TesseractMain extends PApplet {
     String portName = Serial.list()[1];
     arduinoPort = new Serial(this, portName, 115200);
     arduinoPort.bufferUntil(lf);
+
 
 
     // Draw the on-screen visualization
@@ -189,7 +211,7 @@ public class TesseractMain extends PApplet {
     //return
     int[] rgb1 = channel1.drawNode(node);
 
-
+    //TODO apply global brightness
     //apply channel brightness
     rgb1[0] = (int)Math.round(rgb1[0]/1);
     rgb1[1] = (int)Math.round(rgb1[1]/1);
