@@ -50,13 +50,11 @@ dependencies {
   //compile group: 'org.processing', name: 'core', version: '3.3.7'
 
   //processing Serial
-  // https://mvnrepository.com/artifact/org.processing/serial
-  //compile group: 'org.processing', name: 'serial', version: '3.3.7'
+  //https://mvnrepository.com/artifact/org.processing/serial
+  compile group: 'org.processing', name: 'serial', version: '3.3.7'
+    
 
-
-
-
-  //////////////// For unit/integration tests
+    //////////////// For unit/integration tests
 
   // https://mvnrepository.com/artifact/junit/junit
   testCompile group: 'junit', name: 'junit', version: '4.12'
