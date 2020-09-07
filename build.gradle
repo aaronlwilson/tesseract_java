@@ -49,9 +49,9 @@ dependencies {
   // https://mvnrepository.com/artifact/org.processing/core
   //compile group: 'org.processing', name: 'core', version: '3.3.7'
 
-  //processing Serial
+  //processing Serial, this link does not work, possibly missing native bindings
   //https://mvnrepository.com/artifact/org.processing/serial
-  compile group: 'org.processing', name: 'serial', version: '3.3.7'
+  //compile group: 'org.processing', name: 'serial', version: '3.3.7'
     
 
     //////////////// For unit/integration tests
