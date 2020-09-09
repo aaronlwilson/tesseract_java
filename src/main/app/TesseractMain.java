@@ -68,6 +68,7 @@ public class TesseractMain extends PApplet {
 
     // Configure Data and Stores
 
+      /*
     // Make some dummy data in the stores
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
@@ -75,6 +76,7 @@ public class TesseractMain extends PApplet {
     // Saves the default data
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
+       */
 
     // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install
     ConfigStore.get();
@@ -187,14 +189,14 @@ public class TesseractMain extends PApplet {
   //calls happen on pApplet, then can be routed to the proper place in our code
   @Override
   public void mousePressed() {
-    udpModel.sendFlameTest(4, 1);
+    //udpModel.sendFlameTest(4, 1);
 
     onScreen.mousePressed();
   }
 
   @Override
   public void mouseReleased() {
-    udpModel.sendFlameTest(4, 0);
+    //udpModel.sendFlameTest(4, 0);
 
     onScreen.mouseReleased();
   }
