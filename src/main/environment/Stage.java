@@ -175,12 +175,18 @@ public class Stage {
 
     nodes = new Node[0];
 
-    int numLedsPerStrip = 10;
+    //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
+    //800 pixels per teensy 3.2 is the current max. That should be higher...
+    int numLedsPerStrip = 300;
 
-    for (int i = 0; i < 6; i++) {
+    //pins on the teensy are 1 through 8
+    int pinz = 1;
+
+    for (int i = 0; i < 1; i++) {
       Node[] stripNodes = new Node[numLedsPerStrip];
 
-      Strip strip = new Strip(1, numLedsPerStrip, i);
+      Strip strip = new Strip(1, numLedsPerStrip, pinz);
+      pinz--;
       strip.setMyController(_myMain.udpModel.teensies[0]);
 
       //make some nodes in x y z space

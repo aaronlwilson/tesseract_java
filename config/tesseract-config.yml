@@ -1,5 +1,5 @@
-initialPlaylist: Cubotron
-initialPlayState: loop_scene
+initialPlaylist: Color Cube
+initialPlayState: playing
 stageType: scared
 
 # this is temporary.  eventually we'll just have a list of controllers or whatever makes sense, e.g.

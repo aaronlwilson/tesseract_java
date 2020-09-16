@@ -63,7 +63,7 @@ public class TesseractMain extends PApplet {
     // Clear screen
     clear();
 
-    frameRate(3);
+    frameRate(45);
 
     Util.enableColorization();
 
@@ -135,6 +135,7 @@ public class TesseractMain extends PApplet {
   public void completeConfiguration() {
     // Configure Data and Stores
 
+    /*
     // Make some dummy data in the stores
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
@@ -142,6 +143,8 @@ public class TesseractMain extends PApplet {
     // Saves the default data
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
+
+     */
 
 
     // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install

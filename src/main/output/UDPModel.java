@@ -246,7 +246,7 @@ public class UDPModel {
       data[1] = (byte) fixture.pinNum; //pin address, once again we are doing one node per pin
 
 
-      System.out.printf("pin num: %d\n", fixture.pinNum);
+      //System.out.printf("pin num: %d\n", fixture.pinNum);
 
       for (int i = 0; i < l; i++) {
         Node node = fixture.nodeArray[i];
