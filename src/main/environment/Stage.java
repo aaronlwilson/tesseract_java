@@ -171,7 +171,7 @@ public class Stage {
 
     _myMain.udpModel.teensies = new Teensy[1];
 
-    _myMain.udpModel.teensies[0] = new Teensy("192.168.50.203", 1, "mac_address");
+    _myMain.udpModel.teensies[0] = new Teensy("192.168.50.204", 1, "mac_address");
 
     nodes = new Node[0];
 
@@ -180,12 +180,12 @@ public class Stage {
     int numLedsPerStrip = 300;
 
     //pins on the teensy are 1 through 8
-    int pinz = 1;
+    int pinz = 8;
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 8; i++) {
       Node[] stripNodes = new Node[numLedsPerStrip];
 
-      Strip strip = new Strip(1, numLedsPerStrip, pinz);
+      Strip strip = new Strip(i, numLedsPerStrip, pinz);
       pinz--;
       strip.setMyController(_myMain.udpModel.teensies[0]);
 

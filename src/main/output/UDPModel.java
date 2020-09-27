@@ -140,6 +140,7 @@ public class UDPModel {
       byte[] data = new byte[1];
       data[0] = (byte) ('s');
       udp.send(data, teensy.ip, teensyPort);
+
     }
 
   }
@@ -245,7 +246,6 @@ public class UDPModel {
       data[0] = (byte) ('l'); //LIGHTS command
       data[1] = (byte) fixture.pinNum; //pin address, once again we are doing one node per pin
 
-
       //System.out.printf("pin num: %d\n", fixture.pinNum);
 
       for (int i = 0; i < l; i++) {
@@ -256,7 +256,7 @@ public class UDPModel {
         data[(i * 3) + 2 + 2] = (byte) node.b;
       }
 
-      // send the bytes for each tile separately
+      // send the bytes for each strip separately
       udp.send(data, teensy.ip, teensyPort);
 
     }
