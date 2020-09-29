@@ -19,6 +19,7 @@ public class UDPModel {
 
   public Rabbit[] rabbits;
   public Teensy[] teensies;
+  public Controller[] controllers;
 
   public int myPort = 7777; //6000 also works
   public int rabbitPort = 7;
@@ -140,6 +141,11 @@ public class UDPModel {
       byte[] data = new byte[1];
       data[0] = (byte) ('s');
       udp.send(data, teensy.ip, teensyPort);
+    }
+
+    for (Controller controller : controllers) {
+
+
     }
 
   }

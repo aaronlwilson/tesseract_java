@@ -2,7 +2,6 @@ package output;
 
 
 //package heronarts.lx.output;
-
 //import heronarts.lx.LX;
 //import heronarts.lx.model.LXModel;
 
@@ -15,7 +14,7 @@ package output;
  *
  * See: https://tsp.esta.org/tsp/documents/docs/ANSI_E1-31-2018.pdf
  */
-public class SACNModel extends BufferDatagram {
+public class StreamingACNDatagram extends BufferDatagram {
 
   protected final static int OFFSET_DMX_DATA = 126;
   protected final static int OFFSET_SEQUENCE_NUMBER = 111;
@@ -33,34 +32,6 @@ public class SACNModel extends BufferDatagram {
   private int universeNumber;
 
   /**
-   * Creates a StreamingACNDatagram for the given model
-   *
-   * @param model Model of points
-   */
-  public StreamingACNDatagram(LXModel model) {
-    this(model, DEFAULT_UNIVERSE_NUMBER);
-  }
-
-  /**
-   * Constructs a StreamingACNDatagram on default universe
-   *
-   * @param indexBuffer Points to send on this universe
-   */
-  public StreamingACNDatagram(int[] indexBuffer) {
-    this(indexBuffer, DEFAULT_UNIVERSE_NUMBER);
-  }
-
-  /**
-   * Creates a StreamingACNDatagram for the model on given universe
-   *
-   * @param model Model of points
-   * @param universeNumber Universe number
-   */
-  public StreamingACNDatagram(LXModel model, int universeNumber) {
-    this(model.toIndexBuffer(), universeNumber);
-  }
-
-  /**
    * Constructs a datagram, sends the list of point indices on the given
    * universe number.
    *
@@ -72,7 +43,7 @@ public class SACNModel extends BufferDatagram {
   }
 
   /**
-   * Creates a StreamingACNDatagrm for given index buffer on universe and byte order
+   * Creates a StreamingACNDatagram for given index buffer on universe and byte order
    *
    * @param indexBuffer Index buffer
    * @param universeNumber Universe number
@@ -80,17 +51,6 @@ public class SACNModel extends BufferDatagram {
    */
   public StreamingACNDatagram(int[] indexBuffer, int universeNumber, ByteOrder byteOrder) {
     this(indexBuffer, indexBuffer.length * byteOrder.getNumBytes(), universeNumber, byteOrder);
-  }
-
-  /**
-   * Subclasses may override for a custom payload with fixed size, not necessarily
-   * based upon an array of point indices - such as custom DMX data
-   *
-   * @param dataSize Fixed data payload size
-   * @param universeNumber Universe number
-   */
-  protected StreamingACNDatagram(int dataSize, int universeNumber) {
-    this(null, dataSize, universeNumber);
   }
 
   private StreamingACNDatagram(int[] indexBuffer, int dataSize, int universeNumber) {
@@ -159,9 +119,11 @@ public class SACNModel extends BufferDatagram {
     this.buffer[44] = 'L';
     this.buffer[45] = 'X';
     this.buffer[46] = '-';
-    byte[] versionBytes = LX.VERSION.getBytes();
-    System.arraycopy(versionBytes, 0, this.buffer, 47, versionBytes.length);
-    for (int i = 47 + versionBytes.length; i < 108; ++i) {
+
+    //byte[] versionBytes = LX.VERSION.getBytes();
+    //System.arraycopy(versionBytes, 0, this.buffer, 47, versionBytes.length);
+
+    for (int i = 47; i < 108; ++i) {
       this.buffer[i] = 0;
     }
 
@@ -207,6 +169,12 @@ public class SACNModel extends BufferDatagram {
 
     // DMX Start
     this.buffer[125] = 0x00;
+
+    StringBuilder sb = new StringBuilder();
+    for (byte b : this.buffer) {
+      sb.append(String.format("%02X", b));
+    }
+    System.out.println(sb.toString());
   }
 
   /**

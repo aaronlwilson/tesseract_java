@@ -6,11 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-    import heronarts.lx.parameter.BooleanParameter;
-    import heronarts.lx.parameter.BoundedParameter;
-
-
-
 public abstract class Datagram {
 
   protected static class ErrorState {
@@ -46,28 +41,35 @@ public abstract class Datagram {
 
   final DatagramPacket packet;
 
+
+
   /**
    * Whether this datagram is active
-   */
+
   public final BooleanParameter enabled =
       new BooleanParameter("Enabled", true)
           .setDescription("Whether this datagram is active");
+   */
+
 
   /**
    * Whether this datagram is in an error state
-   */
+
   public final BooleanParameter error =
       new BooleanParameter("Error", false)
           .setDescription("Whether there have been errors sending to this datagram address");
+   */
+
 
   /**
    * Brightness of the datagram
-   */
+
   public final BoundedParameter brightness =
       new BoundedParameter("Brightness", 1)
           .setDescription("Level of the output");
+  */
 
-  protected LXDatagram(int datagramSize) {
+  protected Datagram(int datagramSize) {
     this.buffer = new byte[datagramSize];
     for (int i = 0; i < datagramSize; ++i) {
       this.buffer[i] = 0;

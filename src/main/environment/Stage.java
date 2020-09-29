@@ -2,8 +2,8 @@ package environment;
 
 
 import app.TesseractMain;
-import hardware.Rabbit;
-import hardware.Teensy;
+import hardware.*;
+
 
 public class Stage {
 
@@ -169,15 +169,19 @@ public class Stage {
 
   private void buildScared() {
 
-    _myMain.udpModel.teensies = new Teensy[1];
+    //_myMain.udpModel.teensies = new Teensy[1];
+    //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.203", 1, "mac_address");
 
-    _myMain.udpModel.teensies[0] = new Teensy("192.168.50.203", 1, "mac_address");
+    _myMain.udpModel.controllers = new Controller[1];
+    _myMain.udpModel.controllers[0] = new Controller("192.168.50.101", 1, "mac_address");
+    _myMain.udpModel.controllers[0].addDatagram();
+
 
     nodes = new Node[0];
 
     //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
     //800 pixels per teensy 3.2 is the current max. That should be higher...
-    int numLedsPerStrip = 300;
+    int numLedsPerStrip = 50;
 
     //pins on the teensy are 1 through 8
     int pinz = 1;
@@ -187,7 +191,9 @@ public class Stage {
 
       Strip strip = new Strip(1, numLedsPerStrip, pinz);
       pinz--;
-      strip.setMyController(_myMain.udpModel.teensies[0]);
+
+      //strip.setMyController(_myMain.udpModel.teensies[0]);
+      strip.setMyController(_myMain.udpModel.controllers[0]);
 
       //make some nodes in x y z space
       for (int j = 0; j < numLedsPerStrip; j++) {

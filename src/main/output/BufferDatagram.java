@@ -10,7 +10,7 @@ public abstract class BufferDatagram extends Datagram {
    */
   public enum ByteOrder {
     RGB(new int[] { 0, 1, 2 }),
-    RBG(new int[] { 0, 2, 1 }),
+    RBG(new int[] { 0, 2, 1 }), //RIP RBG!
     GRB(new int[] { 1, 0, 2 }),
     GBR(new int[] { 2, 0, 1 }),
     BRG(new int[] { 1, 2, 0 }),
@@ -58,11 +58,11 @@ public abstract class BufferDatagram extends Datagram {
 
   protected final int[] indexBuffer;
 
-  protected LXBufferDatagram(int[] indexBuffer, int datagramSize) {
+  protected BufferDatagram(int[] indexBuffer, int datagramSize) {
     this(indexBuffer, datagramSize, ByteOrder.RGB);
   }
 
-  protected LXBufferDatagram(int[] indexBuffer, int datagramSize, ByteOrder byteOrder) {
+  protected BufferDatagram(int[] indexBuffer, int datagramSize, ByteOrder byteOrder) {
     super(datagramSize);
     this.byteOrder = byteOrder;
     this.indexBuffer = indexBuffer;
@@ -76,7 +76,7 @@ public abstract class BufferDatagram extends Datagram {
    * @param indexBuffer New index buffer values, must have same length as existing
    * @return this
    */
-  public LXBufferDatagram updateIndexBuffer(int[] indexBuffer) {
+  public BufferDatagram updateIndexBuffer(int[] indexBuffer) {
     Objects.requireNonNull(indexBuffer, "May not set null LXBufferDatagram.setIndexBuffer()");
     if (indexBuffer.length != this.indexBuffer.length) {
       throw new IllegalArgumentException("May not change length of LXBufferDatagram indexBuffer, must make a new Datagram: " + this.indexBuffer.length + " != " + indexBuffer.length);
@@ -91,7 +91,7 @@ public abstract class BufferDatagram extends Datagram {
    * @param byteOrder Byte ordering
    * @return this
    */
-  public LXBufferDatagram setByteOrder(ByteOrder byteOrder) {
+  public BufferDatagram setByteOrder(ByteOrder byteOrder) {
     if (this.byteOrder.getNumBytes() != byteOrder.getNumBytes()) {
       throw new IllegalArgumentException("May not change number of bytes in order");
     }
@@ -110,7 +110,7 @@ public abstract class BufferDatagram extends Datagram {
    * @param offset Offset in buffer to write
    * @return this
    */
-  protected LXBufferDatagram copyPoints(int[] colors, byte[] glut, int[] indexBuffer, int offset) {
+  protected BufferDatagram copyPoints(int[] colors, byte[] glut, int[] indexBuffer, int offset) {
     int numBytes = this.byteOrder.getNumBytes();
     if (this.byteOrder.hasWhite()) {
       int[] byteOffset = this.byteOrder.getByteOffset();
