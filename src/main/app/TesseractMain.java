@@ -6,7 +6,7 @@ import clip.Particle;
 
 import processing.core.PApplet;
 import processing.video.Movie;
-import processing.serial.*;
+//import processing.serial.*; //PUT BACK
 
 import environment.Node;
 import environment.Stage;
@@ -45,10 +45,10 @@ public class TesseractMain extends PApplet {
   public UDPModel udpModel;
   public Stage stage;
   public Channel channel1;
-
+  public Boolean setupComplete = false;
 
   //for Rotary Encoder readings
-  public Serial arduinoPort;    // The serial port
+  //public Serial arduinoPort;    // The serial port //PUT BACK
   public int lf = 10;      // ASCII linefeed
   public String inString;  // Input chars from serial port
   public double rotaryEncoderAngle;
@@ -81,39 +81,50 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
-    frameRate( 30 );
+    // Clear screen
+    clear();
 
-    _main = this;
+    frameRate(30);
 
     Util.enableColorization();
 
-
-    //PUT BACK everything with //^, working on a problem with both Mac and Windows:
-
-      /*
-      java.lang.RuntimeException: Waited 5000ms for: <734097cb, 7d8767d3>[count 2, qsz 0, owner <main-FPSAWTAnimator#00-Timer0>] - <main-FPSAWTAnimator#00-Timer0-FPSAWTAnimator#00-Timer1>
-	at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:410)
-	at java.lang.Thread.run(Thread.java:748)
-
-      /*
-      //I think wee need to move all of the setup code to a separate thread.
-
-      // If setup takes too long, JOGL will time out waiting for the GUI to draw something.
-      // moving the setup to a separate thread solves this. We just have to make sure not to
-      // start drawing until delayed setup is done.
-      //thread("delayedSetup");
-      */
+    _main = this;
 
 
+    // Start listening for UDP messages.  Handles sending/receiving all UDP data
+    udpModel = new UDPModel(this);
+
+    // Draw the on-screen visualization
+    onScreen = new OnScreen(this);
+
+    // The stage is the LED mapping
+    stage = new Stage();
+
+    // create channel
+    channel1 = new Channel(1);
+
+    //finish set up on a separate thread to avoid this common error seen in the console:
+    /*
+    java.lang.RuntimeException: Waited 5000ms for: <2b4dc6d4, 258a2dcd>[count 2, qsz 0, owner <main-FPSAWTAnimator#00-Timer0>] - <main-FPSAWTAnimator#00-Timer0-FPSAWTAnimator#00-Timer1>
+    at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:410)
+    */
+
+    thread("completeConfiguration");
+  }
+
+  public void completeConfiguration() {
     // Configure Data and Stores
 
+    /*
     // Make some dummy data in the stores
-    //^ Util.createBuiltInScenes();
-    //^ Util.createBuiltInPlaylists();
+    Util.createBuiltInScenes();
+    Util.createBuiltInPlaylists();
 
     // Saves the default data
-    //^ SceneStore.get().saveDataToDisk();
-    //^ PlaylistStore.get().saveDataToDisk();
+    SceneStore.get().saveDataToDisk();
+    PlaylistStore.get().saveDataToDisk();
+
+     */
 
 
     // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install
@@ -122,25 +133,15 @@ public class TesseractMain extends PApplet {
     // Initialize websocket connection
     WebsocketInterface.get();
 
-
-    // Start listening for UDP messages.  Handles sending/receiving all UDP data
-    udpModel = new UDPModel(this);
-
-    // The stage is the LED mapping
-    stage = new Stage();
-
     // Get the configured stage value.  Controlled via configuration option
     String stageType = ConfigStore.get().getString("stageType");
 
     // eventually we might load a saved project which is a playlist and environment together
     stage.buildStage(stageType);
 
-    // create channel
-    channel1 = new Channel(1);
 
     // Tell the PlaylistManager which channel to play playlists in
     PlaylistManager.get().setChannel(this.channel1);
-
 
     // Get initial playlist & playState from config
     Playlist initialPlaylist = PlaylistStore.get().find("displayName", ConfigStore.get().getString("initialPlaylist"));
@@ -149,25 +150,17 @@ public class TesseractMain extends PApplet {
     // Play the playlist w/ the playState defined in our configuration
     PlaylistManager.get().play(initialPlaylist.getId(), null, initialPlayState);
 
-
     // The shutdown hook will let us clean up when the application is killed.  It is very important to clean up the websocket server so we don't leave the port in use
     createShutdownHook();
 
-
-
-    // Open the port you are using at the rate you want:
-    String portName = Serial.list()[1];
-    arduinoPort = new Serial(this, portName, 115200);
-    arduinoPort.bufferUntil(lf);
-
-
-
-    // Draw the on-screen visualization
-    onScreen = new OnScreen(this);
+    setupComplete = true;
   }
 
   @Override
   public void draw() {
+    //wait for the "completeConfiguration" thread to complete
+    if (!setupComplete) return;
+
     clear();
 
     //call run() on the current clips inside channels
@@ -199,7 +192,6 @@ public class TesseractMain extends PApplet {
 
     //push dummy packets out to LEDS
     //udpModel.sendRabbitTest();
-
 
     //PUT BACK
     udpModel.send();
@@ -248,7 +240,8 @@ public class TesseractMain extends PApplet {
     onScreen.mouseReleased();
   }
 
-
+//PUT BACK
+  /*
   //event handler for processing.serial
   public void serialEvent(Serial p) {
     //inString = p.readString();
@@ -264,6 +257,8 @@ public class TesseractMain extends PApplet {
       rotaryEncoderAngle = (pulses*(this.PI/1024));
     }
   }
+
+   */
 
   //Custom event handler on pApplet for video library
   public void movieEvent(Movie movie) { movie.read(); }
