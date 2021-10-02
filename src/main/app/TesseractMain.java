@@ -50,7 +50,7 @@ public class TesseractMain extends PApplet {
 
     // Required for the application to launch on Ubuntu Linux (Intel NUC w/ Intel integrated graphics)
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
-    https://github.com/processing/processing/issues/5476
+    // https://github.com/processing/processing/issues/5476
     System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
@@ -63,7 +63,7 @@ public class TesseractMain extends PApplet {
     // Clear screen
     clear();
 
-    frameRate(45);
+    frameRate(30);
 
     Util.enableColorization();
 
@@ -82,7 +82,7 @@ public class TesseractMain extends PApplet {
     // create channel
     channel1 = new Channel(1);
 
-    //finish set up on a separate thread to avoid this common problem:
+    //finish set up on a separate thread to avoid this common error seen in the console:
     /*
     java.lang.RuntimeException: Waited 5000ms for: <2b4dc6d4, 258a2dcd>[count 2, qsz 0, owner <main-FPSAWTAnimator#00-Timer0>] - <main-FPSAWTAnimator#00-Timer0-FPSAWTAnimator#00-Timer1>
 	at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:410)

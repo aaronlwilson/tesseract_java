@@ -1,6 +1,11 @@
-initialPlaylist: Color Cube
+initialPlaylist: All Videos
 initialPlayState: playing
-stageType: scared
+
+# CUBOTRON
+# TESSERACT
+# DRACO
+# SCARED
+stageType: tesseract
 
 # this is temporary.  eventually we'll just have a list of controllers or whatever makes sense, e.g.
 # controllers:
