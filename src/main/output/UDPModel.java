@@ -136,7 +136,7 @@ public class UDPModel {
 
       sendPanelFrame(teensy);
 
-      //swap command, makes all the tiles change at once
+      //swap command, makes all the pins change at once
       byte[] data = new byte[1];
       data[0] = (byte) ('s');
       udp.send(data, teensy.ip, teensyPort);

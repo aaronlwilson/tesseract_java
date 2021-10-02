@@ -70,25 +70,28 @@ public class Stage {
 
   private void buildTesseractStage() {
     int counter = 0;
-
     PixelPlane plane = new PixelPlane(_myMain);
-    //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
     _myMain.udpModel.rabbits = new Rabbit[6];
 
     //one rabbit per 9 tiles
-    _myMain.udpModel.rabbits[0] = new Rabbit("192.168.1.100", 1, "mac_address");
-    _myMain.udpModel.rabbits[1] = new Rabbit("192.168.1.105", 2, "mac_address");
-    _myMain.udpModel.rabbits[2] = new Rabbit("192.168.1.104", 3, "mac_address");
-    _myMain.udpModel.rabbits[3] = new Rabbit("192.168.1.102", 4, "mac_address");
-    _myMain.udpModel.rabbits[4] = new Rabbit("192.168.1.101", 5, "mac_address");
-    _myMain.udpModel.rabbits[5] = new Rabbit("192.168.1.103", 6, "mac_address");
+    //Apollo Central Router has reserved IP addresses for each mac address
+    _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.100", 1, "00-90-C2-F1-30-1E");
+    _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.101", 2, "00-90-C2-F1-2F-EE");
+    _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.102", 3, "00-90-C2-FA-59-2C");
+    _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.103", 4, "00-90-C2-FA-58-ED");
+    _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.104", 5, "00-90-C2-F1-2F-7D");
+    _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.105", 6, "00-90-C2-FA-58-FF");
 
+    //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
+
+
+    //The following lays out the panels as a big 1x6 screen, like in my basement
     int startY = -72;
 
     nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -(72 * 9), startY, 0, 0, false);
 
-    Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -(72 * 6), startY, 0, 0, true);
+    Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -(72 * 6), startY, 0, 0, false);
     nodes = (Node[]) TesseractMain.concat(nodes, planeNodes);
 
     planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -(72 * 3), startY, 0, 0, false);
@@ -100,9 +103,8 @@ public class Stage {
     planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, (72 * 3), startY, 0, 0, false);
     nodes = (Node[]) TesseractMain.concat(nodes, planeNodes);
 
-    planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, (72 * 6), startY, 0, 0, false);
+    planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, (72 * 6), startY, 0, 0, true);
     nodes = (Node[]) TesseractMain.concat(nodes, planeNodes);
-
 
   }
 
@@ -171,18 +173,24 @@ public class Stage {
 
     _myMain.udpModel.teensies = new Teensy[1];
 
-    _myMain.udpModel.teensies[0] = new Teensy("192.168.50.204", 1, "mac_address");
+    //Teensy 4.1
+    //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.203", 1, "mac_address");
+
+
+    //ESP8266
+    _myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
 
     nodes = new Node[0];
 
     //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
     //800 pixels per teensy 3.2 is the current max. That should be higher...
-    int numLedsPerStrip = 300;
+    int numLedsPerStrip = 214;
 
     //pins on the teensy are 1 through 8
-    int pinz = 8;
+    int pinz = 8; //gets decremented
+    int numPins = pinz;
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < numPins; i++) {
       Node[] stripNodes = new Node[numLedsPerStrip];
 
       Strip strip = new Strip(i, numLedsPerStrip, pinz);
@@ -191,7 +199,7 @@ public class Stage {
 
       //make some nodes in x y z space
       for (int j = 0; j < numLedsPerStrip; j++) {
-        stripNodes[j] = new Node(2*j, 10 + (i*20), 10, j, strip);
+        stripNodes[j] = new Node(3*j, 10 + (i*10), 10, j, strip);
       }
 
       strip.addNodes(stripNodes);
