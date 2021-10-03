@@ -6,7 +6,7 @@ import clip.Particle;
 
 import processing.core.PApplet;
 import processing.video.Movie;
-//import processing.serial.*; //PUT BACK
+import processing.serial.*;
 
 import environment.Node;
 import environment.Stage;
@@ -48,7 +48,7 @@ public class TesseractMain extends PApplet {
   public Boolean setupComplete = false;
 
   //for Rotary Encoder readings
-  //public Serial arduinoPort;    // The serial port //PUT BACK
+  public Serial arduinoPort;    // The serial port
   public int lf = 10;      // ASCII linefeed
   public String inString;  // Input chars from serial port
   public double rotaryEncoderAngle;
@@ -238,8 +238,6 @@ public class TesseractMain extends PApplet {
   }
 
 
-  // PUT BACK
-  /*
   //event handler for processing.serial
   public void serialEvent(Serial p) {
     //inString = p.readString();
@@ -255,8 +253,6 @@ public class TesseractMain extends PApplet {
       rotaryEncoderAngle = (pulses*(this.PI/1024));
     }
   }
-   */
-
 
   //Custom event handler on pApplet for video library
   public void movieEvent(Movie movie) { movie.read(); }

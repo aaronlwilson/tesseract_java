@@ -51,7 +51,7 @@ dependencies {
 
   //processing Serial, this link does not work, possibly missing native bindings
   //https://mvnrepository.com/artifact/org.processing/serial
-  //compile group: 'org.processing', name: 'serial', version: '3.3.7'
+  compile group: 'org.processing', name: 'serial', version: '3.3.7'
     
 
     //////////////// For unit/integration tests
