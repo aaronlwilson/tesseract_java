@@ -112,6 +112,13 @@ public class TesseractMain extends PApplet {
     thread("completeConfiguration");
   }
 
+  private void setupSerial() {
+    // Open the port you are using at the rate you want:
+    String portName = Serial.list()[1];
+    arduinoPort = new Serial(this, portName, 115200);
+    arduinoPort.bufferUntil(lf);
+  }
+
   public void completeConfiguration() {
     // Configure Data and Stores
 
@@ -152,6 +159,9 @@ public class TesseractMain extends PApplet {
     // The shutdown hook will let us clean up when the application is killed.  It is very important to clean up the websocket server so we don't leave the port in use
     createShutdownHook();
 
+    //open up a serial "portal" to an Arduino dimension
+    setupSerial();
+
     setupComplete = true;
   }
 
@@ -165,7 +175,6 @@ public class TesseractMain extends PApplet {
     //call run() on the current clips inside channels
     channel1.run();
     //channel2.run();
-
 
     //get the full list of hardware nodes
     int l = stage.nodes.length;
