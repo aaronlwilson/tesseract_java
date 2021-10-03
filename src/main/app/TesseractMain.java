@@ -84,7 +84,7 @@ public class TesseractMain extends PApplet {
     // Clear screen
     clear();
 
-    frameRate(30);
+    frameRate(25);
 
     Util.enableColorization();
 
@@ -123,7 +123,6 @@ public class TesseractMain extends PApplet {
     // Saves the default data
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
-
      */
 
 
@@ -229,18 +228,17 @@ public class TesseractMain extends PApplet {
   @Override
   public void mousePressed() {
     //udpModel.sendFlameTest(4, 1);
-
     onScreen.mousePressed();
   }
 
   @Override
   public void mouseReleased() {
     //udpModel.sendFlameTest(4, 0);
-
     onScreen.mouseReleased();
   }
 
-//PUT BACK
+
+  // PUT BACK
   /*
   //event handler for processing.serial
   public void serialEvent(Serial p) {
@@ -257,8 +255,8 @@ public class TesseractMain extends PApplet {
       rotaryEncoderAngle = (pulses*(this.PI/1024));
     }
   }
-
    */
+
 
   //Custom event handler on pApplet for video library
   public void movieEvent(Movie movie) { movie.read(); }
