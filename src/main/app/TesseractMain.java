@@ -114,7 +114,7 @@ public class TesseractMain extends PApplet {
 
   private void setupSerial() {
     // Open the port you are using at the rate you want:
-    String portName = Serial.list()[1];
+    String portName = Serial.list()[4];
     arduinoPort = new Serial(this, portName, 115200);
     arduinoPort.bufferUntil(lf);
   }
@@ -251,6 +251,8 @@ public class TesseractMain extends PApplet {
   public void serialEvent(Serial p) {
     //inString = p.readString();
     inString = p.readStringUntil('\n');
+
+    //System.out.printf("SERIAL IN: %s \n", inString);
 
     if (inString != null) {
       // trim off any whitespace:
