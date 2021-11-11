@@ -114,9 +114,13 @@ public class TesseractMain extends PApplet {
 
   private void setupSerial() {
     // Open the port you are using at the rate you want:
-    String portName = Serial.list()[4];
-    arduinoPort = new Serial(this, portName, 115200);
-    arduinoPort.bufferUntil(lf);
+    if (Serial.list().length > 2) {
+      String portName = Serial.list()[2];
+      arduinoPort = new Serial(this, portName, 115200);
+      arduinoPort.bufferUntil(lf);
+    }else{
+
+    }
   }
 
   public void completeConfiguration() {
@@ -213,9 +217,9 @@ public class TesseractMain extends PApplet {
 
     //TODO apply global brightness
     //apply channel brightness
-    rgb1[0] = (int)Math.round(rgb1[0]/1);
-    rgb1[1] = (int)Math.round(rgb1[1]/1);
-    rgb1[2] = (int)Math.round(rgb1[2]/1);
+//    rgb1[0] = (int)Math.round(rgb1[0]/1);
+//    rgb1[1] = (int)Math.round(rgb1[1]/1);
+//    rgb1[2] = (int)Math.round(rgb1[2]/1);
 
     //TODO mix the 2 channels together
 
