@@ -5,7 +5,7 @@ initialPlayState: playing
 # TESSERACT
 # DRACO
 # SCARED
-stageType: tesseract
+stageType: scared
 
 # this is temporary.  eventually we'll just have a list of controllers or whatever makes sense, e.g.
 # controllers:
