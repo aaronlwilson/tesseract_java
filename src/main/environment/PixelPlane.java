@@ -1,8 +1,9 @@
 package environment;
 
 
+import hardware.Controllers.Rabbit;
+import hardware.Fixtures.Tile;
 import processing.core.PApplet;
-import hardware.*;
 
 public class PixelPlane {
 

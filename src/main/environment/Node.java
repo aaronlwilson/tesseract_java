@@ -1,6 +1,6 @@
 package environment;
 
-import hardware.*;
+import hardware.Fixtures.Fixture;
 
 public class Node  {
   public int x;

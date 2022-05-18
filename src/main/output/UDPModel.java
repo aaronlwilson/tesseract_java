@@ -2,8 +2,11 @@ package output;
 
 
 import environment.*;
-import hardware.*;
 
+import hardware.Controllers.Rabbit;
+import hardware.Controllers.Teensy;
+import hardware.Fixtures.Fixture;
+import hardware.Fixtures.Tile;
 import hypermedia.net.UDP;
 //import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 

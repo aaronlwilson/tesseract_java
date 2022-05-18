@@ -2,8 +2,9 @@ package environment;
 
 
 import app.TesseractMain;
-import hardware.Rabbit;
-import hardware.Teensy;
+import hardware.Controllers.Rabbit;
+import hardware.Fixtures.Strip;
+import hardware.Controllers.Teensy;
 
 public class Stage {
 
@@ -43,6 +44,9 @@ public class Stage {
 
     } else if (stageType.equals("SCARED")) {
       buildScared();
+
+    } else if (stageType.equals("AJUBATUBES")) {
+      buildAjUbaTubesSmall();
 
     } else {
       throw new RuntimeException("ERROR: Invalid stage of type: " + stageType);
@@ -176,7 +180,6 @@ public class Stage {
     //Teensy 4.1
     //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.203", 1, "mac_address");
 
-
     //ESP8266
     _myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
 
@@ -206,6 +209,15 @@ public class Stage {
 
       nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
     }
+
+  }
+
+  private void buildAjUbaTubesSmall() {
+    int numtubes = 16;
+    int [][] tubelocation = {{123, 203}, {165, 193}, {84, 185}, {191, 160}, {119, 166}, {58, 149}, {202, 115}, {159, 155}, {60, 103}, {91, 131}, {161, 112}, {91, 69}, {175, 77}, {116, 96}, {134, 59}, {128, 132}};
+    //End to End outside tube lengths of Glass tubes in meters
+    double [] tubelengths = {495.3,546.1,571.5,650.875,698.5,666.75,701.675,765.175,758.825,841.375,901.7,952.5,1009.65,1022.35,1060.45,1165.225};
+
 
   }
 

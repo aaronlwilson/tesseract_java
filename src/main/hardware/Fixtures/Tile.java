@@ -1,6 +1,7 @@
-package hardware;
+package hardware.Fixtures;
 
 import environment.Node;
+import hardware.Controllers.Rabbit;
 
 public class Tile extends Fixture {
 

@@ -1,4 +1,7 @@
-package hardware;
+package hardware.Controllers;
+
+import hardware.Controllers.Controller;
+import hardware.Fixtures.Tile;
 
 public class Rabbit extends Controller {
 

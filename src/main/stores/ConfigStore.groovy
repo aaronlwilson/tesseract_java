@@ -37,8 +37,8 @@ class ConfigStore extends BaseStore {
       stageType       : [
           defaultValue     : 'CUBOTRON',
           transformValueFn : { it.toUpperCase() },
-          validateFn       : { ['CUBOTRON', 'TESSERACT', 'DRACO', 'SCARED'].contains(it) },
-          validateFailMsgFn: { "stageType '${it}' is invalid.  Must be one of 'CUBOTRON', 'TESSERACT', 'DRACO', or 'SCARED'" },
+          validateFn       : { ['CUBOTRON', 'TESSERACT', 'DRACO', 'SCARED', 'AJUBATUBES'].contains(it) },
+          validateFailMsgFn: { "stageType '${it}' is invalid.  Must be one of 'CUBOTRON', 'TESSERACT', 'DRACO', 'SCARED' or 'AJUBATUBES'" },
       ],
       // These are the controllers, e.g. rabbits, teensies, or pixelpushers
       numRabbits       : [

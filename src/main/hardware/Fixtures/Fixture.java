@@ -1,5 +1,5 @@
 
-package hardware;
+package hardware.Fixtures;
 
 import environment.Node;
 

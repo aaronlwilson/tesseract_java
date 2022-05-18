@@ -1,4 +1,6 @@
-package hardware;
+package hardware.Controllers;
+
+import hardware.Fixtures.Fixture;
 
 import java.util.ArrayList;
 

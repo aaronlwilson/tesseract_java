@@ -1,6 +1,7 @@
-package hardware;
+package hardware.Controllers;
 
 import environment.StrandPanel;
+import hardware.Controllers.Controller;
 
 import java.util.ArrayList;
 

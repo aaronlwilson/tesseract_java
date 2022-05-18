@@ -1,4 +1,6 @@
-package hardware;
+package hardware.Controllers;
+
+import hardware.Controllers.Controller;
 
 public class PixelPusher extends Controller {
 

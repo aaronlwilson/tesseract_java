@@ -1,7 +1,6 @@
-package environment;
+package hardware.Fixtures;
 
-import hardware.Controller;
-import hardware.Fixture;
+import hardware.Controllers.Controller;
 
 
 public class Strip extends Fixture {

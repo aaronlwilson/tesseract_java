@@ -1,7 +1,7 @@
 package environment
 
+import hardware.Controllers.Teensy
 import mapping.ReadDracoMapping
-import hardware.*
 import util.Util
 
 public class StrandPanel {
