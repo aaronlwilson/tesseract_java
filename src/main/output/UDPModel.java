@@ -140,7 +140,6 @@ public class UDPModel {
       byte[] data = new byte[1];
       data[0] = (byte) ('s');
       udp.send(data, teensy.ip, teensyPort);
-
     }
 
   }
