@@ -116,9 +116,11 @@ public class TesseractMain extends PApplet {
       int[] rgb = renderNode(n); //does the blending between the channels, apply master FX
 
       //now store that color on the node so we can send it as UDP data to the lights
-      n.r = rgb[0];
-      n.g = rgb[1];
-      n.b = rgb[2];
+      n.r = (int)Math.floor(rgb[0] * 0.8);
+      n.g = (int)Math.floor(rgb[1] * 0.5);
+      n.b = (int)Math.floor(rgb[2] * 0.5);
+
+      //TODO: need global brightness control, especially with generator power
 
       nextNodes[i] = n;
     }
@@ -128,7 +130,6 @@ public class TesseractMain extends PApplet {
     onScreen.draw();
 
     udpModel.send();
-
 
   }
 

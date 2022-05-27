@@ -1,5 +1,5 @@
-initialPlaylist: All Videos
-initialPlayState: playing
+initialPlaylist: Cubotron #All Videos
+initialPlayState: loop_scene #playing
 
 # CUBOTRON
 # TESSERACT

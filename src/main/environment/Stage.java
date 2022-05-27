@@ -170,41 +170,43 @@ public class Stage {
   }
 
   private void buildScared() {
-
-    _myMain.udpModel.teensies = new Teensy[1];
+    int numberTeensies = 2;
+    _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
     //Teensy 4.1
-    //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.203", 1, "mac_address");
-
+    _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
+    _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
 
     //ESP8266
-    _myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
+    //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
 
     nodes = new Node[0];
 
     //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
     //800 pixels per teensy 3.2 is the current max. That should be higher...
-    int numLedsPerStrip = 214;
+    int numLedsPerStrip = 200;
 
-    //pins on the teensy are 1 through 8
-    int pinz = 8; //gets decremented
-    int numPins = pinz;
+    for (int k = 0; k < numberTeensies; k++) {
+      //pins on the teensy are 1 through 8
+      int pinz = 8; //gets decremented
+      int numPins = pinz;
 
-    for (int i = 0; i < numPins; i++) {
-      Node[] stripNodes = new Node[numLedsPerStrip];
+      for (int i = 0; i < numPins; i++) {
+        Node[] stripNodes = new Node[numLedsPerStrip];
 
-      Strip strip = new Strip(i, numLedsPerStrip, pinz);
-      pinz--;
-      strip.setMyController(_myMain.udpModel.teensies[0]);
+        Strip strip = new Strip(i, numLedsPerStrip, pinz);
+        pinz--;
+        strip.setMyController(_myMain.udpModel.teensies[k]);
 
-      //make some nodes in x y z space
-      for (int j = 0; j < numLedsPerStrip; j++) {
-        stripNodes[j] = new Node(3*j, 10 + (i*10), 10, j, strip);
+        //make some nodes in x y z space
+        for (int j = 0; j < numLedsPerStrip; j++) {
+          stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
+        }
+
+        strip.addNodes(stripNodes);
+
+        nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
       }
-
-      strip.addNodes(stripNodes);
-
-      nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
     }
 
   }
