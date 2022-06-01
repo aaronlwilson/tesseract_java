@@ -114,8 +114,8 @@ public class TesseractMain extends PApplet {
 
   private void setupSerial() {
     // Open the port you are using at the rate you want:
-    if (Serial.list().length > 2) {
-      String portName = Serial.list()[2];
+    if (Serial.list().length > 4) {
+      String portName = Serial.list()[5];
       arduinoPort = new Serial(this, portName, 115200);
       arduinoPort.bufferUntil(lf);
     }else{
