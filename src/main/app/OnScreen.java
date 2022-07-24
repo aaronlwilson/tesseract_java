@@ -88,7 +88,6 @@ public class OnScreen {
             _yDelta = 0;
         }
 
-
         _newXrot = _xMove - _xDelta;
         _newYrot = _yMove - _yDelta;
 
@@ -99,17 +98,13 @@ public class OnScreen {
         diff = _yrot-_newYrot;
         if (Math.abs(diff) >  0.01) { _yrot -= diff/6.0; }
 
-
-
         p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI) + p.PI);
 
         //add on the rotation from 1024 rotary encoder
         float totalY = (float) (p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI + _myMain.rotaryEncoderAngle);
         p.rotateY(totalY);
 
-
         drawAxes(600);
-
 
         //temp, show absolute position of particles
         p.strokeWeight(12);
@@ -122,17 +117,15 @@ public class OnScreen {
         p.stroke(_myMain.particleZ.color);
         p.point(_myMain.particleZ.position.x, _myMain.particleZ.position.y, _myMain.particleZ.position.z);
 
-
-
         p.pushMatrix();
+
 
         //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
         //we want to translate the object on multiple axes using the current global coordinates.
         float valueX = 45, valueY = 0, valueZ = 35.3f;
 
-        //for Tesseract only
-        rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
-
+        //for Tesseract CUBE only
+        //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
 
         p.strokeWeight(1);
         drawBoundingBox();
@@ -158,8 +151,6 @@ public class OnScreen {
         }
 
         p.popMatrix();
-
-
     }
 
     private void drawFramerate()

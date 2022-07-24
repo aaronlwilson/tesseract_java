@@ -1,17 +1,10 @@
 package clip;
 
-
 import hardware.Tile;
-
-
 import environment.Node;
 import util.Util;
 
-
-
-
 public class TilesTestClip  extends AbstractClip {
-
 
     //constructor
     public TilesTestClip() {
@@ -25,8 +18,6 @@ public class TilesTestClip  extends AbstractClip {
     public void run() {
 
     }
-
-
 
     public int[] drawNode(Node node) {
 
@@ -59,6 +50,5 @@ public class TilesTestClip  extends AbstractClip {
 
         return nodestate;
     }
-
 
 }
