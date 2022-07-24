@@ -64,8 +64,8 @@ public class TesseractMain extends PApplet {
   @Override
   public void settings() {
 
-    //size(1400, 800, P3D); // for when all panels are in a row
-    size(450, 450, OPENGL);
+    size(1400, 800, P3D); // for when all panels are in a row
+    //size(450, 450, P3D); // for tesseract cube
 
     // Required for the application to launch on Ubuntu Linux (Intel NUC w/ Intel integrated graphics)
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
@@ -171,8 +171,6 @@ public class TesseractMain extends PApplet {
     //wait for the "completeConfiguration" thread to complete
     if (!setupComplete) return;
 
-    clear();
-
     //call run() on the current clips inside channels
     channel1.run();
     //channel2.run();
@@ -197,6 +195,7 @@ public class TesseractMain extends PApplet {
 
     stage.nodes = nextNodes;
 
+    //TODO: keyboard toggle drawing when not needed at shows
     onScreen.draw();
 
     //push dummy packets out to LEDS
@@ -214,9 +213,9 @@ public class TesseractMain extends PApplet {
 
     //TODO apply global brightness
     //apply channel brightness
-    rgb1[0] = (int)Math.round(rgb1[0]/2);
-    rgb1[1] = (int)Math.round(rgb1[1]/3);
-    rgb1[2] = (int)Math.round(rgb1[2]/3);
+    rgb1[0] = Math.round(rgb1[0]/1);
+    rgb1[1] = Math.round(rgb1[1]/1);
+    rgb1[2] = Math.round(rgb1[2]/1);
 
     //TODO mix the 2 channels together
 

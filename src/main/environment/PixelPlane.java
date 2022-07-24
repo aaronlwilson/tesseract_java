@@ -8,17 +8,15 @@ public class PixelPlane {
 
     private PApplet p;
 
-
     public Tile[][] panelTileArray = new Tile[3][3];
 
-    // This layout corresponds to the physical construction of the pixel plane panels. I had to invert the matrix to get the transformations to work, not sure why... aliens
+    // This layout corresponds to the physical construction of the pixel plane panels.
+    // I had to invert the matrix to get the transformations to work, not sure why... aliens
     //int layoutMatrix[][];
 
     public PixelPlane(PApplet pApplet) {
         p = pApplet;
     }//end constructor
-
-
 
     private static void flipMatrixHorizontal(int mat[][])
     {
