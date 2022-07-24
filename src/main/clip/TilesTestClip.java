@@ -18,7 +18,6 @@ public class TilesTestClip  extends AbstractClip {
     }
 
     public void init() {
-
         clipId = "tiles_test_clip";
         super.init();
     }

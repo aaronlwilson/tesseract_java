@@ -29,8 +29,6 @@ public class TesseractMain extends PApplet {
   public Particle particleY;
   public Particle particleZ;
 
-
-
   //CLIP CLASS ENUM
   public static final int NODESCAN = 0;
   public static final int SOLID = 1;
@@ -66,7 +64,8 @@ public class TesseractMain extends PApplet {
   @Override
   public void settings() {
 
-    size(1400, 800, P3D);
+    //size(1400, 800, P3D); // for when all panels are in a row
+    size(450, 450, OPENGL);
 
     // Required for the application to launch on Ubuntu Linux (Intel NUC w/ Intel integrated graphics)
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
@@ -84,7 +83,7 @@ public class TesseractMain extends PApplet {
     // Clear screen
     clear();
 
-    frameRate(25);
+    frameRate(30);
 
     Util.enableColorization();
 
@@ -126,7 +125,6 @@ public class TesseractMain extends PApplet {
   public void completeConfiguration() {
     // Configure Data and Stores
 
-    /*
     // Make some dummy data in the stores
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
@@ -134,7 +132,6 @@ public class TesseractMain extends PApplet {
     // Saves the default data
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
-     */
 
 
     // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install
@@ -217,9 +214,9 @@ public class TesseractMain extends PApplet {
 
     //TODO apply global brightness
     //apply channel brightness
-//    rgb1[0] = (int)Math.round(rgb1[0]/1);
-//    rgb1[1] = (int)Math.round(rgb1[1]/1);
-//    rgb1[2] = (int)Math.round(rgb1[2]/1);
+    rgb1[0] = (int)Math.round(rgb1[0]/2);
+    rgb1[1] = (int)Math.round(rgb1[1]/3);
+    rgb1[2] = (int)Math.round(rgb1[2]/3);
 
     //TODO mix the 2 channels together
 
