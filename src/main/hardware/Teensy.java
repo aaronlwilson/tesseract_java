@@ -13,9 +13,8 @@ public class Teensy extends Controller {
 
     //constructor
     public Teensy(String theIp, int theId, String theMac) {
-        ip = theIp;
-        id = theId;
-        mac = theMac;
+
+        super(theIp, theId, theMac);
 
         strandPanelArray = new ArrayList<StrandPanel>();
     }
@@ -25,6 +24,7 @@ public class Teensy extends Controller {
         strandPanelArray.add(strandPanel);
 
     }
+
 
 
 

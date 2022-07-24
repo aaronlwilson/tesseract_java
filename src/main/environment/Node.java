@@ -13,7 +13,7 @@ public class Node  {
 
   public int index; //0-143 usually relative to the fixture
   public int port;  //1-8 on pixel pusher
-  public Tile fixture;
+  public Fixture fixture;
 
   //public int nodeType;
 
@@ -22,7 +22,7 @@ public class Node  {
   public int b;
 
   //constructor
-  public Node(int theX, int theY, int theZ, int theIndex, Tile theFixture) {
+  public Node(int theX, int theY, int theZ, int theIndex, Fixture theFixture) {
     x = theX;
     y = theY;
     z = theZ;
