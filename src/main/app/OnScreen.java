@@ -125,7 +125,9 @@ public class OnScreen {
         float valueX = 45, valueY = 0, valueZ = 35.3f;
 
         //for Tesseract CUBE only (so it spins upon one corner)
-        rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        if(_myMain.stage.stageType.equals("TESSERACT")) {
+          rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        }
 
         p.strokeWeight(1);
         drawBoundingBox();

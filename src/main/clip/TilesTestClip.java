@@ -45,7 +45,7 @@ public class TilesTestClip  extends AbstractClip {
         }
         catch(NullPointerException e)
         {
-            System.out.println("NullPointerException Caught");
+            //System.out.println("NullPointerException Caught");
         }
 
         return nodestate;

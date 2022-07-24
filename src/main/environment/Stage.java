@@ -24,6 +24,8 @@ public class Stage {
     public Node[] nodes;
     public Node[] prevNodes; //last frames data
 
+    public String stageType;
+
     private TesseractMain _myMain;
 
 
@@ -34,14 +36,18 @@ public class Stage {
     }
 
     public void buildStage(String stageType) {
+        this.stageType = stageType;
+
         if (stageType.equals("CUBOTRON")) {
           buildCubotron();
         } else if (stageType.equals("TESSERACT")) {
           buildTesseractStageCube();
-          //buildTesseractStage();
-
+        } else if (stageType.equals("TESSERACT_WALL")) {
+          buildTesseractStage();
         } else if (stageType.equals("DRACO")) {
           buildDracoStage();
+        } else if (stageType.equals("SCARED")) {
+          buildScared();
         } else {
           throw new RuntimeException("ERROR: Invalid stage of type: " + stageType);
         }
@@ -156,6 +162,48 @@ public class Stage {
         nodes = (Node[]) _myMain.concat( nodes, planeNodes );
 
     }
+
+  private void buildScared() {
+    int numberTeensies = 2;
+    _myMain.udpModel.teensies = new Teensy[numberTeensies];
+
+    //Teensy 4.1
+    _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
+    _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
+
+    //ESP8266
+    //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
+
+    nodes = new Node[0];
+
+    //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
+    //800 pixels per teensy 3.2 is the current max. That should be higher...
+    int numLedsPerStrip = 200;
+
+    for (int k = 0; k < numberTeensies; k++) {
+      //pins on the teensy are 1 through 8
+      int pinz = 8; //gets decremented
+      int numPins = pinz;
+
+      for (int i = 0; i < numPins; i++) {
+        Node[] stripNodes = new Node[numLedsPerStrip];
+
+        Strip strip = new Strip(i, numLedsPerStrip, pinz);
+        pinz--;
+        strip.setMyController(_myMain.udpModel.teensies[k]);
+
+        //make some nodes in x y z space
+        for (int j = 0; j < numLedsPerStrip; j++) {
+          stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
+        }
+
+        strip.addNodes(stripNodes);
+
+        nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
+      }
+    }
+
+  }
 
 
     private void buildDracoStage() {

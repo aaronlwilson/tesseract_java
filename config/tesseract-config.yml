@@ -1,11 +1,12 @@
-initialPlaylist: Cubotron #All Videos
-initialPlayState: loop_scene #playing
+initialPlaylist:  Cubotron #Color Cube #All Videos
+initialPlayState: playing #loop_scene
 
 # CUBOTRON
 # TESSERACT
+# TESSERACT_WALL
 # DRACO
 # SCARED
-stageType: TESSERACT
+stageType: TESSERACT_WALL
 
 # this is temporary.  eventually we'll just have a list of controllers or whatever makes sense, e.g.
 # controllers:

@@ -121,7 +121,6 @@ public class Scene {
                 newClip = new TilesTestClip();
                 break;
 
-
             default:
                 throw new IllegalStateException("Unexpected value: " + clipClass);
         }
@@ -132,7 +131,6 @@ public class Scene {
             this.setClipValues(this.getSceneValues(), this.filename);
         }
     }
-
 
 }
 
