@@ -29,7 +29,7 @@ public class TilesTestClip  extends AbstractClip {
         {
             // This line of code throws NullPointerException
             // because t is null
-            Tile t = node.fixture;
+            Tile t = (Tile)node.fixture;
             //int c = t.numberPImage.pixels[node.index];
 
             int c = t.numberColorForNodeIndex(node.index);
@@ -45,7 +45,7 @@ public class TilesTestClip  extends AbstractClip {
         }
         catch(NullPointerException e)
         {
-            //System.out.println("NullPointerException Caught");
+            System.out.println("NullPointerException Caught");
         }
 
         return nodestate;

@@ -8,7 +8,7 @@ public class Rabbit extends Controller {
   public int testColor;
 
   //constructor
-  public Rabbit(String theIp, int theId, String theMac) {
+  public Rabbit(String theIp, int theId, String theMac, int theTestColor) {
     super(theIp, theId, theMac);
 
     testColor = theTestColor;
