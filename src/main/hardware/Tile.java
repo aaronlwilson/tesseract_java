@@ -87,7 +87,7 @@ public class Tile extends Fixture {
                     yPos -= ySpacing;
                 }
 
-                //TODO map node z position
+                //the z node mapping happens at the panel level, Tiles are 2d by themselves
                 Node node = new Node(xPos+xOffset-3, yPos+yOffset+3, 0, globalIndex,this);
                 globalIndex++;
 
