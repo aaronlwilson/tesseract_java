@@ -12,7 +12,7 @@ public class Node  {
 
 
   public int index; //0-? usually relative to the fixture
-  public int port;  //1-8 on pixel pusher
+  public int port;  //1-8 on pixel pusher, or 'pin' on Teensy
   public Fixture fixture;
 
   //public int nodeType;

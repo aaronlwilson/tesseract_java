@@ -17,7 +17,7 @@ public class Controller {
     id = theId;
     mac = theMac;
 
-    fixtureArray = new ArrayList<Fixture>();
+    fixtureArray = new ArrayList<>();
 
   }
 
