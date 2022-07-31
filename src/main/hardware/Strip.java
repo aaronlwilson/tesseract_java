@@ -1,4 +1,4 @@
-package environment;
+package hardware;
 
 import hardware.Controller;
 import hardware.Fixture;
@@ -17,7 +17,7 @@ public class Strip extends Fixture {
 
     pinNum = thePinNum;
 
-    //not really needed
+    //not really needed, the nodes are added to the global nodeArray
     //nodeArray = new Node[theLedCount];
   }
 

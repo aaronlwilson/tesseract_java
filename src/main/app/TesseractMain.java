@@ -80,9 +80,7 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
-    // Clear screen
-    clear();
-
+    background(0);
     frameRate(30);
 
     Util.enableColorization();
@@ -202,7 +200,7 @@ public class TesseractMain extends PApplet {
     //udpModel.sendRabbitTest();
 
     //PUT BACK
-    udpModel.send();
+    //udpModel.send();
   }
 
 

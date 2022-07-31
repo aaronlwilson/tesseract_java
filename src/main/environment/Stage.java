@@ -2,8 +2,7 @@ package environment;
 
 
 import app.TesseractMain;
-import hardware.Rabbit;
-import hardware.Teensy;
+import hardware.*;
 
 public class Stage {
 
@@ -72,7 +71,20 @@ public class Stage {
         _myMain.println("maxD: " + maxD);
     }
 
-    private void buildTesseractStage() {
+  private void buildTesseractStage() {
+    _myMain.udpModel.pixelPushers = new PixelPusher[1];
+
+
+    _myMain.udpModel.pixelPushers[0] = new PixelPusher("192.168.50.119", 1, "d8:80:39:66:49:7b");
+
+    TileAPA myTile = new TileAPA(1,1);
+    myTile.setMyController(_myMain.udpModel.pixelPushers[0]);
+
+    Node[] tileNodes = myTile.zigZagNodes();
+    nodes = (Node[]) _myMain.concat( nodes, tileNodes );
+  }
+
+    private void buildTesseractStageOLD() {
         int counter = 0;
 
         //PixelPlane plane = new PixelPlane(_myMain);
@@ -197,7 +209,7 @@ public class Stage {
           stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
         }
 
-        strip.addNodes(stripNodes);
+        strip.addNodesToFixture(stripNodes);
 
         nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
       }

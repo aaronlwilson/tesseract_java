@@ -4,7 +4,7 @@ package output;
 import environment.StrandPanel;
 import hardware.Tile;
 import hypermedia.net.UDP;
-//import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
+import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 
 import processing.core.PApplet;
 
@@ -20,15 +20,14 @@ public class UDPModel {
 
     public Rabbit[] rabbits;
     public Teensy[] teensies;
+    public PixelPusher [] pixelPushers;
 
     public int myPort      = 7777; //6000 also works
     public int rabbitPort  = 7;
     public int teensyPort  = 1337;
 
-
     private int numTiles    = 9;
     private String broadcastIp = "255.255.255.255";  // the remote IP address, rabbit uses DHCP, so you might have to check the router or use the driver app to get the IP
-
 
     private int numColors = 3;
     private int[] c = new int[numColors*3];
@@ -42,8 +41,8 @@ public class UDPModel {
     public UDPModel(PApplet pApplet) {
         p = pApplet;
 
-        initRabbits();
-        initTeensies();
+        initRabbitsArray();
+        initTeensiesArray();
 
         //red
         c[0] = 200;//255 is max
@@ -73,30 +72,31 @@ public class UDPModel {
     }
 
     // Initialize the rabbit controllers.  Number of controllers is set in env var NUM_RABBITS.  default is 0
-    private void initRabbits() {
+    private void initRabbitsArray() {
         Integer numRabbits = ConfigStore.get().getInt("numRabbits");
         rabbits = new Rabbit[numRabbits];
         // TODO: need to initialize from values in env vars
     }
 
     // Initialize the teensy (draco) controllers.  Number of controllers is set in env var NUM_TEENSIES.  default is 0
-    private void initTeensies() {
+    private void initTeensiesArray() {
         Integer numTeensies = ConfigStore.get().getInt("numTeensies");
         teensies = new Teensy[numTeensies];
         // TODO: need to objects initialize from values in env vars
     }
+
 
     //for rabbit test
     private void createNodeMap(){
         for (int k=0; k<12; k++){//y
             for (int j=0; j<12; j++){//x
 
-                int serial_port = (int) k/4; //what serial port does this coordinate belong to?
+                int serial_port = k/4; //what serial port does this coordinate belong to?
                 //println(serial_port);
 
                 int chipRow = (k%4)/2;// either 0 or 1
-                int chipCol = (int) ((1-chipRow)*4);
-                int chip_address = (int) chipCol+ (int)(j/3);
+                int chipCol = (1-chipRow) * 4;
+                int chip_address = chipCol + (j/3);
                 //println(chip_address);
 
                 int node_number = 0;
@@ -126,7 +126,6 @@ public class UDPModel {
                 int OUTBUFF_position = ((chip_address*6*9)+node_number*9);//this is the base chip position
                 OUTBUFF_position = OUTBUFF_position+serial_port;// offset by the correct amount for the correct serial port.
                 nodeMap[k][j] = OUTBUFF_position;
-
             }
         }
 
@@ -169,6 +168,13 @@ public class UDPModel {
             udp.send( data, teensy.ip, teensyPort );
         }
 
+        for (PixelPusher pixelPusher : pixelPushers) {
+
+          if (pixelPusher == null)
+            continue;
+
+          pixelPusher.send();
+        }
     }
 
 
