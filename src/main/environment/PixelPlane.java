@@ -241,7 +241,8 @@ public class PixelPlane {
                 tile.panelRotation = panelRotation;
                 tile.orientation = orientation;
                 //HACK
-                if(rabbit.ip != "192.168.50.103") {
+                if(rabbit.ip != "192.168.0.100") {
+                //if(rabbit.ip != "192.168.50.103") { // TP LINK Black Router
                     tile.flipHorizontal = flipHorizontal;
                     tile.flipVertical = flipVertical;
                 }
