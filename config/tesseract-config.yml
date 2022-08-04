@@ -1,5 +1,5 @@
-initialPlaylist:  Color Cube #Cubotron  #All Videos
-initialPlayState: playing #loop_scene
+initialPlaylist:  Cubotron  #All Videos #Color Cube
+initialPlayState: loop_scene #playing
 
 # CUBOTRON
 # TESSERACT

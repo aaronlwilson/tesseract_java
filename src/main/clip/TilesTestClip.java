@@ -23,20 +23,19 @@ public class TilesTestClip  extends AbstractClip {
 
         int[] nodestate = new int[3];
 
-
         // Checking if t.equals null or works fine.
         try
         {
             // This line of code throws NullPointerException
             // because t is null
             Tile t = (Tile)node.fixture;
-            //int c = t.numberPImage.pixels[node.index];
 
+            //int c = t.numberPImage.pixels[node.index];
             int c = t.numberColorForNodeIndex(node.index);
 
             //different color for each panel
             if(Util.getR(c) > 2){
-                c = t.parentRabbit.testColor;
+                c = t.myController.testColor;
             }
 
             nodestate[0] = Util.getR(c);
@@ -45,7 +44,10 @@ public class TilesTestClip  extends AbstractClip {
         }
         catch(NullPointerException e)
         {
-            //System.out.println("NullPointerException Caught");
+            System.out.println("NullPointerException Caught: TilesTestClip");
+            nodestate[0] = 255;
+            nodestate[1] = 255;
+            nodestate[2] = 255;
         }
 
         return nodestate;

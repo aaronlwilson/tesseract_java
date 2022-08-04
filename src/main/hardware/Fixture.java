@@ -9,14 +9,25 @@ public class Fixture {
   public int pinNum;
 
   public Node[] nodeArray;
-
+  public Controller myController;
 
   //CONSTRUCTOR
   public Fixture(int theId) {
 
     id = theId;
     nodeArray = new Node[0];
+  }
 
+
+  public Controller getMyController() {
+    return myController;
+  }
+
+  public void setMyController(Controller myController) {
+    this.myController = myController;
+
+    //for each teensy, we loop over all the attached Strands to send UDP, so give it a reference to this one
+    myController.addFixture(this);
   }
 
   public void addNodesToFixture(Node[] newNodes) {

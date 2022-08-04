@@ -1,15 +1,14 @@
 package output;
 
 
-import environment.StrandPanel;
-import hardware.Tile;
-import hypermedia.net.UDP;
-import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
-
-import processing.core.PApplet;
-
-import hardware.*;
 import environment.Node;
+import environment.StrandPanel;
+import hardware.PixelPusher;
+import hardware.Rabbit;
+import hardware.Teensy;
+import hardware.TilePP;
+import hypermedia.net.UDP;
+import processing.core.PApplet;
 import stores.ConfigStore;
 
 
@@ -43,6 +42,8 @@ public class UDPModel {
 
         initRabbitsArray();
         initTeensiesArray();
+        //init PixelPusher array
+        pixelPushers = new PixelPusher[0];
 
         //red
         c[0] = 200;//255 is max
@@ -144,7 +145,7 @@ public class UDPModel {
             if (rabbit == null)
                 continue;
 
-            for (Tile tile : rabbit.tileArray) {
+            for (TilePP tile : rabbit.tileArray) {
                 sendTileFrame(tile);
             }
 
@@ -154,7 +155,6 @@ public class UDPModel {
             data[1] = (byte) (p.unhex("FE"));
             udp.send( data, rabbit.ip, rabbitPort );
         }
-
 
         for (Teensy teensy : teensies) {
             if (teensy == null)
@@ -169,7 +169,6 @@ public class UDPModel {
         }
 
         for (PixelPusher pixelPusher : pixelPushers) {
-
           if (pixelPusher == null)
             continue;
 
@@ -179,7 +178,7 @@ public class UDPModel {
 
 
     // Send tile to Tesseract
-    public void sendTileFrame(Tile tile){
+    public void sendTileFrame(TilePP tile){
         if(tile == null)
             return;
 

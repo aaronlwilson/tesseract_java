@@ -28,7 +28,6 @@ public class Stage {
     private TesseractMain _myMain;
 
 
-
     public Stage() {
         _myMain = TesseractMain.getMain();
         nodes = new Node[]{};
@@ -38,28 +37,28 @@ public class Stage {
         this.stageType = stageType;
 
         if (stageType.equals("CUBOTRON")) {
-          buildCubotron();
+            buildCubotron();
         } else if (stageType.equals("TESSERACT")) {
-          buildTesseractStageCube();
+            buildTesseractStageCube();
         } else if (stageType.equals("TESSERACT_WALL")) {
-          buildTesseractStage();
+            buildTesseractWall();
         } else if (stageType.equals("DRACO")) {
-          buildDracoStage();
+            buildDracoStage();
         } else if (stageType.equals("SCARED")) {
-          buildScared();
+            buildScared();
         } else {
-          throw new RuntimeException("ERROR: Invalid stage of type: " + stageType);
+            throw new RuntimeException("ERROR: Invalid stage of type: " + stageType);
         }
 
         //set the boundaries of the stage
         for (Node n : nodes) {
-          if (n.x > maxX) maxX = n.x;
-          if (n.y > maxY) maxY = n.y;
-          if (n.z > maxZ) maxZ = n.z;
+            if (n.x > maxX) maxX = n.x;
+            if (n.y > maxY) maxY = n.y;
+            if (n.z > maxZ) maxZ = n.z;
 
-          if (n.x < minX) minX = n.x;
-          if (n.y < minY) minY = n.y;
-          if (n.z < minZ) minZ = n.z;
+            if (n.x < minX) minX = n.x;
+            if (n.y < minY) minY = n.y;
+            if (n.z < minZ) minZ = n.z;
         }
 
         maxW = maxX + Math.abs(_myMain.stage.minX);
@@ -71,20 +70,21 @@ public class Stage {
         _myMain.println("maxD: " + maxD);
     }
 
-  private void buildTesseractStage() {
-    _myMain.udpModel.pixelPushers = new PixelPusher[1];
+    private void buildTesseractWallNew() {
+        _myMain.udpModel.pixelPushers = new PixelPusher[1];
+        PixelPusher pixelPusher = new PixelPusher("192.168.50.119", 1, "d8:80:39:66:49:7b", 0xff0011);
 
+        TileAPA tileApa = new TileAPA(1, 1);
+        tileApa.setMyController(pixelPusher);
+        pixelPusher.tileArray[0] = tileApa;
 
-    _myMain.udpModel.pixelPushers[0] = new PixelPusher("192.168.50.119", 1, "d8:80:39:66:49:7b");
+        _myMain.udpModel.pixelPushers[0] = pixelPusher;
 
-    TileAPA myTile = new TileAPA(1,1);
-    myTile.setMyController(_myMain.udpModel.pixelPushers[0]);
+        Node[] tileNodes = tileApa.zigZagNodes(0, 0, 100);
+        nodes = (Node[]) _myMain.concat(nodes, tileNodes);
+    }
 
-    Node[] tileNodes = myTile.zigZagNodes();
-    nodes = (Node[]) _myMain.concat( nodes, tileNodes );
-  }
-
-    private void buildTesseractStageOLD() {
+    private void buildTesseractWall() {
         int counter = 0;
 
         //PixelPlane plane = new PixelPlane(_myMain);
@@ -103,27 +103,27 @@ public class Stage {
         int startY = -72;
 
         PixelPlane plane = new PixelPlane(_myMain);
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter,-(72*9),startY,0, 0, 0,false,false,false );
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -(72 * 9), startY, 0, 0, 0, false, false, false);
 
         plane = new PixelPlane(_myMain);
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter,-(72*6),startY,0, 1, 0,false,false,false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -(72 * 6), startY, 0, 1, 0, false, false, false);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter,-(72*3),startY,0, 0,0,false,false, false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -(72 * 3), startY, 0, 0, 0, false, false, false);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter,0,startY,0, 0,0,false,false, false  );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, 0, startY, 0, 0, 0, false, false, false);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter,(72*3),startY,0, 0, 0,false,false,false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, (72 * 3), startY, 0, 0, 0, false, false, false);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter,(72*6),startY,0, 0, 0,false,false,true );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, (72 * 6), startY, 0, 0, 0, false, false, true);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
     }
 
@@ -133,12 +133,12 @@ public class Stage {
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.103", 1, "",0xff00ff); //Purple -up
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.151", 2, "",0xffcc11); //Grey-Yellow
-        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.104", 3, "",0xff0000); //Red -up
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.196", 4, "",0x00ff00); //Green
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.105", 5, "",0x0000ff); //Blue -up
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.102", 6, "",0xffffff); //White
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.103", 1, "", 0xff00ff); //Purple -up
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.151", 2, "", 0xffcc11); //Grey-Yellow
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.104", 3, "", 0xff0000); //Red -up
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.196", 4, "", 0x00ff00); //Green
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.105", 5, "", 0x0000ff); //Blue -up
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.102", 6, "", 0xffffff); //White
 
         // old order 103, 100, 102, 104, 101, 105 - does not mean shit, those mappings were lost on the old router
         // new order 100, 101, 102, 103, 104, 105 ?
@@ -155,67 +155,67 @@ public class Stage {
 
         //top //red //up
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr,0,1,true,true,false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr, 0, 1, true, true, false);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         //bottom //green
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr,1,1,true,false,false);
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr, 1, 1, true, false, false);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         //left //blue //up
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr,0,2,false,false,true );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr, 0, 2, false, false, true);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         //right //white
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr,0,2,false,true,false );
-        nodes = (Node[]) _myMain.concat( nodes, planeNodes );
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, false, true, false);
+        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
     }
 
-  private void buildScared() {
-    int numberTeensies = 2;
-    _myMain.udpModel.teensies = new Teensy[numberTeensies];
+    private void buildScared() {
+        int numberTeensies = 2;
+        _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
-    //Teensy 4.1
-    _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
-    _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
+        //Teensy 4.1
+        _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
+        _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
 
-    //ESP8266
-    //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
+        //ESP8266
+        //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
 
-    nodes = new Node[0];
+        nodes = new Node[0];
 
-    //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
-    //800 pixels per teensy 3.2 is the current max. That should be higher...
-    int numLedsPerStrip = 200;
+        //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
+        //800 pixels per teensy 3.2 is the current max. That should be higher...
+        int numLedsPerStrip = 200;
 
-    for (int k = 0; k < numberTeensies; k++) {
-      //pins on the teensy are 1 through 8
-      int pinz = 8; //gets decremented
-      int numPins = pinz;
+        for (int k = 0; k < numberTeensies; k++) {
+            //pins on the teensy are 1 through 8
+            int pinz = 8; //gets decremented
+            int numPins = pinz;
 
-      for (int i = 0; i < numPins; i++) {
-        Node[] stripNodes = new Node[numLedsPerStrip];
+            for (int i = 0; i < numPins; i++) {
+                Node[] stripNodes = new Node[numLedsPerStrip];
 
-        Strip strip = new Strip(i, numLedsPerStrip, pinz);
-        pinz--;
-        strip.setMyController(_myMain.udpModel.teensies[k]);
+                Strip strip = new Strip(i, numLedsPerStrip, pinz);
+                pinz--;
+                strip.setMyController(_myMain.udpModel.teensies[k]);
 
-        //make some nodes in x y z space
-        for (int j = 0; j < numLedsPerStrip; j++) {
-          stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
+                //make some nodes in x y z space
+                for (int j = 0; j < numLedsPerStrip; j++) {
+                    stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
+                }
+
+                strip.addNodesToFixture(stripNodes);
+
+                nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
+            }
         }
 
-        strip.addNodesToFixture(stripNodes);
-
-        nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
-      }
     }
-
-  }
 
 
     private void buildDracoStage() {
@@ -240,77 +240,77 @@ public class Stage {
         //nodes = new StrandPanel().buildPanel(_myMain.udpModel.teensies[0], 0, "center_pillar_level_4", 0, 0, 0, 0, 0);
 
 
-        Node[] talonNodes = buildSmallTalon(_myMain.udpModel.teensies[0], -450,0, 300);
-        nodes = (Node[]) _myMain.concat( nodes, talonNodes );
+        Node[] talonNodes = buildSmallTalon(_myMain.udpModel.teensies[0], -450, 0, 300);
+        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
 
-        talonNodes = buildSmallTalon(_myMain.udpModel.teensies[1], -150,0 , 300);
-        nodes = (Node[]) _myMain.concat( nodes, talonNodes );
+        talonNodes = buildSmallTalon(_myMain.udpModel.teensies[1], -150, 0, 300);
+        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
 
-        talonNodes = buildSmallTalon(_myMain.udpModel.teensies[2], 150,0, 300);
-        nodes = (Node[]) _myMain.concat( nodes, talonNodes );
+        talonNodes = buildSmallTalon(_myMain.udpModel.teensies[2], 150, 0, 300);
+        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
 
-        talonNodes = buildSmallTalon(_myMain.udpModel.teensies[3], 450,0 , 300);
-        nodes = (Node[]) _myMain.concat( nodes, talonNodes );
+        talonNodes = buildSmallTalon(_myMain.udpModel.teensies[3], 450, 0, 300);
+        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
 
 
         //center tower
-        Node[] towerNodes = buildCenterTower(_myMain.udpModel.teensies[4], 0,0 , 0);
-        nodes = (Node[]) _myMain.concat( nodes, towerNodes );
+        Node[] towerNodes = buildCenterTower(_myMain.udpModel.teensies[4], 0, 0, 0);
+        nodes = (Node[]) _myMain.concat(nodes, towerNodes);
 
 
     }
 
-    private Node[] buildSmallTalon(Teensy teensy, int startX, int startY, int startZ){
+    private Node[] buildSmallTalon(Teensy teensy, int startX, int startY, int startZ) {
 
         Node[] talonNodes = new Node[0];
 
-        Node[] panelNodes = new StrandPanel().buildPanel(teensy, 0, "talon_top_mirrored", talonNodes.length, startX-100, startY-100, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat( talonNodes, panelNodes );
+        Node[] panelNodes = new StrandPanel().buildPanel(teensy, 0, "talon_top_mirrored", talonNodes.length, startX - 100, startY - 100, startZ, 0);
+        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
 
-        panelNodes = new StrandPanel().buildPanel(teensy, 2, "talon_bottom", talonNodes.length, startX-140, startY, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat( talonNodes, panelNodes );
+        panelNodes = new StrandPanel().buildPanel(teensy, 2, "talon_bottom", talonNodes.length, startX - 140, startY, startZ, 0);
+        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
 
-        panelNodes = new StrandPanel().buildPanel(teensy, 4, "talon_top", talonNodes.length, startX, startY-100, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat( talonNodes, panelNodes );
+        panelNodes = new StrandPanel().buildPanel(teensy, 4, "talon_top", talonNodes.length, startX, startY - 100, startZ, 0);
+        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
 
         panelNodes = new StrandPanel().buildPanel(teensy, 6, "talon_bottom_mirrored", talonNodes.length, startX, startY, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat( talonNodes, panelNodes );
+        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
 
         return talonNodes;
     }
 
-    private Node[] buildCenterTower(Teensy teensy, int startX, int startY, int startZ){
+    private Node[] buildCenterTower(Teensy teensy, int startX, int startY, int startZ) {
 
         Node[] towerNodes = new Node[0];
 
-        Node[] panelNodes = new StrandPanel().buildPanel(teensy, 1, "center_pillar_all", towerNodes.length, startX-130, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
+        Node[] panelNodes = new StrandPanel().buildPanel(teensy, 1, "center_pillar_all", towerNodes.length, startX - 130, startY, startZ, 0);
+        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
 
         panelNodes = new StrandPanel().buildPanel(teensy, 2, "center_pillar_all", towerNodes.length, startX, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
+        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
 
 
-        panelNodes = new StrandPanel().buildPanel(teensy, 3, "center_pillar_all", towerNodes.length, startX+130, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
+        panelNodes = new StrandPanel().buildPanel(teensy, 3, "center_pillar_all", towerNodes.length, startX + 130, startY, startZ, 0);
+        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
 
-        panelNodes = new StrandPanel().buildPanel(teensy, 4, "center_pillar_all", towerNodes.length, startX+260, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat( towerNodes, panelNodes );
+        panelNodes = new StrandPanel().buildPanel(teensy, 4, "center_pillar_all", towerNodes.length, startX + 260, startY, startZ, 0);
+        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
 
 
-        return  towerNodes;
+        return towerNodes;
     }
 
 
     private void buildCubotron() {
 
         int counter = 0;
-        nodes = new Node[30*30*30];
+        nodes = new Node[30 * 30 * 30];
 
         // Initialize a crap-ton of nodes, just a big basic cubeotron
         for (int i = 0; i < 30; i++) {
             for (int j = 0; j < 30; j++) {
                 for (int k = 0; k < 30; k++) {
-                    nodes[counter] = new Node(10*i, 10*j, 10*k, counter, null);
+                    nodes[counter] = new Node(10 * i, 10 * j, 10 * k, counter, null);
                     counter++;
                 }
             }
