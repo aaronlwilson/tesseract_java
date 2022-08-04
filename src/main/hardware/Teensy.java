@@ -14,9 +14,9 @@ public class Teensy extends Controller {
     //constructor
     public Teensy(String theIp, int theId, String theMac) {
 
-        super(theIp, theId, theMac);
+        super(theIp, theId, theMac, 0xffcc11);
 
-        strandPanelArray = new ArrayList<StrandPanel>();
+        strandPanelArray = new ArrayList<>();
     }
 
 

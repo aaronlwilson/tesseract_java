@@ -2,50 +2,81 @@ package hardware;
 
 import environment.Node;
 
-public class TileAPA extends Fixture {
+public class TileAPA extends Tile {
 
-  public static int numLEDperTile = 144;
+    public Node[] nodeArray = new Node[numLEDperTile];
 
-  public Node[][] tileNodeArray = new Node[12][12];
+    private int[][] tileMappingArray = new int[12][12];
 
-  public Controller myController;
+    //constructor
+    public TileAPA(int theId, int thePinNum) {
+        super(theId);
 
-
-  //constructor
-  public TileAPA(int theId, int thePinNum) {
-
-    super(theId);
-
-    pinNum = thePinNum;
-
-    //not really needed, the nodes are added to the global nodeArray
-    //nodeArray = new Node[numLEDperTile];
-  }
-
-  public Controller getMyController() {
-    return myController;
-  }
-
-  public void setMyController(Controller myController) {
-    this.myController = myController;
-
-    //for each teensy, we loop over all the attached Strands to send UDP, so give it a reference to this one
-    myController.addFixture(this);
-  }
-
-  public Node[] zigZagNodes() {
-    Node[] tileNodes = new Node[TileAPA.numLEDperTile];
-
-    int n = 0;
-
-    //make some nodes in x y z space
-    for (int i = 0; i < 12; i++) {
-      for (int j = 0; j < 12; j++) {
-        tileNodes[n] = new Node(i * 6, j * 6, 100, n, this);
-        n++;
-      }
+        pinNum = thePinNum;
     }
-    return tileNodes;
-  }
+
+    public Node[] zigZagNodes(int startX, int startY, int startZ) {
+        int n = 0;
+        int x = startX + (12 * xSpacing);
+        int y = startY + (12 * ySpacing);
+        int ySpacer = -ySpacing;
+
+        //for tile mapping
+        int col = 11;
+        int row = 11;
+        int rowInc = -1;
+
+        //make some nodes in x y z space
+        for (int i = 0; i < 12; i++) { //rows
+            for (int j = 0; j < 12; j++) { //cols
+                Node node = new Node(x - 3, y - 3, startZ, n, this);
+                tileNodeArray[j][i] = nodeArray[n] = node;
+                tileMappingArray[col][row] = n;
+                n++;
+                y += ySpacer; // sometimes negative
+                row += rowInc;
+            }
+
+            x -= xSpacing;
+            col -= 1;
+
+            if (i % 2 == 0) {//even number col
+                y = startY + ySpacing;
+                row = 0;
+                ySpacer = ySpacing;
+                rowInc = 1;
+
+            } else {
+                //reset to bottom
+                y = startY + (12 * ySpacing);
+                ySpacer = -ySpacing;
+                row = 11;
+                rowInc = -1;
+            }
+        }
+
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
+//                Node node = new Node(j * xSpacing, i * ySpacing, startZ, n, this);
+//                tileNodeArray[j][i] = nodeArray[n] = node;
+                System.out.printf(" %d,", tileMappingArray[j][i]);
+            }
+            System.out.println();
+        }
+
+        return nodeArray;
+    }
+
+    @Override
+    public int numberColorForNodeIndex(int index) {
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
+                if (tileMappingArray[j][i] == index) {
+                    return numberPImageArray[j][i];
+                }
+            }
+        }
+        return 0;
+    }
 
 }

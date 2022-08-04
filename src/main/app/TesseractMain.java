@@ -71,7 +71,7 @@ public class TesseractMain extends PApplet {
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
     //https://github.com/processing/processing/issues/5476
 
-    System.setProperty("jogl.disable.openglcore", "false");
+    //System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
@@ -83,7 +83,7 @@ public class TesseractMain extends PApplet {
     background(0);
     frameRate(30);
 
-    Util.enableColorization();
+    Util.enableColorization(); // color in the console output
 
     _main = this;
 
@@ -105,7 +105,6 @@ public class TesseractMain extends PApplet {
     java.lang.RuntimeException: Waited 5000ms for: <2b4dc6d4, 258a2dcd>[count 2, qsz 0, owner <main-FPSAWTAnimator#00-Timer0>] - <main-FPSAWTAnimator#00-Timer0-FPSAWTAnimator#00-Timer1>
     at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:410)
     */
-
     thread("completeConfiguration");
   }
 
@@ -123,6 +122,8 @@ public class TesseractMain extends PApplet {
   public void completeConfiguration() {
     // Configure Data and Stores
 
+
+    //PUT BACK, Needed for fresh installs
     // Make some dummy data in the stores
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
@@ -200,7 +201,7 @@ public class TesseractMain extends PApplet {
     //udpModel.sendRabbitTest();
 
     //PUT BACK
-    //udpModel.send();
+    udpModel.send();
   }
 
 
@@ -209,13 +210,13 @@ public class TesseractMain extends PApplet {
     //return
     int[] rgb1 = channel1.drawNode(node);
 
-    //TODO apply global brightness
+    //TODO: apply global brightness
     //apply channel brightness
     rgb1[0] = Math.round(rgb1[0]/1);
     rgb1[1] = Math.round(rgb1[1]/1);
     rgb1[2] = Math.round(rgb1[2]/1);
 
-    //TODO mix the 2 channels together
+    //TODO: mix the 2 channels together
 
     return rgb1;
 

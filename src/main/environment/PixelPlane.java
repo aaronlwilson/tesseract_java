@@ -8,7 +8,7 @@ public class PixelPlane {
 
     private PApplet p;
 
-    public Tile[][] panelTileArray = new Tile[3][3];
+    public TilePP[][] panelTileArray = new TilePP[3][3];
 
     // This layout corresponds to the physical construction of the pixel plane panels.
     // I had to invert the matrix to get the transformations to work, not sure why... aliens
@@ -193,8 +193,6 @@ public class PixelPlane {
         return planeNodes;
     }
 
-
-
     public Node[] buildPanel(Rabbit rabbit, int startIndex, int startX, int startY, int startZ, int panelRotation, int orientation, boolean flipHorizontal, boolean flipVertical, boolean channelSwap){
 
         Node[] planeNodes = new Node[0];
@@ -236,17 +234,18 @@ public class PixelPlane {
 
                 int tileRot = (tileId >3 && tileId <7) ? 2 : 0;
 
-                Tile tile = new Tile(rabbit, tileId);
+                TilePP tile = new TilePP(rabbit, tileId);
                 tile.rotation = tileRot;
                 tile.panelRotation = panelRotation;
                 tile.orientation = orientation;
+
                 //HACK
                 if(rabbit.ip != "192.168.50.103") {
                     tile.flipHorizontal = flipHorizontal;
                     tile.flipVertical = flipVertical;
                 }
 
-                //hack for the old school pixel plane panel that has 8 of 9 tiles with rgb channels swapped
+                //hack for the old school pixel plane panel (REV2) that has 8 of 9 tiles with rgb channels swapped
                 if(tileId != 1)
                     tile.channelSwap = channelSwap;
 
