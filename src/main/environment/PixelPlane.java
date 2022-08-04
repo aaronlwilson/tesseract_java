@@ -1,14 +1,14 @@
 package environment;
 
 
-import processing.core.PApplet;
 import hardware.*;
+import processing.core.PApplet;
 
 public class PixelPlane {
 
     private PApplet p;
 
-    public TilePP[][] panelTileArray = new TilePP[3][3];
+    public Tile[][] pixelPlanePanelTileArray = new Tile[3][3];
 
     // This layout corresponds to the physical construction of the pixel plane panels.
     // I had to invert the matrix to get the transformations to work, not sure why... aliens
@@ -18,40 +18,38 @@ public class PixelPlane {
         p = pApplet;
     }//end constructor
 
-    private static void flipMatrixHorizontal(int mat[][])
-    {
+    private static void flipMatrixHorizontal(int mat[][]) {
         int N = mat.length;
 
         for (int i = 0; i < N / 2; i++) {
             for (int j = 0; j < mat[i].length; j++) {
                 int temp = mat[i][j];
                 mat[i][j] = mat[N - 1 - i][j];
-                mat[N - 1 -i][j] = temp;
+                mat[N - 1 - i][j] = temp;
             }
         }
     }
 
-    private static void flipMatrixVertical(int mat[][])
-    {
+    private static void flipMatrixVertical(int mat[][]) {
         int N = mat.length;
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < mat[i].length / 2; j++) {
                 int temp = mat[i][j];
                 mat[i][j] = mat[i][mat[i].length - 1 - j];
-                mat[i][mat[i].length - 1 -j] = temp;
+                mat[i][mat[i].length - 1 - j] = temp;
             }
         }
     }
 
-    private static int[][] rotateMatrixClockwise(int[][] mat){
+    private static int[][] rotateMatrixClockwise(int[][] mat) {
         //rotate a 2D array
         int N = mat.length;
 
         int[][] rotatedArray = new int[N][N];
-        for (int j=0; j<N; j++){
-            for (int i=0; i<N; i++){
-                rotatedArray[j][i] = mat[i][N-j-1];
+        for (int j = 0; j < N; j++) {
+            for (int i = 0; i < N; i++) {
+                rotatedArray[j][i] = mat[i][N - j - 1];
             }
         }
         return rotatedArray;
@@ -115,9 +113,9 @@ public class PixelPlane {
  */
 
 
-    public Node[] buildFullCube(int startIndex, int startX, int startY, int startZ, int rotation){
+    public Node[] buildFullCube(int startIndex, int startX, int startY, int startZ, int rotation) {
 
-        int total = (36*36)*6;
+        int total = (36 * 36) * 6;
         Node[] planeNodes = new Node[total];
 
         int counter = 0;
@@ -126,9 +124,9 @@ public class PixelPlane {
 
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
-                int x = (10*i) + startX;
-                int y = (10*j) + startY;
-                int z = startZ-10;
+                int x = (10 * i) + startX;
+                int y = (10 * j) + startY;
+                int z = startZ - 10;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
                 counter++;
@@ -137,9 +135,9 @@ public class PixelPlane {
 
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
-                int x = (10*i) + startX;
-                int y = startY-10;
-                int z = (10*j) + startZ;
+                int x = (10 * i) + startX;
+                int y = startY - 10;
+                int z = (10 * j) + startZ;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
                 counter++;
@@ -148,9 +146,9 @@ public class PixelPlane {
 
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
-                int x = startX-10;
-                int y = (10*i) + startY;
-                int z = (10*j) + startZ;
+                int x = startX - 10;
+                int y = (10 * i) + startY;
+                int z = (10 * j) + startZ;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
                 counter++;
@@ -160,9 +158,9 @@ public class PixelPlane {
         // other half
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
-                int x = (10*i) + startX;
-                int y = (10*j) + startY;
-                int z = startZ+360;
+                int x = (10 * i) + startX;
+                int y = (10 * j) + startY;
+                int z = startZ + 360;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
                 counter++;
@@ -171,9 +169,9 @@ public class PixelPlane {
 
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
-                int x = startX+360;
-                int y = (10*i) + startY;
-                int z = (10*j) + startZ;
+                int x = startX + 360;
+                int y = (10 * i) + startY;
+                int z = (10 * j) + startZ;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
                 counter++;
@@ -182,9 +180,9 @@ public class PixelPlane {
 
         for (int i = 0; i < 36; i++) {
             for (int j = 0; j < 36; j++) {
-                int x = (10*i) + startX;
-                int y = startY+360;
-                int z = (10*j) + startZ;
+                int x = (10 * i) + startX;
+                int y = startY + 360;
+                int z = (10 * j) + startZ;
 
                 planeNodes[counter] = new Node(x, y, z, counter, null);
                 counter++;
@@ -193,46 +191,94 @@ public class PixelPlane {
         return planeNodes;
     }
 
-    public Node[] buildPanel(Rabbit rabbit, int startIndex, int startX, int startY, int startZ, int panelRotation, int orientation, boolean flipHorizontal, boolean flipVertical, boolean channelSwap){
+
+    public Node[] buildPanelAPA(PixelPusher pixelPusher, int startIndex, int startX, int startY, int startZ, int panelRotation, int orientation, boolean flipHorizontal, boolean flipVertical) {
+        Node[] planeNodes = new Node[0];
+
+        int gap = Tile.xSpacing * 12; //spacing 6 x 12 nodes
+
+        //adjust the layoutMatrix prior to layout
+        int layoutMatrix[][] =
+            {
+                {9, 6, 3},
+                {8, 5, 2},
+                {7, 4, 1}
+            };
+
+        if (flipHorizontal)
+            flipMatrixHorizontal(layoutMatrix);
+
+        if (flipVertical)
+            flipMatrixVertical(layoutMatrix);
+
+        if (panelRotation > 0) {
+            for (int r = 0; r < panelRotation; r++) {
+                layoutMatrix = rotateMatrixClockwise(layoutMatrix);
+            }
+        } else {
+            //layoutMatrix = rotateMatrixCounterClockwise(layoutMatrix);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int xTilePos = startX + (gap * j);
+                int yTilePos = startY + (gap * i);
+
+                int tileId = layoutMatrix[j][i];
+                TileAPA tileApa = new TileAPA(tileId, i);
+
+                //tileApa.rotation = tileRot;
+                tileApa.panelRotation = panelRotation;
+                tileApa.orientation = orientation;
+
+                tileApa.setMyController(pixelPusher);
+                pixelPusher.tileArray[0] = tileApa;
+
+                Node[] tileNodes = tileApa.zigZagNodes(xTilePos, yTilePos, startZ);
+                planeNodes = (Node[]) p.concat(planeNodes, tileNodes);
+
+                pixelPlanePanelTileArray[i][j] = tileApa;
+            }
+        }
+        return planeNodes;
+    }
+
+    public Node[] buildPanel(Rabbit rabbit, int startIndex, int startX, int startY, int startZ, int panelRotation, int orientation, boolean flipHorizontal, boolean flipVertical, boolean channelSwap) {
 
         Node[] planeNodes = new Node[0];
 
-        int inc = 6*12; //spacing 6 x 12 nodes
+        int gap = Tile.xSpacing * 12; //spacing 6 x 12 nodes
 
         //adjust the layoutMatrix prior to layout
-        int myMatrix[][] =
-                {
-                        {9, 4, 3},
-                        {8, 5, 2},
-                        {7, 6, 1}
-                };
+        int layoutMatrix[][] =
+            {
+                {9, 4, 3},
+                {8, 5, 2},
+                {7, 6, 1}
+            };
 
-        if(flipHorizontal)
-            flipMatrixHorizontal(myMatrix);
+        if (flipHorizontal)
+            flipMatrixHorizontal(layoutMatrix);
 
-        if(flipVertical)
-            flipMatrixVertical(myMatrix);
+        if (flipVertical)
+            flipMatrixVertical(layoutMatrix);
 
-        if(panelRotation >0) {
+        if (panelRotation > 0) {
             for (int r = 0; r < panelRotation; r++) {
-                myMatrix = rotateMatrixClockwise(myMatrix);
+                layoutMatrix = rotateMatrixClockwise(layoutMatrix);
             }
 
-        }else{
-            //myMatrix = rotateMatrixCounterClockwise(myMatrix);
-
+        } else {
+            //layoutMatrix = rotateMatrixCounterClockwise(layoutMatrix);
         }
 
-        //layoutMatrix = myMatrix;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int xTilePos = startX + (gap * j);
+                int yTilePos = startY + (gap * i);
 
-        for(int i=0; i<3; i++) {
-            for(int j=0; j<3; j++) {
-                int xTilePos = startX + (inc*j);
-                int yTilePos = startY + (inc*i);
-
-                int tileId = myMatrix[j][i];
-
-                int tileRot = (tileId >3 && tileId <7) ? 2 : 0;
+                int tileId = layoutMatrix[j][i];
+                int tileRot = (tileId > 3 && tileId < 7) ? 2 : 0;
 
                 TilePP tile = new TilePP(rabbit, tileId);
                 tile.rotation = tileRot;
@@ -240,26 +286,24 @@ public class PixelPlane {
                 tile.orientation = orientation;
 
                 //HACK
-                if(rabbit.ip != "192.168.50.103") {
+                if (rabbit.ip != "192.168.50.103") {
                     tile.flipHorizontal = flipHorizontal;
                     tile.flipVertical = flipVertical;
                 }
 
                 //hack for the old school pixel plane panel (REV2) that has 8 of 9 tiles with rgb channels swapped
-                if(tileId != 1)
+                if (tileId != 1)
                     tile.channelSwap = channelSwap;
 
                 rabbit.tileArray[tileId - 1] = tile;
 
                 Node[] tileNodes = tile.getNodeLayout(xTilePos, yTilePos, startZ);
-                planeNodes = (Node[]) p.concat( planeNodes, tileNodes );
+                planeNodes = (Node[]) p.concat(planeNodes, tileNodes);
 
-                panelTileArray[i][j] = tile;
+                pixelPlanePanelTileArray[i][j] = tile;
             }
         }
-
         return planeNodes;
     }
-
 
 }

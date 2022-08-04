@@ -29,7 +29,7 @@ public class TileAPA extends Tile {
         //make some nodes in x y z space
         for (int i = 0; i < 12; i++) { //rows
             for (int j = 0; j < 12; j++) { //cols
-                Node node = new Node(x - 3, y - 3, startZ, n, this);
+                Node node = new Node(x - xSpacing, y - ySpacing, startZ, n, this);
                 tileNodeArray[j][i] = nodeArray[n] = node;
                 tileMappingArray[col][row] = n;
                 n++;
@@ -42,8 +42,8 @@ public class TileAPA extends Tile {
 
             if (i % 2 == 0) {//even number col
                 y = startY + ySpacing;
-                row = 0;
                 ySpacer = ySpacing;
+                row = 0;
                 rowInc = 1;
 
             } else {
@@ -55,14 +55,23 @@ public class TileAPA extends Tile {
             }
         }
 
+        for (int r = 0; r < panelRotation; r++) {
+            rotateNodeMatrix(tileNodeArray);
+            rotateImageMatrix(numberPImageArray);
+            rotateImageMatrix(tileMappingArray);
+        }
+
+        // prints the node zigZag layout in a 12 x 12 grid
+        n = 0;
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
-//                Node node = new Node(j * xSpacing, i * ySpacing, startZ, n, this);
-//                tileNodeArray[j][i] = nodeArray[n] = node;
                 System.out.printf(" %d,", tileMappingArray[j][i]);
+                //nodeArray[n++] = tileNodeArray[j][i];
             }
             System.out.println();
         }
+
+        System.out.println("______________________");
 
         return nodeArray;
     }

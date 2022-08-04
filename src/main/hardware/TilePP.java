@@ -109,7 +109,6 @@ public class TilePP extends Tile {
             rotateImageMatrix(numberPImageArray);
         }
 
-
         //return 2D array as 1D
         int n = 0;
         for (int i = 0; i < 12; i++) {
@@ -117,7 +116,6 @@ public class TilePP extends Tile {
                 nodeArray[n++] = tileNodeArray[i][j];
             }
         }
-
         return nodeArray;
 
     }//end getNodeLayout

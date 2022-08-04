@@ -12,8 +12,8 @@ public class Tile extends Fixture {
   //this tile holds references to all its nodes, and where they are mapped considering rotation
   public Node[][] tileNodeArray = new Node[12][12];
 
-  int xSpacing = 6;
-  int ySpacing = 6;
+  public static int xSpacing = 6;
+  public static int ySpacing = 6;
 
   public int rotation = 0;
   public int panelRotation = 0;

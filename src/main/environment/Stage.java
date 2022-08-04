@@ -70,21 +70,23 @@ public class Stage {
         _myMain.println("maxD: " + maxD);
     }
 
-    private void buildTesseractWallNew() {
+    private void buildTesseractWall() {
+        int counter = 0;
+
         _myMain.udpModel.pixelPushers = new PixelPusher[1];
         PixelPusher pixelPusher = new PixelPusher("192.168.50.119", 1, "d8:80:39:66:49:7b", 0xff0011);
-
-        TileAPA tileApa = new TileAPA(1, 1);
-        tileApa.setMyController(pixelPusher);
-        pixelPusher.tileArray[0] = tileApa;
-
         _myMain.udpModel.pixelPushers[0] = pixelPusher;
 
-        Node[] tileNodes = tileApa.zigZagNodes(0, 0, 100);
-        nodes = (Node[]) _myMain.concat(nodes, tileNodes);
+        int gap = Tile.xSpacing * 12; //spacing 6 x 12 nodes
+        int startY = -gap;
+
+        PixelPlane plane = new PixelPlane(_myMain);
+        nodes = plane.buildPanelAPA(pixelPusher, counter, 0, 0, 0, 0, 0, false, false);
+
+       // nodes = (Node[]) _myMain.concat(nodes, tileNodes);
     }
 
-    private void buildTesseractWall() {
+    private void buildTesseractWallOLD() {
         int counter = 0;
 
         //PixelPlane plane = new PixelPlane(_myMain);
@@ -100,17 +102,18 @@ public class Stage {
         _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.104", 5, "00-90-C2-F1-2F-7D", 0xff0000); //Red
         _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.105", 6, "00-90-C2-FA-58-FF", 0x0000ff); //Blue
 
-        int startY = -72;
+        int gap = Tile.xSpacing * 12; //spacing 6 x 12 nodes
+        int startY = -gap;
 
         PixelPlane plane = new PixelPlane(_myMain);
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -(72 * 9), startY, 0, 0, 0, false, false, false);
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -(gap * 9), startY, 0, 0, 0, false, false, false);
 
         plane = new PixelPlane(_myMain);
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -(72 * 6), startY, 0, 1, 0, false, false, false);
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -(gap * 6), startY, 0, 1, 0, false, false, false);
         nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -(72 * 3), startY, 0, 0, 0, false, false, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -(gap * 3), startY, 0, 0, 0, false, false, false);
         nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
@@ -118,13 +121,12 @@ public class Stage {
         nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, (72 * 3), startY, 0, 0, 0, false, false, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, (gap * 3), startY, 0, 0, 0, false, false, false);
         nodes = (Node[]) _myMain.concat(nodes, planeNodes);
 
         plane = new PixelPlane(_myMain);
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, (72 * 6), startY, 0, 0, 0, false, false, true);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, (gap * 6), startY, 0, 0, 0, false, false, true);
         nodes = (Node[]) _myMain.concat(nodes, planeNodes);
-
     }
 
     private void buildTesseractStageCube() {
