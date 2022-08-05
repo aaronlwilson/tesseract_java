@@ -94,8 +94,8 @@ task downloadProcessingVideoLibrary() {
   doLast {
     download {
       println "Downloading processing video library"
-      src 'https://github.com/processing/processing-video/releases/download/r6-v2.0-beta4/video-2.0-beta4.zip'
-      dest new File("${rootDir}/tmp", 'processing-video-lib-v2-beta-release-6.zip')
+      src 'https://github.com/processing/processing-video/releases/download/latest-processing3/video.zip'
+      dest new File("${rootDir}/tmp", 'processing-video-lib-latest-processing3.zip')
       onlyIfModified true
     }
   }
@@ -105,7 +105,7 @@ task unzipProcessingVideoLibrary(dependsOn: downloadProcessingVideoLibrary) {
   doLast {
     copy {
       println "Unzipping processing video library"
-      from zipTree("${rootDir}/tmp/processing-video-lib-v2-beta-release-6.zip")
+      from zipTree("${rootDir}/tmp/processing-video-lib-latest-processing3.zip")
       into "${rootDir}/lib"
     }
   }
