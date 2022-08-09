@@ -212,9 +212,9 @@ public class TesseractMain extends PApplet {
 
     //TODO: apply global brightness
     //apply channel brightness
-    rgb1[0] = Math.round(rgb1[0]/1);
-    rgb1[1] = Math.round(rgb1[1]/1);
-    rgb1[2] = Math.round(rgb1[2]/1);
+    rgb1[0] = Math.round(rgb1[0]/2);
+    rgb1[1] = Math.round(rgb1[1]/2);
+    rgb1[2] = Math.round(rgb1[2]/2);
 
     //TODO: mix the 2 channels together
 
