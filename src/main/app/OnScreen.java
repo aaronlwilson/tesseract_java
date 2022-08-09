@@ -10,7 +10,6 @@ import environment.*;
 
 
 public class OnScreen {
-
     private PApplet p;
 
     private float _xrot;
@@ -23,7 +22,6 @@ public class OnScreen {
     private float _yDelta;
     private float _xMove;
     private float _yMove;
-
     private TesseractMain _myMain;
 
 
@@ -68,7 +66,6 @@ public class OnScreen {
     }
 
     public void draw() {
-
         p.background(20);
         p.noFill();
         p.ortho();

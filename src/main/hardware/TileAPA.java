@@ -30,7 +30,7 @@ public class TileAPA extends Tile {
         for (int i = 0; i < 12; i++) { //rows
             for (int j = 0; j < 12; j++) { //cols
                 Node node = new Node(x - xSpacing, y - ySpacing, startZ, n, this);
-                tileNodeArray[j][i] = nodeArray[n] = node;
+                tileNodeArray[col][row] = nodeArray[n] = node;
                 tileMappingArray[col][row] = n;
                 n++;
                 y += ySpacer; // sometimes negative
@@ -55,17 +55,35 @@ public class TileAPA extends Tile {
             }
         }
 
-        for (int r = 0; r < panelRotation; r++) {
-            rotateNodeMatrix(tileNodeArray);
-            rotateImageMatrix(numberPImageArray);
-            rotateImageMatrix(tileMappingArray);
+        //HACK
+        int numRotations = panelRotation;
+        if (numRotations % 2 != 0){
+            numRotations += 2;
+        }
+
+        //apply matrix transformations at the tile level
+        if (this.flipVertical) {
+            flipNodeMatrixVertical(tileNodeArray);
+            //flipImageMatrixVertical(numberPImageArray);
+        }
+
+        if (this.flipHorizontal) {
+            flipNodeMatrixHorizontal(tileNodeArray);
+            //flipImageMatrixHorizontal(numberPImageArray);
+        }
+
+        for (int r = 0; r < numRotations; r++) {
+            rotateNodeMatrix(tileNodeArray); //no change
+            //rotateImageMatrix(numberPImageArray); //correct, 90 Clockwise
+            // rotateImageMatrix(tileMappingArray); //incorrect, 90 CounterClockwise
         }
 
         // prints the node zigZag layout in a 12 x 12 grid
         n = 0;
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
-                System.out.printf(" %d,", tileMappingArray[j][i]);
+                System.out.printf(" %d n+%d,", tileNodeArray[j][i].index, n);
+                n++;
                 //nodeArray[n++] = tileNodeArray[j][i];
             }
             System.out.println();
@@ -80,11 +98,14 @@ public class TileAPA extends Tile {
     public int numberColorForNodeIndex(int index) {
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
-                if (tileMappingArray[j][i] == index) {
+
+                //if (tileMappingArray[j][i] == index) {
+                if (tileNodeArray[j][i].index == index) {
                     return numberPImageArray[j][i];
                 }
             }
         }
+
         return 0;
     }
 

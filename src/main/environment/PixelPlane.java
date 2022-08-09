@@ -88,7 +88,6 @@ public class PixelPlane {
         }
     }
 
-
     // Function to rotate the matrix 90 degree clockwise
     static void rotate90Clockwise(int a[][])
     {
@@ -109,9 +108,7 @@ public class PixelPlane {
             }
         }
     }
-
  */
-
 
     public Node[] buildFullCube(int startIndex, int startX, int startY, int startZ, int rotation) {
 
@@ -191,7 +188,6 @@ public class PixelPlane {
         return planeNodes;
     }
 
-
     public Node[] buildPanelAPA(PixelPusher pixelPusher, int startIndex, int startX, int startY, int startZ, int panelRotation, int orientation, boolean flipHorizontal, boolean flipVertical) {
         Node[] planeNodes = new Node[0];
 
@@ -230,6 +226,8 @@ public class PixelPlane {
                 //tileApa.rotation = tileRot;
                 tileApa.panelRotation = panelRotation;
                 tileApa.orientation = orientation;
+                tileApa.flipHorizontal = flipHorizontal;
+                tileApa.flipVertical = flipVertical;
 
                 tileApa.setMyController(pixelPusher);
                 pixelPusher.tileArray[0] = tileApa;

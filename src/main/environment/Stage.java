@@ -81,7 +81,7 @@ public class Stage {
         int startY = -gap;
 
         PixelPlane plane = new PixelPlane(_myMain);
-        nodes = plane.buildPanelAPA(pixelPusher, counter, 0, 0, 0, 0, 0, false, false);
+        nodes = plane.buildPanelAPA(pixelPusher, counter, 0, 0, 0, 1, 0, true, true);
 
        // nodes = (Node[]) _myMain.concat(nodes, tileNodes);
     }
