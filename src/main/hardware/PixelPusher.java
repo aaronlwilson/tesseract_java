@@ -49,7 +49,6 @@ public class PixelPusher extends Controller {
 
             // for every pixel in the physical strip
             for (int i = 0; i < strip.getLength(); i++) {
-
                 Node node = tileArray[0].nodeArray[i];
                 int c = ((node.r & 0x0ff) << 16) | ((node.g & 0x0ff) << 8) | (node.b & 0x0ff);
 

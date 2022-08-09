@@ -106,7 +106,6 @@ public class Channel {
                 return _currentScene.clip.drawNode(node);
             }
 
-
         }else if(_currentScene != null && _nextScene != null) {// this the the transition between scenes
 
             int[] currentRgb = new int[3];
@@ -121,7 +120,6 @@ public class Channel {
                 nextRgb = _nextScene.clip.drawNode(node);
             }
 
-
             for(int i=0; i<3; i++){
                 //apply mix ratios to each scene and add them together for a generic output format
                 sceneMix[i] = (int)(currentRgb[i] * _mix) + (int)(nextRgb[i] * Math.abs(_mix-1) );
@@ -133,7 +131,6 @@ public class Channel {
 
             return sceneMix;
         }
-
 
         return new int[3];
     }
