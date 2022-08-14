@@ -135,10 +135,10 @@ public class Stage {
         _myMain.udpModel.rabbits = new Rabbit[6];
 
         //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.103", 1, "", 0xff00ff); //Purple -up
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.103", 1, "", 0x00ff00); //Green -up
         _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.151", 2, "", 0xffcc11); //Grey-Yellow
         _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.104", 3, "", 0xff0000); //Red -up
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.196", 4, "", 0x00ff00); //Green
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.196", 4, "", 0xff00ff); //Purple
         _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.105", 5, "", 0x0000ff); //Blue -up
         _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.102", 6, "", 0xffffff); //White
 
