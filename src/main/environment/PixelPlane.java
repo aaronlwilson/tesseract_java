@@ -284,7 +284,7 @@ public class PixelPlane {
                 tile.orientation = orientation;
 
                 //HACK
-                if (rabbit.ip != "192.168.50.103") {
+                if (rabbit.ip != "192.168.50.104") {
                     tile.flipHorizontal = flipHorizontal;
                     tile.flipVertical = flipVertical;
                 }

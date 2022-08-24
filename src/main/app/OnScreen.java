@@ -72,6 +72,10 @@ public class OnScreen {
 
         drawFramerate();
 
+        if (!_myMain.drawing) {
+            return;
+        }
+
         //center camera and move backward
         p.translate(p.width/2, (p.height/2), 0);
 
@@ -158,6 +162,16 @@ public class OnScreen {
         p.textSize (14);
         p.fill(160);
         p.text("FPS " + p.str(p.floor(p.frameRate)), p.width-60, 20);
+
+        if(_myMain.sending) {
+            p.text("SENDING", p.width-110, 40);
+        }else{
+            p.text("NOT SENDING", p.width-110, 40);
+        }
+
+        if(!_myMain.drawing) {
+            p.text("NOT DRAWING", p.width-110, 70);
+        }
     }
 
 
