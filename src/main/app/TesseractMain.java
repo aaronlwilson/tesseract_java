@@ -45,6 +45,9 @@ public class TesseractMain extends PApplet {
   public Channel channel1;
   public Boolean setupComplete = false;
 
+  public Boolean drawing = true;
+  public Boolean sending = true;
+
   //for Rotary Encoder readings
   public Serial arduinoPort;    // The serial port
   public int lf = 10;      // ASCII linefeed
@@ -200,8 +203,9 @@ public class TesseractMain extends PApplet {
     //push dummy packets out to LEDS
     //udpModel.sendRabbitTest();
 
-    //PUT BACK
-    udpModel.send();
+    if(sending) {
+        udpModel.send();
+    }
   }
 
 
@@ -212,9 +216,9 @@ public class TesseractMain extends PApplet {
 
     //TODO: apply global brightness
     //apply channel brightness
-    rgb1[0] = Math.round(rgb1[0]/1);
-    rgb1[1] = Math.round(rgb1[1]/1);
-    rgb1[2] = Math.round(rgb1[2]/1);
+    rgb1[0] = Math.round(rgb1[0]/2);
+    rgb1[1] = Math.round(rgb1[1]/2);
+    rgb1[2] = Math.round(rgb1[2]/2);
 
     //TODO: mix the 2 channels together
 
@@ -266,4 +270,16 @@ public class TesseractMain extends PApplet {
 
   //Custom event handler on pApplet for video library
   public void movieEvent(Movie movie) { movie.read(); }
+
+
+   public void keyPressed() {
+    System.out.println(key);
+        if(key == 's') {
+            sending = !sending;
+        }
+
+       if(key == 'd') {
+           drawing = !drawing;
+       }
+    }
 }
