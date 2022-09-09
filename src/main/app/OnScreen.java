@@ -1,11 +1,15 @@
 package app;
 
+//temp
+import clip.Particle;
+
+
 import processing.core.PApplet;
+
 import environment.*;
 
 
 public class OnScreen {
-
     private PApplet p;
 
     private float _xrot;
@@ -18,7 +22,6 @@ public class OnScreen {
     private float _yDelta;
     private float _xMove;
     private float _yMove;
-
     private TesseractMain _myMain;
 
 
@@ -63,12 +66,15 @@ public class OnScreen {
     }
 
     public void draw() {
-
         p.background(20);
         p.noFill();
         p.ortho();
 
         drawFramerate();
+
+        if (!_myMain.drawing) {
+            return;
+        }
 
         //center camera and move backward
         p.translate(p.width/2, (p.height/2), 0);
@@ -93,23 +99,39 @@ public class OnScreen {
         diff = _yrot-_newYrot;
         if (Math.abs(diff) >  0.01) { _yrot -= diff/6.0; }
 
-        p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI));
-        p.rotateY(p.map(_xrot,0, p.width, p.PI, -p.PI));
+        p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI) + p.PI);
+
+        //add on the rotation from 1024 rotary encoder
+        float totalY = (p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI);
+        p.rotateY(totalY);
 
         drawAxes(600);
 
-        drawBoundingBox();
+        //temp, show absolute position of particles
+        p.strokeWeight(12);
+        p.stroke(_myMain.particleX.color);
+        p.point(_myMain.particleX.position.x, _myMain.particleX.position.y, _myMain.particleX.position.z);
 
+        p.stroke(_myMain.particleY.color);
+        p.point(_myMain.particleY.position.x, _myMain.particleY.position.y, _myMain.particleY.position.z);
+
+        p.stroke(_myMain.particleZ.color);
+        p.point(_myMain.particleZ.position.x, _myMain.particleZ.position.y, _myMain.particleZ.position.z);
 
         p.pushMatrix();
 
+
         //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
         //we want to translate the object on multiple axes using the current global coordinates.
-        //float valueX = 45, valueY = 0, valueZ = 35.3f;
+        float valueX = 45, valueY = 0, valueZ = 35.3f;
 
-        //for Tesseract only
-        //rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        //for Tesseract CUBE only (so it spins upon one corner)
+        if(_myMain.stage.stageType.equals("TESSERACT")) {
+          rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        }
 
+        p.strokeWeight(1);
+        drawBoundingBox();
 
         //draw nodes
         p.strokeWeight(4);
@@ -132,8 +154,6 @@ public class OnScreen {
         }
 
         p.popMatrix();
-
-
     }
 
     private void drawFramerate()
@@ -142,6 +162,16 @@ public class OnScreen {
         p.textSize (14);
         p.fill(160);
         p.text("FPS " + p.str(p.floor(p.frameRate)), p.width-60, 20);
+
+        if(_myMain.sending) {
+            p.text("SENDING", p.width-110, 40);
+        }else{
+            p.text("NOT SENDING", p.width-110, 40);
+        }
+
+        if(!_myMain.drawing) {
+            p.text("NOT DRAWING", p.width-110, 70);
+        }
     }
 
 

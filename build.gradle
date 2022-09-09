@@ -44,7 +44,17 @@ dependencies {
   // Include all jar files in 'lib' automatically
   compile fileTree(dir: 'lib', include: ['**/*.jar'])
 
-  //////////////// For unit/integration tests
+
+  //processing Core
+  // https://mvnrepository.com/artifact/org.processing/core
+  //compile group: 'org.processing', name: 'core', version: '3.3.7'
+
+  //processing Serial, this link does not work, possibly missing native bindings
+  //https://mvnrepository.com/artifact/org.processing/serial
+  compile group: 'org.processing', name: 'serial', version: '3.3.7'
+    
+
+    //////////////// For unit/integration tests
 
   // https://mvnrepository.com/artifact/junit/junit
   testCompile group: 'junit', name: 'junit', version: '4.12'

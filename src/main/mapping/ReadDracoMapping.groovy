@@ -28,11 +28,28 @@ class ReadDracoMapping {
     // 'collect' calls a function once for each list element, creating a new list of the same length with the result of the function
     // its useful to transform one list into another, for example here we are transforming a list of CSV paths (String) into a list of nodes (Map)
     // groovy automatically returns the last expression in a function, so no 'return' statement is necessary
-    csvPaths.collect { String path -> parseCsv(new File(path).text, path) }
+    csvPaths.inject([]) { List<Map> result, String path ->
+      // create one mirrored and one unmirrored
+
+      def parsedCsv = parseCsv(new File(path).text, path, false)
+
+      def parsedCsvMirrored = parseCsv(new File(path).text, path, true)
+
+      if (!parsedCsvMirrored.metadata.species) {
+        throw new RuntimeException("ERROR: Panel does not have panel species defined")
+      }
+
+      parsedCsvMirrored.metadata.species = "${parsedCsvMirrored.metadata.species}_mirrored"
+
+      result << parsedCsv
+      result << parsedCsvMirrored
+
+      result
+    }
   }
 
   // we just pass the path in so we can print a better error, really.  the error checking should be moved
-  public static Map parseCsv(String csvText, String csvPath = '') {
+  public static Map parseCsv(String csvText, String csvPath = '', Boolean isMirrored = false) {
     Map result = [:]
     result.nodes = []
     result.metadata = [:]
@@ -50,7 +67,7 @@ class ReadDracoMapping {
       Integer currentY = i + 1
 
       // Parse the line and merge the stuff we care about into our own 'results' map
-      Map lineResult = parseLine(currentY, line)
+      Map lineResult = parseLine(currentY, line, isMirrored)
 
       // The '<<' merges the Maps.  shallow merge
       result.metadata << lineResult.metadata
@@ -64,13 +81,18 @@ class ReadDracoMapping {
   }
 
   // Parses one line of the csv file.  currentY is the current y index in the matrix of nodes
-  public static Map parseLine(Integer currentY, String line) {
+  public static Map parseLine(Integer currentY, String line, Boolean isMirrored) {
     Map result = [:]
     result.nodes = []
     result.metadata = [:]
     result.unstructured = []
 
     List<String> cells = line.split(',').collect { it.trim() } // split on ',' and trim all cells
+
+    // this is a mirrored line
+    if (isMirrored) {
+      cells = cells.reverse()
+    }
 
     // Parse each type of cell and put the results in the 'results' map
     cells.eachWithIndex { String cell, int i ->

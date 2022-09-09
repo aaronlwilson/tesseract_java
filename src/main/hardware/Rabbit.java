@@ -2,15 +2,14 @@ package hardware;
 
 public class Rabbit extends Controller {
 
-  //public int numTiles;
-  public Tile[] tileArray;
+    //public int numTiles;
+    public TilePP[] tileArray;
 
-  //constructor
-  public Rabbit(String theIp, int theId, String theMac) {
-    super(theIp, theId, theMac);
+    //constructor
+    public Rabbit(String theIp, int theId, String theMac, int theTestColor) {
+        super(theIp, theId, theMac, theTestColor);
 
-    tileArray = new Tile[9];
-  }
-
+        tileArray = new TilePP[9];
+    }
 
 }

@@ -22,9 +22,9 @@ class ClipMetadata {
 //                [displayName: 'Hue', type: 'knob', defaultValue: 1.0, fieldName: 'p1'],
 //                [displayName: 'Saturation', type: 'knob', defaultValue: 1.0, fieldName: 'p2'],
 //                [displayName: 'Brightness', type: 'knob', defaultValue: 1.0, fieldName: 'p3'],
-                [displayName: 'Red', type: 'slider', defaultValue: 1.0, fieldName: 'p4'],
-                [displayName: 'Green', type: 'slider', defaultValue: 1.0, fieldName: 'p5'],
-                [displayName: 'Blue', type: 'slider', defaultValue: 1.0, fieldName: 'p6'],
+                [displayName: 'Red', type: 'knob', defaultValue: 1.0, fieldName: 'p4'],
+                [displayName: 'Green', type: 'knob', defaultValue: 1.0, fieldName: 'p5'],
+                [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
             ],
         ],
         [
@@ -55,11 +55,11 @@ class ClipMetadata {
                 displayName: 'Particle Clip',
                 clipId     : 'particle_clip',
                 controls   : [
-                        [displayName: 'Size',         type: 'slider', defaultValue: 0.5, fieldName: 'p1'],
-                        [displayName: 'Ramp',         type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
-                        [displayName: 'Speed',        type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
-                        [displayName: 'Acceleration', type: 'slider', defaultValue: 0.0, fieldName: 'p4'],
-                        [displayName: 'Density',      type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
+                        [displayName: 'Size',         type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Ramp',         type: 'knob', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Speed',        type: 'knob', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'Acceleration', type: 'knob', defaultValue: 0.0, fieldName: 'p4'],
+                        [displayName: 'Density',      type: 'knob', defaultValue: 0.5, fieldName: 'p5'],
                         [displayName: 'BounceX', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
                         [displayName: 'BounceY', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
                         [displayName: 'BounceZ', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
@@ -70,11 +70,11 @@ class ClipMetadata {
                 displayName: 'Perlin Noise',
                 clipId     : 'perlin_noise',
                 controls   : [
-                        [displayName: 'Speed',      type: 'slider',   defaultValue: 0.5, fieldName: 'p1'],
-                        [displayName: 'Scale',      type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
-                        [displayName: 'Threshold',  type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
-                        [displayName: 'Lod',        type: 'slider', defaultValue: 0.5, fieldName: 'p4'],
-                        [displayName: 'Falloff',    type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
+                        [displayName: 'Speed',      type: 'knob',   defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Scale',      type: 'knob', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Threshold',  type: 'knob', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'Lod',        type: 'knob', defaultValue: 0.5, fieldName: 'p4'],
+                        [displayName: 'Falloff',    type: 'knob', defaultValue: 0.5, fieldName: 'p5'],
                         [displayName: 'X',          type: 'knob', defaultValue: 0.0, fieldName: 'p6'],
                         [displayName: 'Y',          type: 'knob', defaultValue: 0.0, fieldName: 'p7'],
                         [displayName: 'Z',          type: 'knob', defaultValue: 0.0, fieldName: 'p8']
@@ -85,11 +85,11 @@ class ClipMetadata {
                 displayName: 'Lines Clip',
                 clipId     : 'lines_clip',
                 controls   : [
-                        [displayName: 'Size',         type: 'slider', defaultValue: 0.5, fieldName: 'p1'],
-                        [displayName: 'Ramp',         type: 'slider', defaultValue: 0.5, fieldName: 'p2'],
-                        [displayName: 'Speed',        type: 'slider', defaultValue: 0.5, fieldName: 'p3'],
-                        [displayName: 'Acceleration', type: 'slider', defaultValue: 0.0, fieldName: 'p4'],
-                        [displayName: 'Density',      type: 'slider', defaultValue: 0.5, fieldName: 'p5'],
+                        [displayName: 'Size',         type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Ramp',         type: 'knob', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Speed',        type: 'knob', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'Acceleration', type: 'knob', defaultValue: 0.0, fieldName: 'p4'],
+                        [displayName: 'Density',      type: 'knob', defaultValue: 0.5, fieldName: 'p5'],
                         [displayName: 'BounceX', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
                         [displayName: 'BounceY', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
                         [displayName: 'BounceZ', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
@@ -97,10 +97,20 @@ class ClipMetadata {
                 ],
         ],
         [
+                displayName: 'Tiles Test',
+                clipId     : 'tiles_test_clip',
+                controls   : [
+                        [displayName: 'Size', type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
+                ],
+        ],
+        [
             displayName: 'Video',
             clipId     : 'video',
             controls   : [
                 [displayName: 'Video File', type: 'videoFile', defaultValue: '24K_loop-nosound.mp4', fieldName: 'filename'],
+
+                [displayName: 'threshold', type: 'knob', defaultValue: 0.15, fieldName: 'p1'],
+
             ],
         ],
     ]
