@@ -1,11 +1,16 @@
 package app;
 
+//temp
+import clip.Particle;
+
+
+import processing.core.PApplet;
+import processing.video.Movie;
+
 import environment.Node;
 import environment.Stage;
 import model.Channel;
 import output.UDPModel;
-import processing.core.PApplet;
-import processing.video.Movie;
 import show.Playlist;
 import show.PlaylistManager;
 import stores.ConfigStore;
@@ -16,6 +21,13 @@ import websocket.WebsocketInterface;
 
 public class TesseractMain extends PApplet {
 
+  //single global instance
+  private static TesseractMain _main;
+
+  public Particle particleX;
+  public Particle particleY;
+  public Particle particleZ;
+
   //CLIP CLASS ENUM
   public static final int NODESCAN = 0;
   public static final int SOLID = 1;
@@ -24,15 +36,17 @@ public class TesseractMain extends PApplet {
   public static final int PARTICLE = 4;
   public static final int PERLINNOISE = 5;
   public static final int LINESCLIP = 6;
+  public static final int TILESTEST = 7;
 
-  //single global instance
-  private static TesseractMain _main;
+  private OnScreen onScreen;//only the main class gets to draw
   public UDPModel udpModel;
   public Stage stage;
   public Channel channel1;
-  private OnScreen onScreen;//only the main class gets to draw
-
   public Boolean setupComplete = false;
+
+  public Boolean drawing = true;
+  public Boolean sending = true;
+
 
   //Click the arrow on the line below to run the program in .idea
   public static void main(String[] args) {
@@ -46,12 +60,14 @@ public class TesseractMain extends PApplet {
   @Override
   public void settings() {
 
-    size(1400, 800, P3D);
+    size(1400, 800, P3D); // for when all panels are in a row
+    //size(450, 450, P3D); // for tesseract cube
 
     // Required for the application to launch on Ubuntu Linux (Intel NUC w/ Intel integrated graphics)
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
-    // https://github.com/processing/processing/issues/5476
-    System.setProperty("jogl.disable.openglcore", "false");
+    //https://github.com/processing/processing/issues/5476
+
+    //System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
     //pixelDensity(displayDensity()); //for mac retna displays
@@ -60,12 +76,10 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void setup() {
-    // Clear screen
-    clear();
-
+    background(0);
     frameRate(30);
 
-    Util.enableColorization();
+    Util.enableColorization(); // color in the console output
 
     _main = this;
 
@@ -85,58 +99,15 @@ public class TesseractMain extends PApplet {
     //finish set up on a separate thread to avoid this common error seen in the console:
     /*
     java.lang.RuntimeException: Waited 5000ms for: <2b4dc6d4, 258a2dcd>[count 2, qsz 0, owner <main-FPSAWTAnimator#00-Timer0>] - <main-FPSAWTAnimator#00-Timer0-FPSAWTAnimator#00-Timer1>
-	at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:410)
+    at processing.opengl.PSurfaceJOGL$2.run(PSurfaceJOGL.java:410)
     */
-
     thread("completeConfiguration");
-
-  }
-
-  @Override
-  public void draw() {
-
-    //wait for the "completeConfiguration" thread to complete
-    if (!setupComplete) return;
-
-    clear();
-
-    //call run() on the current clips inside channels
-    channel1.run();
-    //channel2.run();
-
-
-    //get the full list of hardware nodes
-    int l = stage.nodes.length;
-
-    Node[] nextNodes = stage.nodes;
-    stage.prevNodes = stage.nodes;
-
-    for (int i = 0; i < l; i++) {
-      Node n = nextNodes[i];
-      int[] rgb = renderNode(n); //does the blending between the channels, apply master FX
-
-      //now store that color on the node so we can send it as UDP data to the lights
-      n.r = (int)Math.floor(rgb[0] * 0.8);
-      n.g = (int)Math.floor(rgb[1] * 0.5);
-      n.b = (int)Math.floor(rgb[2] * 0.5);
-
-      //TODO: need global brightness control, especially with generator power
-
-      nextNodes[i] = n;
-    }
-
-    stage.nodes = nextNodes;
-
-    onScreen.draw();
-
-    udpModel.send();
-
   }
 
   public void completeConfiguration() {
     // Configure Data and Stores
 
-
+    //PUT BACK, Needed for fresh installs
     // Make some dummy data in the stores
     Util.createBuiltInScenes();
     Util.createBuiltInPlaylists();
@@ -144,7 +115,6 @@ public class TesseractMain extends PApplet {
     // Saves the default data
     SceneStore.get().saveDataToDisk();
     PlaylistStore.get().saveDataToDisk();
-
 
 
     // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install
@@ -176,19 +146,59 @@ public class TesseractMain extends PApplet {
     setupComplete = true;
   }
 
+  @Override
+  public void draw() {
+    //wait for the "completeConfiguration" thread to complete
+    if (!setupComplete) return;
+
+    //call run() on the current clips inside channels
+    channel1.run();
+    //channel2.run();
+
+    //get the full list of hardware nodes
+    int l = stage.nodes.length;
+
+    Node[] nextNodes = stage.nodes;
+    stage.prevNodes = stage.nodes;
+
+    for (int i = 0; i < l; i++) {
+      Node n = nextNodes[i];
+      int[] rgb = renderNode(n); //does the blending between the channels, apply master FX
+
+      //now store that color on the node so we can send it as UDP data to the lights
+      n.r = rgb[0];
+      n.g = rgb[1];
+      n.b = rgb[2];
+
+      nextNodes[i] = n;
+    }
+
+    stage.nodes = nextNodes;
+
+    //TODO: keyboard toggle drawing when not needed at shows
+    onScreen.draw();
+
+    //push dummy packets out to LEDS
+    //udpModel.sendRabbitTest();
+
+    if(sending) {
+        udpModel.send();
+    }
+  }
+
 
   //determine final color for each node each frame
   public int[] renderNode(Node node) {
     //return
     int[] rgb1 = channel1.drawNode(node);
 
-
+    //TODO: apply global brightness
     //apply channel brightness
-    rgb1[0] = (int) rgb1[0];
-    rgb1[1] = (int) rgb1[1];
-    rgb1[2] = (int) rgb1[2];
+    rgb1[0] = Math.round(rgb1[0]/2);
+    rgb1[1] = Math.round(rgb1[1]/2);
+    rgb1[2] = Math.round(rgb1[2]/2);
 
-    //TODO mix the 2 channels together
+    //TODO: mix the 2 channels together
 
     return rgb1;
 
@@ -208,20 +218,28 @@ public class TesseractMain extends PApplet {
   @Override
   public void mousePressed() {
     //udpModel.sendFlameTest(4, 1);
-
     onScreen.mousePressed();
   }
 
   @Override
   public void mouseReleased() {
     //udpModel.sendFlameTest(4, 0);
-
     onScreen.mouseReleased();
   }
 
 
   //Custom event handler on pApplet for video library
-  public void movieEvent(Movie movie) {
-    movie.read();
-  }
+  public void movieEvent(Movie movie) { movie.read(); }
+
+
+   public void keyPressed() {
+    System.out.println(key);
+        if(key == 's') {
+            sending = !sending;
+        }
+
+       if(key == 'd') {
+           drawing = !drawing;
+       }
+    }
 }

@@ -117,7 +117,9 @@ public class Scene {
             case TesseractMain.LINESCLIP:
                 newClip = new LinesClip();
                 break;
-
+            case TesseractMain.TILESTEST:
+                newClip = new TilesTestClip();
+                break;
 
             default:
                 throw new IllegalStateException("Unexpected value: " + clipClass);
@@ -129,7 +131,6 @@ public class Scene {
             this.setClipValues(this.getSceneValues(), this.filename);
         }
     }
-
 
 }
 

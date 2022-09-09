@@ -11,18 +11,15 @@ public class Node  {
   public float screenY;
 
 
-
-
-  public int index; //0-143 usually relative to the fixture
-  public int port;  //1-8 on pixel pusher
+  public int index; //0-? usually relative to the fixture
+  public int port;  //1-8 on pixel pusher, or 'pin' on Teensy
   public Fixture fixture;
 
-  public int nodeType;
+  //public int nodeType;
 
   public int r;
   public int g;
   public int b;
-
 
   //constructor
   public Node(int theX, int theY, int theZ, int theIndex, Fixture theFixture) {
@@ -33,6 +30,5 @@ public class Node  {
     index = theIndex;
     fixture = theFixture;
   }
-
 
 }

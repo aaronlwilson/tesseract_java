@@ -9,16 +9,17 @@ public class Controller {
   public String mac;
 
   public ArrayList<Fixture> fixtureArray;
+  public int testColor;
 
 
   //constructor
-  public Controller(String theIp, int theId, String theMac) {
+  public Controller(String theIp, int theId, String theMac, int theTestColor) {
     ip = theIp;
     id = theId;
     mac = theMac;
+    testColor = theTestColor;
 
-    fixtureArray = new ArrayList<Fixture>();
-
+    fixtureArray = new ArrayList<>();
   }
 
 
@@ -26,6 +27,5 @@ public class Controller {
     fixtureArray.add(fixture);
 
   }
-
 
 }

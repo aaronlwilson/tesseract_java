@@ -9,17 +9,28 @@ public class Fixture {
   public int pinNum;
 
   public Node[] nodeArray;
-
+  public Controller myController;
 
   //CONSTRUCTOR
   public Fixture(int theId) {
 
     id = theId;
     nodeArray = new Node[0];
-
   }
 
-  public void addNodes(Node[] newNodes) {
+
+  public Controller getMyController() {
+    return myController;
+  }
+
+  public void setMyController(Controller myController) {
+    this.myController = myController;
+
+    //for each teensy, we loop over all the attached Strands to send UDP, so give it a reference to this one
+    myController.addFixture(this);
+  }
+
+  public void addNodesToFixture(Node[] newNodes) {
 
     int fal = nodeArray.length;    //determines length of firstArray
     int sal = newNodes.length;   //determines length of secondArray
@@ -30,7 +41,7 @@ public class Fixture {
     nodeArray = resultArray;
   }
 
-  public void addNode(Node newNode) {
+  public void addNodeToFixture(Node newNode) {
 
     environment.Node[] resultArray = new environment.Node[nodeArray.length + 1];
     resultArray[resultArray.length - 1] = newNode;
