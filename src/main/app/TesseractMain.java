@@ -6,7 +6,6 @@ import clip.Particle;
 
 import processing.core.PApplet;
 import processing.video.Movie;
-import processing.serial.*;
 
 import environment.Node;
 import environment.Stage;
@@ -47,12 +46,6 @@ public class TesseractMain extends PApplet {
 
   public Boolean drawing = true;
   public Boolean sending = true;
-
-  //for Rotary Encoder readings
-  public Serial arduinoPort;    // The serial port
-  public int lf = 10;      // ASCII linefeed
-  public String inString;  // Input chars from serial port
-  public double rotaryEncoderAngle;
 
 
   //Click the arrow on the line below to run the program in .idea
@@ -111,20 +104,8 @@ public class TesseractMain extends PApplet {
     thread("completeConfiguration");
   }
 
-  private void setupSerial() {
-    // Open the port you are using at the rate you want:
-    if (Serial.list().length > 4) {
-      String portName = Serial.list()[5];
-      arduinoPort = new Serial(this, portName, 115200);
-      arduinoPort.bufferUntil(lf);
-    }else{
-
-    }
-  }
-
   public void completeConfiguration() {
     // Configure Data and Stores
-
 
     //PUT BACK, Needed for fresh installs
     // Make some dummy data in the stores
@@ -161,9 +142,6 @@ public class TesseractMain extends PApplet {
 
     // The shutdown hook will let us clean up when the application is killed.  It is very important to clean up the websocket server so we don't leave the port in use
     createShutdownHook();
-
-    //open up a serial "portal" to an Arduino dimension
-    setupSerial();
 
     setupComplete = true;
   }
@@ -249,24 +227,6 @@ public class TesseractMain extends PApplet {
     onScreen.mouseReleased();
   }
 
-
-  //event handler for processing.serial
-  public void serialEvent(Serial p) {
-    //inString = p.readString();
-    inString = p.readStringUntil('\n');
-
-    //System.out.printf("SERIAL IN: %s \n", inString);
-
-    if (inString != null) {
-      // trim off any whitespace:
-      inString = trim(inString);
-      // convert to an int and map to the screen height:
-      int pulses = Integer.parseInt(inString);	 //0 to 2048
-
-      //convert to radians
-      rotaryEncoderAngle = (pulses*(this.PI/1024));
-    }
-  }
 
   //Custom event handler on pApplet for video library
   public void movieEvent(Movie movie) { movie.read(); }

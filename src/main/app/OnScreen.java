@@ -102,7 +102,7 @@ public class OnScreen {
         p.rotateX(p.map(_yrot,0, p.height, p.PI, -p.PI) + p.PI);
 
         //add on the rotation from 1024 rotary encoder
-        float totalY = (float) (p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI + _myMain.rotaryEncoderAngle);
+        float totalY = (p.map(_xrot,0, p.width,  -p.PI, p.PI) + p.PI);
         p.rotateY(totalY);
 
         drawAxes(600);

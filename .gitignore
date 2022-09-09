@@ -112,7 +112,8 @@ tesseract_java.iml
 #manually have to include this or have gradle download it separate from the repo
 
 lib/video/
-#lib/serial/ #the binaries needed to be included in the project source, obtained from the Processing app: 
+lib/serial/ 
+#the binaries needed to be included in the project source, obtained from the Processing app: 
 #"show package contents" -> Contents -> Java -> modes -> java -> libraries -> serial
 
 # temporary directory where we download dependencies before unpacking them
