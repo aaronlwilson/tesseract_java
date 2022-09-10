@@ -3,9 +3,9 @@ package environment;
 import hardware.*;
 
 public class Node  {
-  public int x;
-  public int y;
-  public int z;
+  public float x;
+  public float y;
+  public float z;
 
   public float screenX;
   public float screenY;
@@ -22,7 +22,7 @@ public class Node  {
   public int b;
 
   //constructor
-  public Node(int theX, int theY, int theZ, int theIndex, Fixture theFixture) {
+  public Node(float theX, float theY, float theZ, int theIndex, Fixture theFixture) {
     x = theX;
     y = theY;
     z = theZ;

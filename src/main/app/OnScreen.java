@@ -3,11 +3,8 @@ package app;
 //temp
 import clip.Particle;
 
-
 import processing.core.PApplet;
-
 import environment.*;
-
 
 public class OnScreen {
     private PApplet p;

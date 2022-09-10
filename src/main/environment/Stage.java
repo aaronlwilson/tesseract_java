@@ -3,17 +3,21 @@ package environment;
 
 import app.TesseractMain;
 import hardware.*;
+import processing.core.PApplet;
+
+import static java.lang.Math.*;
+import static processing.core.PApplet.radians;
 
 public class Stage {
 
     //used to automatically define bounding box
-    public int maxX;
-    public int maxY;
-    public int maxZ;
+    public float maxX;
+    public float maxY;
+    public float maxZ;
 
-    public int minX;
-    public int minY;
-    public int minZ;
+    public float minX;
+    public float minY;
+    public float minZ;
 
     public float maxW;
     public float maxH;
@@ -178,25 +182,30 @@ public class Stage {
     }
 
     private void buildScared() {
-        int numberTeensies = 2;
+        int numberTeensies = 1;
         _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
         //Teensy 4.1
         _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
-        _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
+//        _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
+//        _myMain.udpModel.teensies[2] = new Teensy("192.168.0.103", 3, "mac_address");
+//        _myMain.udpModel.teensies[3] = new Teensy("192.168.0.104", 4, "mac_address");
 
         //ESP8266
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
 
         nodes = new Node[0];
 
-        //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
-        //800 pixels per teensy 3.2 is the current max. That should be higher...
         int numLedsPerStrip = 200;
+        float startRadius = 20;
+        float radius = startRadius;
+        float startAngle = 0;
+        double exponent = 2.5;
+        int yHeight = 600;
 
         for (int k = 0; k < numberTeensies; k++) {
             //pins on the teensy are 1 through 8
-            int pinz = 8; //gets decremented
+            int pinz = 16; //gets decremented
             int numPins = pinz;
 
             for (int i = 0; i < numPins; i++) {
@@ -206,13 +215,44 @@ public class Stage {
                 pinz--;
                 strip.setMyController(_myMain.udpModel.teensies[k]);
 
+                float x;  // node position
+                float y;
+                float z;
+
                 //make some nodes in x y z space
                 for (int j = 0; j < numLedsPerStrip; j++) {
-                    stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
+                    //distribute 200 into half circle
+                    float angle = PApplet.map(j, 0, 200, 0, 180) + startAngle;
+
+                    if (i < (numPins/2)) { // half spiral clockwise, the other half - counter clockwise
+                        z = (float) (radius * Math.cos(radians(angle)));
+                        x = (float) (radius * Math.sin(radians(angle)));
+                    } else {
+                        // x and z are the circle part
+                        x = (float) (radius * Math.cos(radians(angle)));
+                        z = (float) (radius * Math.sin(radians(angle)));
+                    }
+
+                    //increase the radius as we move down, "christmas tree"
+                    radius += 2;
+
+                    // y is the height (which makes the circle to a spiral)
+                    //y = PApplet.map(j, 0, numLedsPerStrip, -250, 250);
+                    //y = (j*2)-200;
+                    float percent = PApplet.map(j, 0, numLedsPerStrip, 0, 1);
+                    y = (float) ((pow(percent, exponent) * yHeight) - (yHeight/2));
+
+                    stripNodes[j] = new Node(x, z, y, j, strip);
+                    //stripNodes[j] = new Node((3 * j) -300, (10 + (i * 10) + (k * 90)) -175, 10, j, strip);
                 }
 
-                strip.addNodesToFixture(stripNodes);
+                //if (i == 0) {
+                    startAngle += 360 / (numPins/2);
+                //}
 
+                radius = startRadius;
+
+                strip.addNodesToFixture(stripNodes);
                 nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
             }
         }
@@ -221,7 +261,6 @@ public class Stage {
 
 
     private void buildDracoStage() {
-
         nodes = new Node[0];
 
         int h = 5; //number of teensies
@@ -254,12 +293,9 @@ public class Stage {
         talonNodes = buildSmallTalon(_myMain.udpModel.teensies[3], 450, 0, 300);
         nodes = (Node[]) _myMain.concat(nodes, talonNodes);
 
-
         //center tower
         Node[] towerNodes = buildCenterTower(_myMain.udpModel.teensies[4], 0, 0, 0);
         nodes = (Node[]) _myMain.concat(nodes, towerNodes);
-
-
     }
 
     private Node[] buildSmallTalon(Teensy teensy, int startX, int startY, int startZ) {
@@ -302,9 +338,8 @@ public class Stage {
         return towerNodes;
     }
 
-
     private void buildCubotron() {
-
+        // a 30 x 30 x 30 solid cube
         int counter = 0;
         nodes = new Node[30 * 30 * 30];
 

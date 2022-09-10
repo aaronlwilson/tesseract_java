@@ -1,4 +1,4 @@
-initialPlaylist:  Color Cube #Cubotron  #All Videos
+initialPlaylist:  Color Cube #Cubotron #All Videos
 initialPlayState: loop_scene #playing
 
 # CUBOTRON
@@ -6,7 +6,7 @@ initialPlayState: loop_scene #playing
 # TESSERACT_WALL
 # DRACO
 # SCARED
-stageType: TESSERACT
+stageType: SCARED
 
 # this is temporary.  eventually we'll just have a list of controllers or whatever makes sense, e.g.
 # controllers:
@@ -16,4 +16,4 @@ stageType: TESSERACT
 #     ip: 192.168.0.101
 #   ...
 numRabbits: 0
-numTeensies: 0
+numTeensies: 4

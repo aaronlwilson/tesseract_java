@@ -59,13 +59,12 @@ public class TesseractMain extends PApplet {
 
   @Override
   public void settings() {
-    size(1400, 800, P3D); // for when all panels are in a row
+    size(1000, 1000, P3D); // for when all panels are in a row
     //size(450, 450, P3D); // for tesseract cube
 
     // Required for the application to launch on Ubuntu Linux (Intel NUC w/ Intel integrated graphics)
     // It has something to do with the specific OS/packages/video drivers/moon cycles/etc
     //https://github.com/processing/processing/issues/5476
-
     System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
@@ -76,7 +75,7 @@ public class TesseractMain extends PApplet {
   @Override
   public void setup() {
     background(0);
-    frameRate(30);
+    frameRate(60);
 
     Util.enableColorization(); // color in the console output
 
@@ -108,12 +107,12 @@ public class TesseractMain extends PApplet {
 
     //PUT BACK, Needed for fresh installs
     // Make some dummy data in the stores
-    Util.createBuiltInScenes();
-    Util.createBuiltInPlaylists();
-
-    // Saves the default data
-    SceneStore.get().saveDataToDisk();
-    PlaylistStore.get().saveDataToDisk();
+//    Util.createBuiltInScenes();
+//    Util.createBuiltInPlaylists();
+//
+//    // Saves the default data
+//    SceneStore.get().saveDataToDisk();
+//    PlaylistStore.get().saveDataToDisk();
 
 
     // Load configuration from file.  This must happen AFTER we've created our initial playlists, or it will fail on a fresh install
@@ -193,9 +192,9 @@ public class TesseractMain extends PApplet {
 
     //TODO: apply global brightness
     //apply channel brightness
-    rgb1[0] = Math.round(rgb1[0]/2);
-    rgb1[1] = Math.round(rgb1[1]/2);
-    rgb1[2] = Math.round(rgb1[2]/2);
+    rgb1[0] = Math.round(rgb1[0]/1);
+    rgb1[1] = Math.round(rgb1[1]/1);
+    rgb1[2] = Math.round(rgb1[2]/1);
 
     //TODO: mix the 2 channels together
 
