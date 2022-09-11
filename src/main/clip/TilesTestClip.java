@@ -1,10 +1,11 @@
 package clip;
 
+import hardware.Fixture;
 import hardware.Tile;
 import environment.Node;
 import util.Util;
 
-public class TilesTestClip  extends AbstractClip {
+public class TilesTestClip  extends AbstractClip implements ClipInterface {
 
     //constructor
     public TilesTestClip() {
@@ -15,12 +16,13 @@ public class TilesTestClip  extends AbstractClip {
         super.init();
     }
 
+    @Override
     public void run() {
 
     }
 
+    @Override
     public int[] drawNode(Node node) {
-
         int[] nodestate = new int[3];
 
         // Checking if t.equals null or works fine.
@@ -45,12 +47,17 @@ public class TilesTestClip  extends AbstractClip {
         catch(NullPointerException e)
         {
             System.out.println("NullPointerException Caught: TilesTestClip");
-            nodestate[0] = 255;
-            nodestate[1] = 255;
+            nodestate[0] = 0;
+            nodestate[1] = 0;
             nodestate[2] = 255;
+        }
+        catch(ClassCastException e) {
+            System.out.println("ClassCastException Caught: TilesTestClip");
+            nodestate[0] = 255;
+            nodestate[1] = 0;
+            nodestate[2] = 0;
         }
 
         return nodestate;
     }
-
 }
