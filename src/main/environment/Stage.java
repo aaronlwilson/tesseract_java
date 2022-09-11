@@ -221,8 +221,8 @@ public class Stage {
 
                 //make some nodes in x y z space
                 for (int j = 0; j < numLedsPerStrip; j++) {
-                    //distribute 200 into half circle
-                    float angle = PApplet.map(j, 0, 200, 0, 180) + startAngle;
+                    //distribute 200 into 6/16th of a circle
+                    float angle = PApplet.map(j, 0, 200, 0, 135) + startAngle;
 
                     if (i < (numPins/2)) { // half spiral clockwise, the other half - counter clockwise
                         z = (float) (radius * Math.cos(radians(angle)));
