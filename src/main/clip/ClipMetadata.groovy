@@ -88,12 +88,11 @@ class ClipMetadata {
                         [displayName: 'Size',         type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
                         [displayName: 'Ramp',         type: 'knob', defaultValue: 0.5, fieldName: 'p2'],
                         [displayName: 'Speed',        type: 'knob', defaultValue: 0.5, fieldName: 'p3'],
-                        [displayName: 'Acceleration', type: 'knob', defaultValue: 0.0, fieldName: 'p4'],
-                        [displayName: 'Density',      type: 'knob', defaultValue: 0.5, fieldName: 'p5'],
-                        [displayName: 'BounceX', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
-                        [displayName: 'BounceY', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
-                        [displayName: 'BounceZ', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
-
+                        [displayName: 'x Alpha', type: 'knob', defaultValue: 1.0, fieldName: 'p4'],
+                        [displayName: 'y Alpha', type: 'knob', defaultValue: 1.0, fieldName: 'p5'],
+                        [displayName: 'z Alpha', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                        [displayName: 'spinner Alpha', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
+                        [displayName: 'color Shift', type: 'knob', defaultValue: 0.0, fieldName: 'p8'],
                 ],
         ],
         [

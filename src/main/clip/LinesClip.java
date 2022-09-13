@@ -4,32 +4,26 @@ import java.util.*;
 
 
 import processing.core.PVector;
-import static processing.core.PApplet.dist;
-import static processing.core.PApplet.map;
-import static processing.core.PApplet.constrain;
-
 
 import environment.Node;
 import util.Util;
 
-
+import static processing.core.PApplet.*;
 
 
 public class LinesClip  extends AbstractClip {
 
-    private ArrayList<Particle> _particles;
+    //private ArrayList<Particle> _particles;
+    private float _pSpeed; //p1
+    private float _pSize; //p2
+    private float _pRamp; //p3
+    private float _pXAlpha; //p4
+    private float _pYAlpha; //p5
+    private float _pZAlpha; //p6
+    private float _pSpinnerAlpha; //p7
+    private float _pColorShift; //p8
 
-
-
-
-    private float _pSize;
-    private float _pRamp;
-    private float _pSpeed;
-    private float _pAccel;
-    private float _pDensity;
-
-
-    private int _counter;
+    private float _speed;
 
 
     //constructor
@@ -37,12 +31,10 @@ public class LinesClip  extends AbstractClip {
     }
 
     public void init() {
-
         clipId = "lines_clip";
         super.init();
 
-        _particles = new ArrayList<Particle>();
-
+        // _particles = new ArrayList<Particle>();
 
         //X
         PVector xLoc = new PVector(200.0f, 0.0f, 0.0f);
@@ -58,56 +50,38 @@ public class LinesClip  extends AbstractClip {
         PVector zLoc = new PVector(0.0f, 0.0f, 200.0f);
         int zC = _myMain.color(0, 0, 255);
         _myMain.particleZ = addParticle(zLoc, zC);
-
-
-
-
     }
 
     public void run() {
-
-        /*
-        //map local vars to abstract clip parameters
         _pSize = p1*200.0f;
         _pRamp = p2*200.0f;
 
-        _pSpeed = p3*20.0f;
-        _pAccel = p4;
-        _pDensity = (p5*30)+1;
+        _pSpeed = p3*5.0f;
+        _speed += _pSpeed;
 
+        _pXAlpha = p4;
+        _pYAlpha = p5;
+        _pZAlpha = p6;
+        _pSpinnerAlpha = p7;
+        _pColorShift = p8;
 
-        int length = _particles.size()-1;
-        for (int i = length; i >= 0; i--) {
-            Particle p = _particles.get(i);
-            p.run();
-            if (p.isDead()) {
-                _particles.remove(i);
-            }
-        }
+        float x = (float) ((_myMain.stage.maxW/2) * Math.cos(radians(_speed)));
+        _myMain.particleX.position = new PVector(x, 0.0f, 0.0f);
 
-        _counter++;
-        if(_counter >= _pDensity){
-            _counter = 0;
-            addParticle();
-        }
-        */
+        float y = (float) ((_myMain.stage.maxH/2) * Math.cos(radians(_speed)));
+        _myMain.particleY.position = new PVector(0.0f, y, 0.0f);
+
+        float z = (float) ((_myMain.stage.maxD/2) * Math.cos(radians(_speed)));
+        _myMain.particleZ.position = new PVector(0.0f, 0.0f, z);
     }
 
 
-
-    public Particle addParticle(PVector theLoc, int theC ){
-
-        float lowVel = -_pSpeed;
-        float highVel = _pSpeed;
-
-        //PVector theSpeed = new PVector(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
-
+    public Particle addParticle(PVector theLoc, int theC) {
         PVector theSpeed = new PVector(0.0f, 0.0f, 0.0f);
         PVector theAccel = new PVector(0.0f, 0.0f, 0.0f);
 
-
-        Particle p = new Particle(theLoc, theC,_pSize, _pRamp, theSpeed, theAccel);
-        _particles.add(p);
+        Particle p = new Particle(theLoc, theC, _pSize, _pRamp, theSpeed, theAccel);
+        //_particles.add(p);
 
         return p;
     }
@@ -115,8 +89,43 @@ public class LinesClip  extends AbstractClip {
     public int[] drawNode(Node node) {
 
         int[] nodestate = new int[3];
+        float brightness = 0.0f;
+        int newRed = 0;
+        int newGreen = 0;
+        int newBlue = 0;
 
+//        Particle particle = _myMain.particleX;
+//        PVector l = particle.position;
 
+        float distX = Math.abs(node.x - _myMain.particleX.position.x);
+        float distY = Math.abs(node.y - _myMain.particleY.position.y);
+        float distZ = Math.abs(node.z - _myMain.particleZ.position.z);
+
+        brightness = 1.0f; //TODO: add ramp
+
+        if (distX < _pSize) {
+            newRed += (int) (Util.getR(_myMain.particleX.color) * brightness * _pXAlpha);
+            newGreen += (int) (Util.getG(_myMain.particleX.color) * brightness * _pXAlpha);
+            newBlue += (int) (Util.getB(_myMain.particleX.color) * brightness * _pXAlpha);
+        }
+
+        if (distY < _pSize) {
+            newRed += (int) (Util.getR(_myMain.particleY.color) * brightness * _pYAlpha);
+            newGreen += (int) (Util.getG(_myMain.particleY.color) * brightness * _pYAlpha);
+            newBlue += (int) (Util.getB(_myMain.particleY.color) * brightness * _pYAlpha);
+        }
+
+        if (distZ < _pSize) {
+            newRed += (int) (Util.getR(_myMain.particleZ.color) * brightness * _pZAlpha);
+            newGreen += (int) (Util.getG(_myMain.particleZ.color) * brightness * _pZAlpha);
+            newBlue += (int) (Util.getB(_myMain.particleZ.color) * brightness * _pZAlpha);
+        }
+
+        if(newRed > 0) nodestate[0] = newRed;
+        if(newGreen > 0) nodestate[1] = newGreen;
+        if(newBlue > 0) nodestate[2] = newBlue;
+
+        /*
         float brightness = 0.0f;
 
         int newRed = 0;
@@ -153,7 +162,7 @@ public class LinesClip  extends AbstractClip {
         if(newRed > 0) nodestate[0] = newRed;
         if(newGreen > 0) nodestate[1] = newGreen;
         if(newBlue > 0) nodestate[2] = newBlue;
-
+        */
 
 
         return nodestate;

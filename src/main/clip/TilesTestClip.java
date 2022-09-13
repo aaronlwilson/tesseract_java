@@ -24,7 +24,6 @@ public class TilesTestClip  extends AbstractClip implements ClipInterface {
     @Override
     public int[] drawNode(Node node) {
         int[] nodestate = new int[3];
-
         // Checking if t.equals null or works fine.
         try
         {
@@ -52,6 +51,7 @@ public class TilesTestClip  extends AbstractClip implements ClipInterface {
             nodestate[2] = 255;
         }
         catch(ClassCastException e) {
+            //TODO: This Clip should do something helpful for other fixture types such as Strip
             System.out.println("ClassCastException Caught: TilesTestClip");
             nodestate[0] = 255;
             nodestate[1] = 0;
