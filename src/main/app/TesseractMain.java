@@ -68,7 +68,7 @@ public class TesseractMain extends PApplet {
     System.setProperty("jogl.disable.openglcore", "false");
 
     //looks nice, but runs slower, one reason to put UI in browser
-    pixelDensity(displayDensity()); //for mac retna displays
+    //pixelDensity(displayDensity()); //for mac retna displays
     //pixelDensity(2);
   }
 

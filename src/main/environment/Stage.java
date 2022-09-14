@@ -50,6 +50,7 @@ public class Stage {
             buildDracoStage();
         } else if (stageType.equals("SCARED")) {
             buildScared();
+            //buildCubotron();
         } else {
             throw new RuntimeException("ERROR: Invalid stage of type: " + stageType);
         }
@@ -182,14 +183,14 @@ public class Stage {
     }
 
     private void buildScared() {
-        int numberTeensies = 1;
+        int numberTeensies = 4;
         _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
         //Teensy 4.1
-        _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
-//        _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
-//        _myMain.udpModel.teensies[2] = new Teensy("192.168.0.103", 3, "mac_address");
-//        _myMain.udpModel.teensies[3] = new Teensy("192.168.0.104", 4, "mac_address");
+        _myMain.udpModel.teensies[0] = new Teensy("10.0.0.171", 1, "mac_address");
+        _myMain.udpModel.teensies[1] = new Teensy("10.0.0.172", 2, "mac_address");
+        _myMain.udpModel.teensies[2] = new Teensy("10.0.0.173", 3, "mac_address");
+        _myMain.udpModel.teensies[3] = new Teensy("10.0.0.174", 4, "mac_address");
 
         //ESP8266
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
@@ -206,7 +207,7 @@ public class Stage {
         for (int k = 0; k < numberTeensies; k++) {
             //pins on the teensy are 1 through 8
             //TODO: Pinz needs to be 8
-            int pinz = 16; //gets decremented
+            int pinz = 8; //gets decremented
             int numPins = pinz;
 
             for (int i = 0; i < numPins; i++) {
@@ -243,12 +244,15 @@ public class Stage {
                     float percent = PApplet.map(j, 0, numLedsPerStrip, 0, 1);
                     y = (float) ((pow(percent, exponent) * yHeight) - (yHeight/2));
 
+                    //true Scared mapping
                     stripNodes[j] = new Node(x, z, y, j, strip);
+
+                    //simple rows of strips
                     //stripNodes[j] = new Node((3 * j) -300, (10 + (i * 10) + (k * 90)) -175, 10, j, strip);
                 }
 
                 //if (i == 0) {
-                    startAngle += 360 / (numPins/2);
+                    startAngle += 360 / numPins;
                 //}
 
                 radius = startRadius;
@@ -348,7 +352,7 @@ public class Stage {
         for (int i = 0; i < 30; i++) {
             for (int j = 0; j < 30; j++) {
                 for (int k = 0; k < 30; k++) {
-                    nodes[counter] = new Node(10 * i, 10 * j, 10 * k, counter, null);
+                    nodes[counter] = new Node(20*i - (15*20), 20*j - (15*20), 20*k -(15*20), counter, null);
                     counter++;
                 }
             }
