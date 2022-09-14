@@ -3,10 +3,7 @@ package output;
 
 import environment.Node;
 import environment.StrandPanel;
-import hardware.PixelPusher;
-import hardware.Rabbit;
-import hardware.Teensy;
-import hardware.TilePP;
+import hardware.*;
 import hypermedia.net.UDP;
 import processing.core.PApplet;
 import stores.ConfigStore;
@@ -160,7 +157,7 @@ public class UDPModel {
             if (teensy == null)
                 continue;
 
-            sendPanelFrame(teensy);
+            sendFixturesFrame(teensy);
 
             //swap command, makes all the tiles change at once
             byte[] data = new byte[1];
@@ -231,19 +228,49 @@ public class UDPModel {
 
 
     // Send data to the Draco panels via Teensy
-    public void sendPanelFrame(Teensy teensy) {
+    public void sendFixturesFrame(Teensy teensy) {
 
         //octo pin order is orange, blue, green, brown
         if (teensy == null) {
             return;
         }
 
-        if (teensy.strandPanelArray == null) {
+        if (teensy.fixtureArray == null) {
             return;
         }
 
-        for(StrandPanel strandPanel : teensy.strandPanelArray) {
+        for(Fixture fixture : teensy.fixtureArray) {
+            int l = fixture.nodeArray.length;
+            byte[] data = new byte[(l*3) + 2];
 
+            data[0] = (byte) ('l'); //LIGHTS command
+            data[1] = (byte) fixture.pinNum;
+
+            for (int i=0; i<l; i++){
+                Node node = fixture.nodeArray[i];
+                if (node == null) {
+                    continue;
+                }
+
+                data[(i*3) + 0 +2] = (byte) node.r;
+                data[(i*3) + 1 +2] = (byte) node.g;
+                data[(i*3) + 2 +2] = (byte) node.b;
+            }
+
+            // send the bytes for each panel separately
+            //String s = new String(data);
+            //System.out.println(s);
+            System.out.println(fixture.pinNum);
+
+            udp.send( data, teensy.ip, teensyPort );
+        }
+
+        /*
+        if (teensy.strandPanelArray == null) {
+            return;
+        }
+        //Strand Panels were used on Draco only
+        for(StrandPanel strandPanel : teensy.strandPanelArray) {
             int l = strandPanel.strandNodeArray.length;
 
             byte[] data = new byte[(l*3) + 2];
@@ -271,9 +298,10 @@ public class UDPModel {
             //String s = new String(data);
             //System.out.println(strandPanel.pinNum);
 
-
             udp.send( data, teensy.ip, teensyPort );
         }
+        */
+
     }//end sendPanelFrame
 
 

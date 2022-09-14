@@ -183,14 +183,14 @@ public class Stage {
     }
 
     private void buildScared() {
-        int numberTeensies = 4;
+        int numberTeensies = 1;
         _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
         //Teensy 4.1
         _myMain.udpModel.teensies[0] = new Teensy("10.0.0.171", 1, "mac_address");
-        _myMain.udpModel.teensies[1] = new Teensy("10.0.0.172", 2, "mac_address");
-        _myMain.udpModel.teensies[2] = new Teensy("10.0.0.173", 3, "mac_address");
-        _myMain.udpModel.teensies[3] = new Teensy("10.0.0.174", 4, "mac_address");
+//        _myMain.udpModel.teensies[1] = new Teensy("10.0.0.172", 2, "mac_address");
+//        _myMain.udpModel.teensies[2] = new Teensy("10.0.0.173", 3, "mac_address");
+//        _myMain.udpModel.teensies[3] = new Teensy("10.0.0.174", 4, "mac_address");
 
         //ESP8266
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
