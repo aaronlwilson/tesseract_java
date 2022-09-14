@@ -183,14 +183,14 @@ public class Stage {
     }
 
     private void buildScared() {
-        int numberTeensies = 1;
+        int numberTeensies = 4;
         _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
         //Teensy 4.1
-        _myMain.udpModel.teensies[0] = new Teensy("10.0.0.171", 1, "mac_address");
-//        _myMain.udpModel.teensies[1] = new Teensy("10.0.0.172", 2, "mac_address");
-//        _myMain.udpModel.teensies[2] = new Teensy("10.0.0.173", 3, "mac_address");
-//        _myMain.udpModel.teensies[3] = new Teensy("10.0.0.174", 4, "mac_address");
+        _myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
+        _myMain.udpModel.teensies[1] = new Teensy("192.168.50.102", 2, "mac_address");
+        _myMain.udpModel.teensies[2] = new Teensy("192.168.50.103", 3, "mac_address");
+        _myMain.udpModel.teensies[3] = new Teensy("192.168.50.104", 4, "mac_address");
 
         //ESP8266
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
@@ -206,7 +206,6 @@ public class Stage {
 
         for (int k = 0; k < numberTeensies; k++) {
             //pins on the teensy are 1 through 8
-            //TODO: Pinz needs to be 8
             int pinz = 8; //gets decremented
             int numPins = pinz;
 
@@ -226,7 +225,7 @@ public class Stage {
                     //distribute 200 into 6/16th of a circle
                     float angle = PApplet.map(j, 0, numLedsPerStrip, 0, 135) + startAngle;
 
-                    if (i < (numPins/2)) { // half spiral clockwise, the other half - counter clockwise
+                    if (k < 2) { // half spiral clockwise, the other half - counter clockwise
                         z = (float) (radius * Math.cos(radians(angle)));
                         x = (float) (radius * Math.sin(radians(angle)));
                     } else {
@@ -240,9 +239,13 @@ public class Stage {
 
                     // y is the height (which makes the circle to a spiral)
                     //y = PApplet.map(j, 0, numLedsPerStrip, -250, 250);
-                    //y = (j*2)-200;
                     float percent = PApplet.map(j, 0, numLedsPerStrip, 0, 1);
                     y = (float) ((pow(percent, exponent) * yHeight) - (yHeight/2));
+
+                    // each tube has 2 LED strips, so the second one is shown here with a lil more Z
+                    if (i%2 != 0) {
+                        z += 7;
+                    }
 
                     //true Scared mapping
                     stripNodes[j] = new Node(x, z, y, j, strip);
@@ -251,9 +254,9 @@ public class Stage {
                     //stripNodes[j] = new Node((3 * j) -300, (10 + (i * 10) + (k * 90)) -175, 10, j, strip);
                 }
 
-                //if (i == 0) {
-                    startAngle += 360 / numPins;
-                //}
+                if (i%2 != 0) {
+                    startAngle += 360 / 8; // based on an octagon
+                }
 
                 radius = startRadius;
 

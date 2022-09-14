@@ -260,7 +260,7 @@ public class UDPModel {
             // send the bytes for each panel separately
             //String s = new String(data);
             //System.out.println(s);
-            System.out.println(fixture.pinNum);
+            //System.out.println(fixture.pinNum);
 
             udp.send( data, teensy.ip, teensyPort );
         }

@@ -77,6 +77,7 @@ public class OnScreen {
         p.translate(p.width/2, (p.height/2), 0);
 
         //TODO: use number keys to snap to common views
+        //TODO: add drag-zoom and spacebar to reset
         //explore the world
         if(p.mousePressed) {
             _xDelta = _xStart - p.mouseX;
