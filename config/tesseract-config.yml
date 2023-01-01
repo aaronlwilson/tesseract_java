@@ -1,4 +1,4 @@
-initialPlaylist:  Color Cube #Cubotron #All Videos
+initialPlaylist:  Color Cube #All Videos #Cubotron
 initialPlayState: loop_scene #playing
 
 # CUBOTRON
@@ -16,4 +16,6 @@ stageType: SCARED
 #     ip: 192.168.0.101
 #   ...
 numRabbits: 0
-numTeensies: 4
+numTeensies: 5
+
+#server hostname: aaron-macbook.local

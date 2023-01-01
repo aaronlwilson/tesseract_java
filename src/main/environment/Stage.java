@@ -191,7 +191,7 @@ public class Stage {
         _myMain.udpModel.teensies[2] = new Teensy("192.168.50.103", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.50.104", 4, "mac_address");
         //for Tesseract base
-        _myMain.udpModel.teensies[4] = new Teensy("192.168.50.105", 5, "mac_address");
+        //_myMain.udpModel.teensies[4] = new Teensy("192.168.50.105", 5, "mac_address");
 
         //ESP8266
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
@@ -274,10 +274,14 @@ public class Stage {
             }
         }
 
+       // buildTesseractLegs();
 
+    }
 
+    private void buildTesseractLegs() {
+        int numPins = 8;
         //Now build cross-thing for the tubes on the Tesseract metal base
-        int numLedsLegs = 104;
+        int numLedsLegs = 110;
         //pins on the teensy are 1 through 8
         int pin = numPins; //gets decremented
 
@@ -352,8 +356,6 @@ public class Stage {
                 x = 0;
             }
         }
-
-
     }
 
 

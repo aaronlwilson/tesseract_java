@@ -24,7 +24,7 @@ public class LinesClip  extends AbstractClip {
     private float _pColorShift; //p8
 
     private float _speed;
-
+    private boolean _spinWallMode = true; // true = full-height wall, false = 3D segment spoke
 
     //constructor
     public LinesClip() {
@@ -111,6 +111,7 @@ public class LinesClip  extends AbstractClip {
 
         brightness = 1.0f; //TODO: add ramp
 
+        //X, Y, Z particles
         if (distX < _pSize) {
             newRed += (int) (Util.getR(_myMain.particleX.color) * brightness * _pXAlpha);
             newGreen += (int) (Util.getG(_myMain.particleX.color) * brightness * _pXAlpha);
@@ -129,16 +130,65 @@ public class LinesClip  extends AbstractClip {
             newBlue += (int) (Util.getB(_myMain.particleZ.color) * brightness * _pZAlpha);
         }
 
+
+        // Line from origin (0,0,0) to particleSpin position
+        PVector spinPos = _myMain.particleSpin.position.copy();
+
+        if (_spinWallMode) { // Spinning line/wall
+            // Project spin direction into XZ plane — wall extends full height
+            PVector lineDirXY = new PVector(spinPos.x, spinPos.y, 0);
+            float lineLen2D = lineDirXY.mag();
+
+            if (lineLen2D > 0.001f) {
+                lineDirXY.normalize();
+
+                // Ignore Z — wall extends full depth
+                PVector nodeXY = new PVector(node.x, node.y, 0);
+                float t = nodeXY.dot(lineDirXY);
+
+                if (t >= 0 && t <= lineLen2D) {
+                    PVector cross = nodeXY.cross(lineDirXY);
+                    float distToWall = cross.mag();
+
+                    if (distToWall < _pSize) {
+                        newRed   += (int)(Util.getR(_myMain.particleSpin.color) * _pSpinnerAlpha);
+                        newGreen += (int)(Util.getG(_myMain.particleSpin.color) * _pSpinnerAlpha);
+                        newBlue  += (int)(Util.getB(_myMain.particleSpin.color) * _pSpinnerAlpha);
+                    }
+                }
+            }
+
+        } else {
+            // 3D segment spoke — distance in full XYZ, bounded by segment endpoints
+            float lineLen = spinPos.mag();
+
+            if (lineLen > 0.001f) {
+                PVector lineDir = spinPos.copy();
+                lineDir.normalize();
+
+                PVector nodeVec = new PVector(node.x, node.y, node.z);
+                float t = nodeVec.dot(lineDir);
+
+                if (t >= 0 && t <= lineLen) {
+                    PVector cross = nodeVec.cross(lineDir);
+                    float distToLine = cross.mag();
+
+                    if (distToLine < _pSize) {
+                        newRed   += (int)(Util.getR(_myMain.particleSpin.color) * _pSpinnerAlpha);
+                        newGreen += (int)(Util.getG(_myMain.particleSpin.color) * _pSpinnerAlpha);
+                        newBlue  += (int)(Util.getB(_myMain.particleSpin.color) * _pSpinnerAlpha);
+                    }
+                }
+            }
+        }
+
         if(newRed > 0) nodestate[0] = newRed;
         if(newGreen > 0) nodestate[1] = newGreen;
         if(newBlue > 0) nodestate[2] = newBlue;
 
-
-
+/*
         //PINWHEEL effect
         int spokes = 1;
-
-
         float t = atan2(node.x, node.y);         // Convert cartesian to polar
 
         // Compute 2D polar coordinate function
@@ -146,10 +196,10 @@ public class LinesClip  extends AbstractClip {
         int b = (int) ((val + 1.0) * (255.0/2.0));
 
         //leds[i] = setPixelBrightness(color, b);
-//        if(b > 0) nodestate[0] = b;
-//        if(b > 0) nodestate[1] = b;
-//        if(b > 0) nodestate[2] = b;
-
+        if(b > 0) nodestate[0] = b;
+        if(b > 0) nodestate[1] = b;
+        if(b > 0) nodestate[2] = b;
+*/
 
 
 
