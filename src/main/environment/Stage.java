@@ -249,6 +249,7 @@ public class Stage {
 
                     //true Scared mapping
                     stripNodes[j] = new Node(x, z, y, j, strip);
+                    //stripNodes[j].port = i; //used for "TilesTestClip", each Teensy has 8 outputs (octo board)
 
                     //simple rows of strips
                     //stripNodes[j] = new Node((3 * j) -300, (10 + (i * 10) + (k * 90)) -175, 10, j, strip);
@@ -260,7 +261,8 @@ public class Stage {
 
                 radius = startRadius;
 
-                strip.addNodesToFixture(stripNodes);
+               // strip.addNodesToFixture(stripNodes); // this was doubling the length of the array! = bad things
+                strip.nodeArray = stripNodes;
                 nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
             }
         }

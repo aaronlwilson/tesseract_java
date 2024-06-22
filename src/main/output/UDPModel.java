@@ -240,27 +240,34 @@ public class UDPModel {
         }
 
         for(Fixture fixture : teensy.fixtureArray) {
+ //           System.out.println("F.pin " + fixture.pinNum);
+
             int l = fixture.nodeArray.length;
+//            System.out.println("l " + l);
+//            System.out.println(" ");
+
             byte[] data = new byte[(l*3) + 2];
 
             data[0] = (byte) ('l'); //LIGHTS command
-            data[1] = (byte) fixture.pinNum;
+            data[1] = (byte) fixture.pinNum; // pins on teensy+octo are 1-8
 
             for (int i=0; i<l; i++){
                 Node node = fixture.nodeArray[i];
                 if (node == null) {
                     continue;
                 }
-
                 data[(i*3) + 0 +2] = (byte) node.r;
                 data[(i*3) + 1 +2] = (byte) node.g;
                 data[(i*3) + 2 +2] = (byte) node.b;
-            }
 
-            // send the bytes for each panel separately
-            //String s = new String(data);
-            //System.out.println(s);
-            //System.out.println(fixture.pinNum);
+//                int c = 255;
+//                if (fixture.pinNum != 8) {
+//                    c = 0;
+//                }
+//                data[(i*3) + 0 +2] = (byte) c;
+//                data[(i*3) + 1 +2] = (byte) c;
+//                data[(i*3) + 2 +2] = (byte) c;
+            }
 
             udp.send( data, teensy.ip, teensyPort );
         }

@@ -13,7 +13,6 @@ public class Fixture {
 
   //CONSTRUCTOR
   public Fixture(int theId) {
-
     id = theId;
     nodeArray = new Node[0];
   }
@@ -30,6 +29,8 @@ public class Fixture {
     myController.addFixture(this);
   }
 
+  /*
+  // commenting this out because it caused bugs....
   public void addNodesToFixture(Node[] newNodes) {
 
     int fal = nodeArray.length;    //determines length of firstArray
@@ -40,6 +41,7 @@ public class Fixture {
 
     nodeArray = resultArray;
   }
+  */
 
   public void addNodeToFixture(Node newNode) {
 
