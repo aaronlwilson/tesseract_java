@@ -12,10 +12,10 @@ public class Node  {
 
 
   public int index; //0-? usually relative to the fixture
-  public int port;  //1-8 on pixel pusher, or 'pin' on Teensy
+  public int port;  //1-8 on pixel pusher, or 'pinNum' on Teensy
   public Fixture fixture;
 
-  //public int nodeType;
+  //public int nodeType; //ENUM needed
 
   public int r;
   public int g;
