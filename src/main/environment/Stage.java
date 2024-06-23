@@ -196,8 +196,11 @@ public class Stage {
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
 
         nodes = new Node[0];
+        int nodeIndex = 0;
 
+        int numPins = 8;
         int numLedsPerStrip = 200;
+
         float startRadius = 20;
         float radius = startRadius;
         float startAngle = 0;
@@ -206,8 +209,7 @@ public class Stage {
 
         for (int k = 0; k < numberTeensies; k++) {
             //pins on the teensy are 1 through 8
-            int pinz = 8; //gets decremented
-            int numPins = pinz;
+            int pinz = numPins; //gets decremented
 
             for (int i = 0; i < numPins; i++) {
                 Node[] stripNodes = new Node[numLedsPerStrip];
@@ -248,7 +250,8 @@ public class Stage {
                     }
 
                     //true Scared mapping
-                    stripNodes[j] = new Node(x, z, y, j, strip);
+                    stripNodes[j] = new Node(x, z, y, nodeIndex, strip);
+                    nodeIndex++;
                     //stripNodes[j].port = i; //used for "TilesTestClip", each Teensy has 8 outputs (octo board)
 
                     //simple rows of strips

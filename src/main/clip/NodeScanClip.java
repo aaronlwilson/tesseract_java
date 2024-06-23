@@ -15,7 +15,6 @@ public class NodeScanClip extends AbstractClip {
     }
 
     public void init() {
-
         clipId = "node_scan";
 
         super.init();
@@ -29,11 +28,9 @@ public class NodeScanClip extends AbstractClip {
         if(_scanNode >= _myMain.stage.nodes.length){
             _scanNode = 0;
         }
-
     }
 
     public int[] drawNode(Node node) {
-
         int[] nodestate = new int[3];
 
         if(node.index == _scanNode){
