@@ -206,7 +206,7 @@ public class Stage {
         double exponent = 2.5;
         int yHeight = 600;
 
-        for (int k = 0; k < numberTeensies-2; k++) {
+        for (int k = 0; k < numberTeensies; k++) {
             //pins on the teensy are 1 through 8
             int pinz = 1; //gets decremented or incremented independent of index
 
