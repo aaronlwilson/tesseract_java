@@ -32,6 +32,7 @@ public class Fixture {
   /*
   // commenting this out because it caused bugs....
   public void addNodesToFixture(Node[] newNodes) {
+
     int fal = nodeArray.length;    //determines length of firstArray
     int sal = newNodes.length;   //determines length of secondArray
     environment.Node[] resultArray = new environment.Node[fal + sal];  //resultant array of size first array and second array
@@ -43,6 +44,7 @@ public class Fixture {
   */
 
   public void addNodeToFixture(Node newNode) {
+
     environment.Node[] resultArray = new environment.Node[nodeArray.length + 1];
     resultArray[resultArray.length - 1] = newNode;
 

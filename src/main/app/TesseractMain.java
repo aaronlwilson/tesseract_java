@@ -175,7 +175,7 @@ public class TesseractMain extends PApplet {
 
         stage.nodes = nextNodes;
 
-        //keyboard toggle drawing when not needed at shows, use "D" key
+        //TODO: keyboard toggle drawing when not needed at shows
         onScreen.draw();
 
         //push dummy packets out to LEDS

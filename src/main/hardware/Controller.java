@@ -25,6 +25,7 @@ public class Controller {
 
   public void addFixture(Fixture fixture) {
     fixtureArray.add(fixture);
+
   }
 
 }

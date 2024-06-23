@@ -197,9 +197,7 @@ public class Stage {
 
         nodes = new Node[0];
 
-        int numPins = 8;
         int numLedsPerStrip = 200;
-
         float startRadius = 20;
         float radius = startRadius;
         float startAngle = 0;
@@ -208,13 +206,14 @@ public class Stage {
 
         for (int k = 0; k < numberTeensies; k++) {
             //pins on the teensy are 1 through 8
-            int pinz = 1; //gets decremented or incremented independent of index
+            int pinz = 8; //gets decremented
+            int numPins = pinz;
 
             for (int i = 0; i < numPins; i++) {
                 Node[] stripNodes = new Node[numLedsPerStrip];
 
                 Strip strip = new Strip(i, numLedsPerStrip, pinz);
-                pinz++;
+                pinz--;
                 strip.setMyController(_myMain.udpModel.teensies[k]);
 
                 float x;  // node position
@@ -226,7 +225,7 @@ public class Stage {
                     //distribute 200 into 6/16th of a circle
                     float angle = PApplet.map(j, 0, numLedsPerStrip, 0, 135) + startAngle;
 
-                    if (k < 2) { // first half spiral is clockwise, the other half - counter-clockwise (viewed from the top)
+                    if (k < 2) { // half spiral clockwise, the other half - counter clockwise
                         z = (float) (radius * Math.cos(radians(angle)));
                         x = (float) (radius * Math.sin(radians(angle)));
                     } else {
