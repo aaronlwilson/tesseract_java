@@ -27,6 +27,7 @@ public class TesseractMain extends PApplet {
     public Particle particleX;
     public Particle particleY;
     public Particle particleZ;
+    public Particle particleSpin;
 
     //CLIP CLASS ENUM
     public static final int NODESCAN = 0;

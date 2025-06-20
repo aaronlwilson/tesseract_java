@@ -117,6 +117,9 @@ public class OnScreen {
         p.stroke(_myMain.particleZ.color);
         p.point(_myMain.particleZ.position.x, _myMain.particleZ.position.y, _myMain.particleZ.position.z);
 
+        p.stroke(_myMain.particleSpin.color);
+        p.point(_myMain.particleSpin.position.x, _myMain.particleSpin.position.y, _myMain.particleSpin.position.z);
+
         p.pushMatrix();
 
         //for Tesseract CUBE only (so it spins upon one corner)

@@ -36,20 +36,25 @@ public class LinesClip  extends AbstractClip {
 
         // _particles = new ArrayList<Particle>();
 
-        //X
+        //X -red
         PVector xLoc = new PVector(200.0f, 0.0f, 0.0f);
         int xC = _myMain.color(255, 0, 0);
         _myMain.particleX = addParticle(xLoc, xC);
 
-        //Y
+        //Y -green
         PVector yLoc = new PVector(0.0f, 200.0f, 0.0f);
         int yC = _myMain.color(0, 255, 0);
         _myMain.particleY = addParticle(yLoc, yC);
 
-        //Z
+        //Z -blue
         PVector zLoc = new PVector(0.0f, 0.0f, 200.0f);
         int zC = _myMain.color(0, 0, 255);
         _myMain.particleZ = addParticle(zLoc, zC);
+
+        //spin
+        PVector spinLoc = new PVector(0.0f, 0.0f, 0.0f);
+        int spinC = _myMain.color(255, 0, 255);
+        _myMain.particleSpin = addParticle(spinLoc, spinC);
     }
 
     public void run() {
@@ -68,11 +73,16 @@ public class LinesClip  extends AbstractClip {
         float x = (float) ((_myMain.stage.maxW/2) * Math.cos(radians(_speed)));
         _myMain.particleX.position = new PVector(x, 0.0f, 0.0f);
 
-        float y = (float) ((_myMain.stage.maxH/2) * Math.cos(radians(_speed)));
+        float y = (float) ((_myMain.stage.maxH/2) * Math.sin(radians(_speed)));
         _myMain.particleY.position = new PVector(0.0f, y, 0.0f);
 
         float z = (float) ((_myMain.stage.maxD/2) * Math.cos(radians(_speed)));
         _myMain.particleZ.position = new PVector(0.0f, 0.0f, z);
+        //------
+
+        float spinX = (float) ((_myMain.stage.maxW/2) * Math.sin(radians(_speed)));
+        float spinY = (float) ((_myMain.stage.maxH/2) * Math.cos(radians(_speed)));
+        _myMain.particleSpin.position = new PVector(spinX, spinY, 0.0f);
     }
 
 
@@ -94,8 +104,6 @@ public class LinesClip  extends AbstractClip {
         int newGreen = 0;
         int newBlue = 0;
 
-//        Particle particle = _myMain.particleX;
-//        PVector l = particle.position;
 
         float distX = Math.abs(node.x - _myMain.particleX.position.x);
         float distY = Math.abs(node.y - _myMain.particleY.position.y);
