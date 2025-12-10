@@ -108,7 +108,10 @@ dependencies {
 
 import de.undercouch.gradle.tasks.download.Download
 
-// UDP networking library (originally from Processing, now standalone)
+// UDP networking library download task
+// Note: This library was originally part of Processing's contributed libraries,
+// but is now used standalone for UDP communication with LED hardware.
+// It is kept as source in lib/udp/ and has no dependency on Processing.
 task downloadProcessingUdpLibrary(type: Download) {
   src 'http://ubaa.net/shared/processing/udp/udp.zip'
   dest new File("${rootDir}/tmp", 'udp.zip')
@@ -118,7 +121,7 @@ task downloadProcessingUdpLibrary(type: Download) {
 task unzipProcessingUdpLibrary(dependsOn: downloadProcessingUdpLibrary) {
   doLast {
     copy {
-      println "Unzipping processing udp library"
+      println "Unzipping UDP networking library"
       from zipTree("${rootDir}/tmp/udp.zip")
       into "${rootDir}/lib"
     }
