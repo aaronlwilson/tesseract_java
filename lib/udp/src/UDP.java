@@ -23,6 +23,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+// Note: processing.core imports are unused in this project (Processing is not in classpath).
+// The UDP library was originally part of Processing but is used standalone here.
+// Lines 153-158 contain optional PApplet integration code that is safely skipped via
+// NoClassDefFoundError handling. Keeping this import maintains compatibility with
+// the upstream UDP library source.
 import processing.core.*;
 
 /** 
