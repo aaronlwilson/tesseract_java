@@ -8,13 +8,11 @@ import hardware.Rabbit;
 import hardware.Teensy;
 import hardware.TilePP;
 import hypermedia.net.UDP;
-import processing.core.PApplet;
 import stores.ConfigStore;
 
 
 public class UDPModel {
 
-    private PApplet p;
     private UDP udp;
 
     public Rabbit[] rabbits;
@@ -37,9 +35,7 @@ public class UDPModel {
     private int[][] nodeMap = new int[12][12];
 
 
-    public UDPModel(PApplet pApplet) {
-        p = pApplet;
-
+    public UDPModel() {
         initRabbitsArray();
         initTeensiesArray();
         //init PixelPusher array
@@ -65,11 +61,16 @@ public class UDPModel {
 
         // create a new datagram connection on 6000
         // and wait for incoming message
-        udp = new UDP( p, myPort );
+        udp = new UDP( this, myPort );
         udp.setBuffer(10000);
 
         udp.log( false );     // <-- printout the connection activity, but performance is affected
         udp.listen( false );
+    }
+
+    // Helper method to parse hex strings (replaces Processing's unhex)
+    private static int unhex(String hex) {
+        return Integer.parseInt(hex, 16);
     }
 
     // Initialize the rabbit controllers.  Number of controllers is set in env var NUM_RABBITS.  default is 0
@@ -151,8 +152,8 @@ public class UDPModel {
 
             //swap command, makes all the tiles change at once
             byte[] data = new byte[2];
-            data[0] = (byte) (p.unhex("FF"));
-            data[1] = (byte) (p.unhex("FE"));
+            data[0] = (byte) (unhex("FF"));
+            data[1] = (byte) (unhex("FE"));
             udp.send( data, rabbit.ip, rabbitPort );
         }
 
@@ -185,9 +186,9 @@ public class UDPModel {
         //data for one tile, one frame
         byte[] data = new byte[(432+4)]; //144 nodes * 3 channels per node = 432
 
-        data[0] = (byte) (p.unhex("ff")); //listen for command
-        data[1] = (byte) (p.unhex("ff")); //chip command
-        data[2] = (byte) (p.unhex("00")); //start command
+        data[0] = (byte) (unhex("ff")); //listen for command
+        data[1] = (byte) (unhex("ff")); //chip command
+        data[2] = (byte) (unhex("00")); //start command
         data[3] = (byte) (tile.id-1); //tile address
 
         //node map for one tile
@@ -260,11 +261,6 @@ public class UDPModel {
                 data[(i*3) + 0 +2] = (byte) node.r;
                 data[(i*3) + 1 +2] = (byte) node.g;
                 data[(i*3) + 2 +2] = (byte) node.b;
-
-                //for the love of god, something please just happen on the lights so I know my life isn't a complete sham.
-                //data[(i*3) + 0 +2] = (byte) (PApplet.unhex("FF"));
-                //data[(i*3) + 1 +2] = (byte) (PApplet.unhex("FF"));
-                //data[(i*3) + 2 +2] = (byte) (PApplet.unhex("FF"));
             }
 
             // send the bytes for each panel separately
@@ -284,9 +280,9 @@ public class UDPModel {
 
             byte[] data = new byte[(432+4)];
 
-            data[0] = (byte) (p.unhex("ff"));
-            data[1] = (byte) (p.unhex("ff")); //chip command
-            data[2] = (byte) (p.unhex("00")); //start command
+            data[0] = (byte) (unhex("ff"));
+            data[1] = (byte) (unhex("ff")); //chip command
+            data[2] = (byte) (unhex("00")); //start command
             data[3] = (byte) t; //tile address
 
             for (int y=0; y<12; y++){
@@ -295,9 +291,9 @@ public class UDPModel {
                     //scanning behavior
                     if(nodeCount != currentNode){
 
-                        data[nodeMap[y][x]+4] = (byte) (PApplet.unhex("00"));
-                        data[nodeMap[y][x]+3+4] = (byte) (PApplet.unhex("00"));
-                        data[nodeMap[y][x]+6+4] = (byte) (PApplet.unhex("00"));
+                        data[nodeMap[y][x]+4] = (byte) (unhex("00"));
+                        data[nodeMap[y][x]+3+4] = (byte) (unhex("00"));
+                        data[nodeMap[y][x]+6+4] = (byte) (unhex("00"));
 
                     }else{
 
@@ -316,8 +312,8 @@ public class UDPModel {
 
         //swap command
         byte[] data = new byte[2];
-        data[0] = (byte) (p.unhex("FF"));
-        data[1] = (byte) (p.unhex("FE"));
+        data[0] = (byte) (unhex("FF"));
+        data[1] = (byte) (unhex("FE"));
         udp.send( data, broadcastIp, rabbitPort );
 
 

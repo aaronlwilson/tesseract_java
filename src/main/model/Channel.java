@@ -2,7 +2,6 @@ package model;
 
 import clip.*;
 import environment.Node;
-import processing.core.PApplet;
 import show.Scene;
 import app.*;
 
@@ -25,41 +24,6 @@ public class Channel {
     public Channel(int theChannelNumber) {
         channelNumber = theChannelNumber;
     }
-
-    //this logic is duplicated in Scene, it should be abstracted
-    /*
-     public void constructNewClip(int clipClass) {
-
-        AbstractClip newClip = new AbstractClip();
-        switch (clipClass) {
-            case TesseractMain.NODESCAN:
-                newClip = new NodeScanClip();
-                break;
-            case TesseractMain.SOLID:
-                newClip = new SolidColorClip();
-                break;
-            case TesseractMain.COLORWASH:
-                newClip = new ColorWashClip();
-                break;
-            case TesseractMain.VIDEO:
-                newClip = new VideoClip();
-                break;
-            case TesseractMain.PARTICLE:
-                newClip = new ParticleClip();
-                break;
-
-
-            default:
-                throw new IllegalStateException("Unexpected value: " + clipClass);
-        }
-
-        if (newClip != null) {
-            newClip.init();
-            clip = newClip;
-            this.setClipValues(this.getSceneValues(), this.filename);
-        }
-    }
-    */
 
     public void run() {// animation logic that runs per frame
         if(currentClip != null) {
@@ -136,8 +100,8 @@ public class Channel {
     }
 
 
-    public void drawUI(PApplet p, int x, int y){
-        //draw the state of this channel to processing
+    public void drawUI(int x, int y){
+        //draw the state of this channel to rendering system
     }
 
     // this is not safe and caused an NPE exception at one point

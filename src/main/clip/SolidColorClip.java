@@ -1,7 +1,6 @@
 package clip;
 
 import environment.Node;
-import processing.core.PApplet;
 
 
 public class SolidColorClip extends AbstractClip{
@@ -43,18 +42,6 @@ public class SolidColorClip extends AbstractClip{
     public int[] drawNode(Node node) {
 
         int[] nodestate = new int[3];
-
-
-        //PUT BACK this bit for production
-        /*
-        _myMain.colorMode(PApplet.HSB, 100);  // Use HSB with scale of 0-100
-        int color = color(hue, saturation, brightness);
-        _myMain.colorMode(PApplet.RGB, 255);
-
-        nodestate[0] = int(Utils.getR(color));
-        nodestate[1] = int(Utils.getG(color));
-        nodestate[2] = int(Utils.getB(color));
-        */
 
         nodestate[0] = red;
         nodestate[1] = green;
