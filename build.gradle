@@ -1,13 +1,16 @@
 plugins {
-  id "de.undercouch.download" version "3.4.3"
+  id "de.undercouch.download" version "5.5.0"
+  id 'java'
+  id 'groovy'
 }
 
-// This allows us to compile either groovy or java from the same set of directories
-apply plugin: 'java'
-apply plugin: 'groovy'
+// Java 17 compatibility
+java {
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
-  jcenter()
   mavenCentral()
 }
 
@@ -22,104 +25,87 @@ sourceSets {
   }
 }
 
+// LibGDX version
+ext {
+  gdxVersion = '1.12.1'
+}
+
 dependencies {
-  // Groovy - used to compile Groovy projects.  This is what allows IntelliJ to provide groovy code completion & introspection
-  compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.6'
+  // Groovy 4.0 - Java 17 compatible
+  implementation 'org.apache.groovy:groovy:4.0.17'
+  implementation 'org.apache.groovy:groovy-json:4.0.17'
 
   // Common lib for logging
-  // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-  compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
-
-  // Common lib for logging
-  // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
-  compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.26'
+  implementation 'org.slf4j:slf4j-api:2.0.9'
+  implementation 'org.slf4j:slf4j-simple:2.0.9'
 
   // Websocket library used to communicate with the UI
-  compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
+  implementation 'org.java-websocket:Java-WebSocket:1.5.4'
+
+  // LibGDX - Cross-platform graphics (replaces JOGL)
+  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  // Headless backend for Raspberry Pi / server mode
+  implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+
+  // JavaCV for cross-platform video playback (replacing Processing video library)
+  // Core JavaCV and JavaCPP
+  implementation 'org.bytedeco:javacv:1.5.9'
+
+  // FFmpeg Java bindings (for video decoding)
+  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9'
+
+  // Platform-specific native libraries
+  // macOS ARM64 (Apple Silicon)
+  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:macosx-arm64'
+  // macOS x86_64 (Intel)
+  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:macosx-x86_64'
+  // Linux x86_64
+  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:linux-x86_64'
+  // Linux ARM64 (Raspberry Pi 4 64-bit)
+  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:linux-arm64'
+  // Linux ARM (Raspberry Pi 32-bit)
+  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:linux-armhf'
+
+  // JavaCPP platform natives (required by JavaCV)
+  implementation 'org.bytedeco:javacpp:1.5.9:macosx-arm64'
+  implementation 'org.bytedeco:javacpp:1.5.9:macosx-x86_64'
+  implementation 'org.bytedeco:javacpp:1.5.9:linux-x86_64'
+  implementation 'org.bytedeco:javacpp:1.5.9:linux-arm64'
+  implementation 'org.bytedeco:javacpp:1.5.9:linux-armhf'
 
   // YAML parser used for reading config files
-  // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-  compile group: 'org.yaml', name: 'snakeyaml', version: '1.24'
+  implementation 'org.yaml:snakeyaml:2.2'
 
-  // Include all jar files in 'lib' automatically
-  compile fileTree(dir: 'lib', include: ['**/*.jar'])
+  // Include specific jars from lib directory (PixelPusher and UDP libraries)
+  implementation fileTree(dir: 'lib', include: ['PixelPusher/**/*.jar', 'udp/**/*.jar'])
 
+  //////////////// For unit/integration tests
 
-  //processing Core
-  // https://mvnrepository.com/artifact/org.processing/core
-  //compile group: 'org.processing', name: 'core', version: '3.3.7'
+  // JUnit 4
+  testImplementation 'junit:junit:4.13.2'
 
-  //processing Serial, this link does not work, possibly missing native bindings
-  //https://mvnrepository.com/artifact/org.processing/serial
-  compile group: 'org.processing', name: 'serial', version: '3.3.7'
-    
-
-    //////////////// For unit/integration tests
-
-  // https://mvnrepository.com/artifact/junit/junit
-  testCompile group: 'junit', name: 'junit', version: '4.12'
-
-  // Mocking library
-  // https://mvnrepository.com/artifact/org.mockito/mockito-core
-  testCompile group: 'org.mockito', name: 'mockito-core', version: '2.28.2'
-
-  // Lets us mock even harder.  To the max
-  // https://mvnrepository.com/artifact/org.powermock/powermock-core
-  testCompile group: 'org.powermock', name: 'powermock-core', version: '2.0.2'
-
-  // https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4
-  testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.2'
-
-  // https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2
-  testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.2'
+  // Mockito 4.x (Java 17 compatible, no PowerMock needed)
+  testImplementation 'org.mockito:mockito-core:4.11.0'
+  testImplementation 'org.mockito:mockito-inline:4.11.0'
 
   // Hamcrest junit matchers
-  // https://mvnrepository.com/artifact/org.hamcrest/java-hamcrest
-  testCompile group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
-
-  // Hamcrest junit matchers
-  // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-junit
-  testCompile group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0'
+  testImplementation 'org.hamcrest:hamcrest:2.2'
 
   // Allows capturing logs and exit status from commands
-  // https://mvnrepository.com/artifact/com.github.stefanbirkner/system-rules
-  testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.19.0'
+  testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
 
-  // Some random io utilities
-  // https://mvnrepository.com/artifact/commons-io/commons-io
-  testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
+  // IO utilities
+  testImplementation 'commons-io:commons-io:2.15.1'
 }
 
-task downloadProcessingVideoLibrary() {
-  doLast {
-    download {
-      println "Downloading processing video library"
-      src 'https://github.com/processing/processing-video/releases/download/latest-processing3/video.zip'
-      dest new File("${rootDir}/tmp", 'processing-video-lib-latest-processing3.zip')
-      onlyIfModified true
-    }
-  }
-}
+import de.undercouch.gradle.tasks.download.Download
 
-task unzipProcessingVideoLibrary(dependsOn: downloadProcessingVideoLibrary) {
-  doLast {
-    copy {
-      println "Unzipping processing video library"
-      from zipTree("${rootDir}/tmp/processing-video-lib-latest-processing3.zip")
-      into "${rootDir}/lib"
-    }
-  }
-}
-
-task downloadProcessingUdpLibrary() {
-  doLast {
-    download {
-      println "Downloading processing udp library"
-      src 'http://ubaa.net/shared/processing/udp/udp.zip'
-      dest new File("${rootDir}/tmp", 'udp.zip')
-      onlyIfModified true
-    }
-  }
+task downloadProcessingUdpLibrary(type: Download) {
+  src 'http://ubaa.net/shared/processing/udp/udp.zip'
+  dest new File("${rootDir}/tmp", 'udp.zip')
+  overwrite false
 }
 
 task unzipProcessingUdpLibrary(dependsOn: downloadProcessingUdpLibrary) {
@@ -132,53 +118,16 @@ task unzipProcessingUdpLibrary(dependsOn: downloadProcessingUdpLibrary) {
   }
 }
 
-task downloadProcessingCoreLibrary() {
-  doLast {
-    download {
-      println "Downloading processing core library"
-      src 'http://download.processing.org/processing-3.5.3-linux64.tgz'
-      dest new File("${rootDir}/tmp", 'processing-3.5.3-linux64.tgz')
-      onlyIfModified true
-    }
-  }
-}
-
-task untarProcessingCoreLibrary(dependsOn: downloadProcessingCoreLibrary) {
-  doLast {
-    copy {
-      println "Untarring processing core library"
-      from tarTree("${rootDir}/tmp/processing-3.5.3-linux64.tgz")
-      into "${rootDir}/tmp"
-    }
-
-    copy {
-      from("${rootDir}/tmp/processing-3.5.3/core/library/core.jar")
-      into("${rootDir}/lib/processing-core")
-    }
-
-    delete "${rootDir}/tmp/processing-3.5.3"
-  }
-}
-
-task downloadJoglJar() {
-  doLast {
-    download {
-      println "Downloading jogl jar"
-      src 'https://public-deps.s3-us-west-2.amazonaws.com/jogamp-2.3.2-patched.jar'
-      dest new File("${rootDir}/lib/jogl-2.3.2-patched", 'jogamp-2.3.2-patched.jar')
-      onlyIfModified true
-    }
-  }
-}
-
-// To do this, I googled 'gradle build fat jar' and copied this from the first link (with a couple modifications)
-// https://www.baeldung.com/gradle-fat-jar
-task fatJar(type: Jar) {
+// Build fat JAR with all dependencies
+tasks.register('fatJar', Jar) {
   manifest {
-    attributes 'Main-Class': 'app.TesseractMain'
+    attributes 'Main-Class': 'app.TesseractLauncher'
   }
-  baseName = 'TesseractFatJar'
-  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  archiveBaseName = 'TesseractFatJar'
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  from {
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+  }
   with jar
 }
 

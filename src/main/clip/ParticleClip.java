@@ -2,12 +2,10 @@ package clip;
 
 import java.util.*;
 
-
-import processing.core.PVector;
-import static processing.core.PApplet.dist;
-import static processing.core.PApplet.map;
-import static processing.core.PApplet.constrain;
-
+import render.Vec3;
+import static render.ProcessingCompat.dist;
+import static render.ProcessingCompat.map;
+import static render.ProcessingCompat.constrain;
 
 import environment.Node;
 import util.Util;
@@ -78,7 +76,7 @@ public class ParticleClip  extends AbstractClip {
         float locX = _myMain.stage.minX+(_myMain.stage.maxW /2);
         float locY = _myMain.stage.minY+(_myMain.stage.maxH /2);
         float locZ = _myMain.stage.minZ+(_myMain.stage.maxD /2);
-        PVector theLoc = new PVector(locX, locY, locZ);
+        Vec3 theLoc = new Vec3(locX, locY, locZ);
 
         //int theC = _myMain.color(255, 255, 255);
 
@@ -93,8 +91,8 @@ public class ParticleClip  extends AbstractClip {
         float lowVel = -_pSpeed;
         float highVel = _pSpeed;
 
-        PVector theSpeed = new PVector(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
-        PVector theAccel = new PVector(0.01f, 0.01f, 0.01f);
+        Vec3 theSpeed = new Vec3(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
+        Vec3 theAccel = new Vec3(0.01f, 0.01f, 0.01f);
 
         _particles.add(new Particle(theLoc, theC,_pSize, _pRamp, theSpeed, theAccel));
 
@@ -113,7 +111,7 @@ public class ParticleClip  extends AbstractClip {
 
         for(Particle particle : _particles) {
 
-            PVector l = particle.position;
+            Vec3 l = particle.position;
             float dist = dist(node.x, node.y, node.z, l.x, l.y, l.z);
             float surface = particle.size;
 

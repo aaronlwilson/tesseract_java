@@ -47,6 +47,10 @@ COPY tmp/tesseract_java /app/tesseract_java
 RUN mkdir -p /app/tesseract_java/lib
 COPY files/jogamp-2.3.2-patched.jar /app/tesseract_java/lib/jogamp-2.3.2-patched.jar
 
+# Pre-downloaded Processing core library (download.processing.org no longer works)
+RUN mkdir -p /app/tesseract_java/tmp
+COPY files/processing-3.5.4-linux64.tgz /app/tesseract_java/tmp/processing-3.5.4-linux64.tgz
+
 WORKDIR /app/tesseract_java
 
 RUN ./gradlew unzipProcessingVideoLibrary unzipProcessingUdpLibrary untarProcessingCoreLibrary fatJar \

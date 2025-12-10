@@ -2,11 +2,10 @@ package clip;
 
 import environment.Node;
 import model.Palette;
-import processing.core.PApplet;
 import util.Util;
 
-import static processing.core.PApplet.map;
-import static processing.core.PConstants.TWO_PI;
+import static render.ProcessingCompat.map;
+import static render.ProcessingCompat.TWO_PI;
 
 public class PerlinNoiseClip  extends AbstractClip {
 

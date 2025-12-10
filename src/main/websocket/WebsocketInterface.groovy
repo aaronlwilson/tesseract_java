@@ -1,6 +1,6 @@
 package websocket
 
-import app.TesseractMain
+import app.TesseractApp
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
@@ -17,14 +17,14 @@ class WebsocketInterface extends WebSocketServer {
 
   private static WebsocketInterface instance
 
-  private static TesseractMain mainApp
+  private static TesseractApp mainApp
 
   // map has a String key and the value is a list of closures (functions)
   Map<String, List<Closure>> actionHandlers = [:]
 
   WebsocketInterface(String addr, int port) {
     super(new InetSocketAddress(addr, port))
-    this.mainApp = TesseractMain.getMain()
+    this.mainApp = TesseractApp.get()
   }
 
   WebsocketInterface(InetSocketAddress address) {

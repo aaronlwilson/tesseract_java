@@ -1,0 +1,7 @@
+Agent: project-evaluator | 2025-12-10
+Completion: 0% (Migration not started) | Critical Issues: 16 files require changes | Estimated Effort: 100-200+ hours
+Architecture: Processing deeply embedded (application framework, rendering, events, windowing)
+Recommendation: DO NOT MIGRATE - Stay on Processing 4 (has ARM64 support)
+Risk: VERY HIGH - 45% of codebase affected, visual regressions would break LED mapping
+Workflow: PAUSE - User decision required before proceeding
+  -> Questions: WHY migrate? What's success criteria? Resource commitment?

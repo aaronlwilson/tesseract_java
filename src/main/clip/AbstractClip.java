@@ -1,12 +1,12 @@
 package clip;
 
-import app.TesseractMain;
+import app.TesseractApp;
 import environment.Node;
 
 public class AbstractClip  {
 
   //CLASS VARS
-  protected TesseractMain _myMain;
+  protected TesseractApp _myMain;
 
   //display name
   public String clipName;
@@ -29,7 +29,7 @@ public class AbstractClip  {
 
   // ---- TO BE OVERWRITTEN by Clip Class ------
   public void init() {
-    _myMain = app.TesseractMain.getMain();
+    _myMain = TesseractApp.get();
   }
 
   public void run() {// animation logic that runs per frame

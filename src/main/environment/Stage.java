@@ -1,7 +1,7 @@
 package environment;
 
 
-import app.TesseractMain;
+import app.TesseractApp;
 import hardware.*;
 
 public class Stage {
@@ -25,11 +25,11 @@ public class Stage {
 
     public String stageType;
 
-    private TesseractMain _myMain;
+    private TesseractApp _myMain;
 
 
     public Stage() {
-        _myMain = TesseractMain.getMain();
+        _myMain = TesseractApp.get();
         nodes = new Node[]{};
     }
 
@@ -61,13 +61,13 @@ public class Stage {
             if (n.z < minZ) minZ = n.z;
         }
 
-        maxW = maxX + Math.abs(_myMain.stage.minX);
-        maxH = maxY + Math.abs(_myMain.stage.minY);
-        maxD = maxZ + Math.abs(_myMain.stage.minZ);
+        maxW = maxX + Math.abs(minX);
+        maxH = maxY + Math.abs(minY);
+        maxD = maxZ + Math.abs(minZ);
 
-        _myMain.println("maxW: " + maxW);
-        _myMain.println("maxH: " + maxH);
-        _myMain.println("maxD: " + maxD);
+        System.out.println("maxW: " + maxW);
+        System.out.println("maxH: " + maxH);
+        System.out.println("maxD: " + maxD);
     }
 
     private void buildTesseractWall() {
@@ -80,16 +80,16 @@ public class Stage {
         int gap = Tile.xSpacing * 12; //spacing 6 x 12 nodes
         int startY = -gap;
 
-        PixelPlane plane = new PixelPlane(_myMain);
+        PixelPlane plane = new PixelPlane();
         nodes = plane.buildPanelAPA(pixelPusher, counter, 0, 0, 0, 1, 0, true, true);
 
-       // nodes = (Node[]) _myMain.concat(nodes, tileNodes);
+       // nodes = concatNodes(nodes, tileNodes);
     }
 
     private void buildTesseractWallOLD() {
         int counter = 0;
 
-        //PixelPlane plane = new PixelPlane(_myMain);
+        //PixelPlane plane = new PixelPlane();
         //nodes = plane.buildFullCube(counter,-175,-175, -175, 0 );
 
         _myMain.udpModel.rabbits = new Rabbit[6];
@@ -105,28 +105,28 @@ public class Stage {
         int gap = Tile.xSpacing * 12; //spacing 6 x 12 nodes
         int startY = -gap;
 
-        PixelPlane plane = new PixelPlane(_myMain);
+        PixelPlane plane = new PixelPlane();
         nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -(gap * 9), startY, 0, 0, 0, false, false, false);
 
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -(gap * 6), startY, 0, 1, 0, false, false, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -(gap * 3), startY, 0, 0, 0, false, false, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, 0, startY, 0, 0, 0, false, false, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, (gap * 3), startY, 0, 0, 0, false, false, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, (gap * 6), startY, 0, 0, 0, false, false, true);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
     }
 
     private void buildTesseractStageCube() {
@@ -147,33 +147,33 @@ public class Stage {
         int ctr = 108;
 
         //front //purple //needs hack //up
-        PixelPlane plane = new PixelPlane(_myMain);
+        PixelPlane plane = new PixelPlane();
         nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, ctr, 1, 0, true, true, false);
 
         //back //gray-yellow
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, -ctr, 3, 0, false, true, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
         //top //red //up
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr, 0, 1, true, true, true);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
         //bottom //green
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr, 1, 1, true, false, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
         //left //blue //up
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr, 0, 2, false, false, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
         //right //white
-        plane = new PixelPlane(_myMain);
+        plane = new PixelPlane();
         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, false, true, false);
-        nodes = (Node[]) _myMain.concat(nodes, planeNodes);
+        nodes = concatNodes(nodes, planeNodes);
 
     }
 
@@ -213,7 +213,7 @@ public class Stage {
 
                 strip.addNodesToFixture(stripNodes);
 
-                nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
+                nodes = concatNodes(nodes, stripNodes);
             }
         }
 
@@ -243,21 +243,21 @@ public class Stage {
 
 
         Node[] talonNodes = buildSmallTalon(_myMain.udpModel.teensies[0], -450, 0, 300);
-        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
+        nodes = concatNodes(nodes, talonNodes);
 
         talonNodes = buildSmallTalon(_myMain.udpModel.teensies[1], -150, 0, 300);
-        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
+        nodes = concatNodes(nodes, talonNodes);
 
         talonNodes = buildSmallTalon(_myMain.udpModel.teensies[2], 150, 0, 300);
-        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
+        nodes = concatNodes(nodes, talonNodes);
 
         talonNodes = buildSmallTalon(_myMain.udpModel.teensies[3], 450, 0, 300);
-        nodes = (Node[]) _myMain.concat(nodes, talonNodes);
+        nodes = concatNodes(nodes, talonNodes);
 
 
         //center tower
         Node[] towerNodes = buildCenterTower(_myMain.udpModel.teensies[4], 0, 0, 0);
-        nodes = (Node[]) _myMain.concat(nodes, towerNodes);
+        nodes = concatNodes(nodes, towerNodes);
 
 
     }
@@ -267,16 +267,16 @@ public class Stage {
         Node[] talonNodes = new Node[0];
 
         Node[] panelNodes = new StrandPanel().buildPanel(teensy, 0, "talon_top_mirrored", talonNodes.length, startX - 100, startY - 100, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
+        talonNodes = concatNodes(talonNodes, panelNodes);
 
         panelNodes = new StrandPanel().buildPanel(teensy, 2, "talon_bottom", talonNodes.length, startX - 140, startY, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
+        talonNodes = concatNodes(talonNodes, panelNodes);
 
         panelNodes = new StrandPanel().buildPanel(teensy, 4, "talon_top", talonNodes.length, startX, startY - 100, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
+        talonNodes = concatNodes(talonNodes, panelNodes);
 
         panelNodes = new StrandPanel().buildPanel(teensy, 6, "talon_bottom_mirrored", talonNodes.length, startX, startY, startZ, 0);
-        talonNodes = (Node[]) _myMain.concat(talonNodes, panelNodes);
+        talonNodes = concatNodes(talonNodes, panelNodes);
 
         return talonNodes;
     }
@@ -286,17 +286,17 @@ public class Stage {
         Node[] towerNodes = new Node[0];
 
         Node[] panelNodes = new StrandPanel().buildPanel(teensy, 1, "center_pillar_all", towerNodes.length, startX - 130, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
+        towerNodes = concatNodes(towerNodes, panelNodes);
 
         panelNodes = new StrandPanel().buildPanel(teensy, 2, "center_pillar_all", towerNodes.length, startX, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
+        towerNodes = concatNodes(towerNodes, panelNodes);
 
 
         panelNodes = new StrandPanel().buildPanel(teensy, 3, "center_pillar_all", towerNodes.length, startX + 130, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
+        towerNodes = concatNodes(towerNodes, panelNodes);
 
         panelNodes = new StrandPanel().buildPanel(teensy, 4, "center_pillar_all", towerNodes.length, startX + 260, startY, startZ, 0);
-        towerNodes = (Node[]) _myMain.concat(towerNodes, panelNodes);
+        towerNodes = concatNodes(towerNodes, panelNodes);
 
 
         return towerNodes;
@@ -318,5 +318,15 @@ public class Stage {
             }
         }
 
+    }
+
+    /**
+     * Concatenate two Node arrays.
+     */
+    private static Node[] concatNodes(Node[] a, Node[] b) {
+        Node[] result = new Node[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
     }
 }

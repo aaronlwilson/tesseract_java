@@ -1,6 +1,6 @@
 package util
 
-import app.TesseractMain
+import app.TesseractApp
 import groovy.json.JsonBuilder
 import show.Playlist
 import show.Playlist.PlayState
@@ -100,14 +100,14 @@ public class Util {
     public static int getClipEnumValue(String clipId) {
         // map of clipId to ENUM value
         Map clipIdMap = [
-                color_wash   : TesseractMain.COLORWASH,
-                node_scan    : TesseractMain.NODESCAN,
-                solid_color  : TesseractMain.SOLID,
-                video        : TesseractMain.VIDEO,
-                particle_clip: TesseractMain.PARTICLE,
-                perlin_noise : TesseractMain.PERLINNOISE,
-                lines_clip   : TesseractMain.LINESCLIP,
-                tiles_test_clip   : TesseractMain.TILESTEST,
+                color_wash   : TesseractApp.COLORWASH,
+                node_scan    : TesseractApp.NODESCAN,
+                solid_color  : TesseractApp.SOLID,
+                video        : TesseractApp.VIDEO,
+                particle_clip: TesseractApp.PARTICLE,
+                perlin_noise : TesseractApp.PERLINNOISE,
+                lines_clip   : TesseractApp.LINESCLIP,
+                tiles_test_clip   : TesseractApp.TILESTEST,
         ]
 
         Integer enumVal = clipIdMap[clipId]
@@ -205,15 +205,15 @@ public class Util {
         // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
         // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
         List<Scene> scenes = [
-                new Scene(1, "Yellow", TesseractMain.SOLID, [0, 0, 0, 1, 1, 0, 0, 0] as float[]),
-                new Scene(2, "Purple", TesseractMain.SOLID, [0, 0, 0, 1, 0, 1, 0, 0] as float[]),
-                new Scene(3, "Red", TesseractMain.SOLID, [0, 0, 0, 1, 0, 0, 0, 0] as float[]),
-                new Scene(4, "Color Wash", TesseractMain.COLORWASH, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0] as float[]),
-                new Scene(5, "Node Scanner", TesseractMain.NODESCAN, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
-                new Scene(6, "Particles", TesseractMain.PARTICLE, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
-                new Scene(7, "PerlinNoise", TesseractMain.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
-                new Scene(8, "LinesClip", TesseractMain.LINESCLIP, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
-                new Scene(9, "Tiles Test", TesseractMain.TILESTEST, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
+                new Scene(1, "Yellow", TesseractApp.SOLID, [0, 0, 0, 1, 1, 0, 0, 0] as float[]),
+                new Scene(2, "Purple", TesseractApp.SOLID, [0, 0, 0, 1, 0, 1, 0, 0] as float[]),
+                new Scene(3, "Red", TesseractApp.SOLID, [0, 0, 0, 1, 0, 0, 0, 0] as float[]),
+                new Scene(4, "Color Wash", TesseractApp.COLORWASH, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0] as float[]),
+                new Scene(5, "Node Scanner", TesseractApp.NODESCAN, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
+                new Scene(6, "Particles", TesseractApp.PARTICLE, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
+                new Scene(7, "PerlinNoise", TesseractApp.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
+                new Scene(8, "LinesClip", TesseractApp.LINESCLIP, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
+                new Scene(9, "Tiles Test", TesseractApp.TILESTEST, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
         ]
 
         // Check to see if we have videos before blindly trying to create scenes.  TODO: improve this logic.  do better at removing scenes for video files that no longer exist
@@ -222,7 +222,7 @@ public class Util {
             int nextIdx = 10
 
             List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
-                Scene s = new Scene(nextIdx, videoPath, TesseractMain.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
+                Scene s = new Scene(nextIdx, videoPath, TesseractApp.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
                 nextIdx++
                 s
             }

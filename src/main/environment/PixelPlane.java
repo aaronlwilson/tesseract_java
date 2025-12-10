@@ -2,11 +2,9 @@ package environment;
 
 
 import hardware.*;
-import processing.core.PApplet;
+import java.util.Arrays;
 
 public class PixelPlane {
-
-    private PApplet p;
 
     public Tile[][] pixelPlanePanelTileArray = new Tile[3][3];
 
@@ -14,9 +12,15 @@ public class PixelPlane {
     // I had to invert the matrix to get the transformations to work, not sure why... aliens
     //int layoutMatrix[][];
 
-    public PixelPlane(PApplet pApplet) {
-        p = pApplet;
+    public PixelPlane() {
     }//end constructor
+
+    // Helper method to concatenate Node arrays (replaces Processing's concat)
+    private static Node[] concatNodes(Node[] a, Node[] b) {
+        Node[] result = Arrays.copyOf(a, a.length + b.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
 
     private static void flipMatrixHorizontal(int mat[][]) {
         int N = mat.length;
@@ -233,7 +237,7 @@ public class PixelPlane {
                 pixelPusher.tileArray[0] = tileApa;
 
                 Node[] tileNodes = tileApa.zigZagNodes(xTilePos, yTilePos, startZ);
-                planeNodes = (Node[]) p.concat(planeNodes, tileNodes);
+                planeNodes = concatNodes(planeNodes, tileNodes);
 
                 pixelPlanePanelTileArray[i][j] = tileApa;
             }
@@ -296,7 +300,7 @@ public class PixelPlane {
                 rabbit.tileArray[tileId - 1] = tile;
 
                 Node[] tileNodes = tile.getNodeLayout(xTilePos, yTilePos, startZ);
-                planeNodes = (Node[]) p.concat(planeNodes, tileNodes);
+                planeNodes = concatNodes(planeNodes, tileNodes);
 
                 pixelPlanePanelTileArray[i][j] = tile;
             }

@@ -1,6 +1,6 @@
 package show;
 
-import app.TesseractMain;
+import app.TesseractApp;
 import clip.*;
 import stores.SceneStore;
 import util.Util;
@@ -96,28 +96,28 @@ public class Scene {
 
         AbstractClip newClip = new AbstractClip();
         switch (clipClass) {
-            case TesseractMain.NODESCAN:
+            case TesseractApp.NODESCAN:
                 newClip = new NodeScanClip();
                 break;
-            case TesseractMain.SOLID:
+            case TesseractApp.SOLID:
                 newClip = new SolidColorClip();
                 break;
-            case TesseractMain.COLORWASH:
+            case TesseractApp.COLORWASH:
                 newClip = new ColorWashClip();
                 break;
-            case TesseractMain.VIDEO:
-                newClip = new VideoClip();
+            case TesseractApp.VIDEO:
+                newClip = new JavaCVVideoClip();
                 break;
-            case TesseractMain.PARTICLE:
+            case TesseractApp.PARTICLE:
                 newClip = new ParticleClip();
                 break;
-            case TesseractMain.PERLINNOISE:
+            case TesseractApp.PERLINNOISE:
                 newClip = new PerlinNoiseClip();
                 break;
-            case TesseractMain.LINESCLIP:
+            case TesseractApp.LINESCLIP:
                 newClip = new LinesClip();
                 break;
-            case TesseractMain.TILESTEST:
+            case TesseractApp.TILESTEST:
                 newClip = new TilesTestClip();
                 break;
 

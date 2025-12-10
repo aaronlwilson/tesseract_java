@@ -4,7 +4,6 @@ import com.heroicrobot.dropbit.registry.*;
 import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 import com.heroicrobot.dropbit.devices.pixelpusher.Strip;
 import java.util.*;
-import processing.core.*;
 
 class PixelPusherObserver implements Observer {
   public boolean hasStrips = false;

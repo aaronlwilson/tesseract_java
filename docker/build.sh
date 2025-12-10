@@ -33,6 +33,6 @@ cp -R \
   src \
   $tmp_repo_dir
 
-docker build -t tesseractpixel/tesseract-java -f "${script_path}/Dockerfile" "${script_path}"
+docker build --platform linux/amd64 -t tesseractpixel/tesseract-java -f "${script_path}/Dockerfile" "${script_path}"
 
 rm -rf $tmp_repo_dir

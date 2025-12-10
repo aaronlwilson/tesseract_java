@@ -1,6 +1,6 @@
 package state
 
-import app.TesseractMain
+import app.TesseractApp
 import clip.AbstractClip
 import clip.ClipMetadata
 import org.java_websocket.WebSocketImpl
@@ -39,7 +39,7 @@ class StateManager {
 
   // Returns a reference to the live clip instance.  this might be currentScene or nextScene on the channel, depending if we are transitioning
   private AbstractClip getActiveClip() {
-    TesseractMain.getMain().channel1.getActiveClip()
+    TesseractApp.get().channel1.getActiveClip()
   }
 
   // Get the current values of a clip

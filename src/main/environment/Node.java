@@ -31,4 +31,13 @@ public class Node  {
     fixture = theFixture;
   }
 
+  // Default constructor for temporary nodes
+  public Node() {
+    x = 0;
+    y = 0;
+    z = 0;
+    index = 0;
+    fixture = null;
+  }
+
 }

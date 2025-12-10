@@ -1,0 +1,1654 @@
+# LibGDX Migration Implementation Plan
+
+**Generated**: 2025-12-10-012838
+**Source STATUS**: STATUS-libgdx-migration.md (2025-12-10)
+**Spec**: tesseract_java - Processing-based LED visualization system
+**Target**: Complete migration from Processing 3.x/4.x to LibGDX 1.12.x
+
+---
+
+## Executive Summary
+
+**Migration Scope**: Complete architectural rewrite
+**Affected Code**: ~2,500 lines across 16 files (45% of codebase)
+**Complexity**: VERY HIGH
+**Estimated Effort**: 170-300 complexity units
+**Risk Level**: CRITICAL - Visual output must match exactly for LED mapping correctness
+
+### Why This Plan Exists
+
+Per STATUS-libgdx-migration.md evaluation, the user has identified critical issues with Processing:
+- ARM compatibility issues (though Processing 4 has ARM64 support)
+- Desire for modern shader support
+- Need for headless Raspberry Pi deployment
+- Processing maintenance concerns
+
+This plan provides a **realistic, phased approach** to migration while acknowledging the **VERY HIGH** risk and complexity involved.
+
+---
+
+## Architecture Strategy
+
+### LibGDX Application Structure
+
+**Current (Processing)**:
+```
+TesseractMain extends PApplet
+├── settings() - window config
+├── setup() - initialization
+├── draw() - render loop (30fps)
+└── Event handlers (mousePressed, keyPressed)
+```
+
+**Target (LibGDX)**:
+```
+TesseractMain implements ApplicationListener
+├── create() - initialization
+├── resize(w, h) - window resize
+├── render() - render loop
+├── pause() - lifecycle
+├── resume() - lifecycle
+└── dispose() - cleanup
+
+TesseractRenderer (new class)
+├── Camera management
+├── ModelBatch for 3D rendering
+├── ShapeRenderer for primitives
+├── SpriteBatch for text/UI
+
+TesseractInputProcessor implements InputProcessor
+└── All input events
+```
+
+### Key Architectural Changes
+
+**1. Separation of Concerns**
+- **TesseractMain**: Application lifecycle and business logic
+- **TesseractRenderer**: All 3D rendering (replaces OnScreen.java)
+- **TesseractInputProcessor**: Input handling
+- **MathUtils**: Static utilities (replaces PApplet static methods)
+- **NoiseGenerator**: Perlin noise implementation
+
+**2. Rendering Pipeline**
+```
+Processing (Immediate Mode):
+  draw() {
+    pushMatrix()
+    translate(x,y,z)
+    point(x,y,z)  // Draws immediately
+    popMatrix()
+  }
+
+LibGDX (Retained Mode):
+  render() {
+    camera.update()
+    batch.begin(camera)
+    batch.render(model)  // Renders retained geometry
+    batch.end()
+  }
+```
+
+**3. Headless Support Strategy**
+```java
+// Desktop mode (with window)
+LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+config.width = 1400;
+config.height = 800;
+new LwjglApplication(new TesseractMain(), config);
+
+// Headless mode (Raspberry Pi, server)
+HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
+new HeadlessApplication(new TesseractMain(), config);
+```
+
+**Design Decision**: Use runtime flag to switch modes
+```java
+boolean headless = System.getProperty("headless") != null;
+if (headless) {
+    // Skip renderer initialization
+    // Run clip computation only
+} else {
+    // Full rendering pipeline
+}
+```
+
+---
+
+## API Migration Mapping
+
+### Core Processing → LibGDX Equivalents
+
+| Processing API | LibGDX Equivalent | Complexity | Notes |
+|---------------|-------------------|------------|-------|
+| `PApplet` class | `ApplicationListener` | HIGH | Complete paradigm shift |
+| `PVector` | `Vector3` | MEDIUM | Method name changes (mult→scl) |
+| `draw()` | `render()` | HIGH | Lifecycle differences |
+| `settings()` | `LwjglApplicationConfiguration` | MEDIUM | Config object instead |
+| `setup()` | `create()` | LOW | Nearly 1:1 mapping |
+
+### 3D Rendering APIs
+
+| Processing | LibGDX | Implementation Strategy |
+|-----------|--------|------------------------|
+| `background(r,g,b)` | `Gdx.gl.glClearColor() + glClear()` | Direct OpenGL |
+| `ortho()` | `camera = new OrthographicCamera()` | Camera object |
+| `translate(x,y,z)` | `camera.translate()` or `modelInstance.transform.translate()` | Camera or model transform |
+| `rotateX/Y/Z(angle)` | `camera.rotateAround()` or `transform.rotate()` | Transform API |
+| `pushMatrix()/popMatrix()` | Manual matrix stack OR model hierarchy | Implement stack manually |
+| `point(x,y,z)` | `ShapeRenderer.point()` or custom mesh | Use ShapeRenderer |
+| `line(x1,y1,z1,x2,y2,z2)` | `ShapeRenderer.line()` | Use ShapeRenderer |
+| `box(w,h,d)` | `ModelBuilder.createBox()` | Create model instances |
+| `stroke(r,g,b)` | `shapeRenderer.setColor()` | Per-draw-call color |
+| `strokeWeight(w)` | `Gdx.gl.glLineWidth()` | OpenGL call |
+| `screenX/Y/Z(x,y,z)` | `camera.project(Vector3)` | Camera projection method |
+| `text(str, x, y)` | `BitmapFont.draw()` with `SpriteBatch` | Separate text rendering |
+| `applyMatrix()` | `transform.set(Matrix4)` | Direct matrix manipulation |
+
+### Math & Utility APIs
+
+| Processing | LibGDX | Notes |
+|-----------|--------|-------|
+| `PApplet.map(val, s1, e1, s2, e2)` | `MathUtils.map(val, s1, e1, s2, e2)` | Create custom utility |
+| `PApplet.constrain(val, min, max)` | `MathUtils.clamp(val, min, max)` | Built-in |
+| `PApplet.dist(x1,y1,x2,y2)` | `Vector2.dst(v1, v2)` | Use vector methods |
+| `PApplet.floor(x)` | `MathUtils.floor(x)` | Built-in |
+| `PApplet.sin/cos(x)` | `MathUtils.sin/cos(x)` | Built-in |
+| `PApplet.noise(x,y,z)` | **CUSTOM IMPLEMENTATION** | Must implement Perlin noise |
+| `PApplet.noiseDetail(lod, falloff)` | **CUSTOM IMPLEMENTATION** | Part of noise generator |
+
+### Color APIs
+
+| Processing | LibGDX | Notes |
+|-----------|--------|-------|
+| `color(r,g,b)` | `Color.toIntBits(r,g,b,a)` or `new Color(r,g,b,a)` | Float 0-1 vs int 0-255 |
+| `colorMode(HSB)` | **CUSTOM IMPLEMENTATION** | LibGDX has no HSB mode |
+| `red(color)` | `(color >> 16) & 0xFF` | Bit manipulation |
+| `green(color)` | `(color >> 8) & 0xFF` | Bit manipulation |
+| `blue(color)` | `color & 0xFF` | Bit manipulation |
+
+### Image/Texture APIs
+
+| Processing | LibGDX | Notes |
+|-----------|--------|-------|
+| `PImage` | `Texture` or `Pixmap` | Use Texture for display, Pixmap for pixels |
+| `loadImage(path)` | `new Texture(Gdx.files.internal(path))` | File handle API |
+| `image.pixels[]` | `pixmap.getPixel(x, y)` | Per-pixel access |
+
+### Event APIs
+
+| Processing | LibGDX | Notes |
+|-----------|--------|-------|
+| `mousePressed()` method | `InputProcessor.touchDown()` | Interface implementation |
+| `keyPressed()` method | `InputProcessor.keyDown()` | Interface implementation |
+| `mouseX/mouseY` fields | `Gdx.input.getX()/getY()` | Polling instead of fields |
+
+---
+
+## Perlin Noise Implementation Strategy
+
+**Critical Requirement**: Noise output must match Processing's implementation EXACTLY for visual consistency.
+
+### Option 1: Port Processing's Noise (RECOMMENDED)
+**Approach**: Extract Processing's noise implementation and port to standalone class
+**Pros**:
+- Guaranteed identical output
+- Can verify pixel-perfect match
+**Cons**:
+- License compatibility check needed
+- Must maintain custom code
+
+**Implementation**:
+```java
+public class ProcessingPerlinNoise {
+    private int PERLIN_YWRAPB = 4;
+    private int PERLIN_YWRAP = 1<<PERLIN_YWRAPB;
+    private int PERLIN_ZWRAPB = 8;
+    private int PERLIN_ZWRAP = 1<<PERLIN_ZWRAPB;
+    private int PERLIN_SIZE = 4095;
+
+    private float[] perlin;
+    private int perlin_octaves = 4;
+    private float perlin_amp_falloff = 0.5f;
+
+    // Port Processing's noise() and noiseDetail() methods
+}
+```
+
+### Option 2: Use LibGDX Community Noise
+**Approach**: Use gdx-noise library or SimplexNoise
+**Pros**:
+- Maintained library
+- Potentially faster
+**Cons**:
+- Output likely differs from Processing
+- Must recalibrate all animations
+
+### Option 3: Test-Driven Noise Matching
+**Approach**: Generate noise value test cases from Processing, implement until tests pass
+**Pros**:
+- Validates correctness objectively
+- Documents expected behavior
+**Cons**:
+- Time-consuming
+- May not catch all edge cases
+
+**RECOMMENDATION**: Option 1 (port Processing's noise) with test validation.
+
+---
+
+## Phased Migration Plan
+
+### Phase 0: Pre-Migration (CRITICAL - DO FIRST)
+
+**Duration**: 20-30 complexity units
+**Purpose**: Risk mitigation and validation
+**Status**: Not Started
+
+#### P0.1: Create Proof of Concept
+**Effort**: HIGH (15-20 units)
+**Dependencies**: None
+
+**Description**:
+Implement ONE simple clip (PerlinNoiseClip) in LibGDX as standalone test project. This validates:
+- LibGDX can render point clouds correctly
+- Perlin noise can be matched
+- Performance is acceptable
+- Visual output matches Processing
+
+**Acceptance Criteria**:
+- [ ] Standalone LibGDX project created
+- [ ] PerlinNoiseClip ported to LibGDX APIs
+- [ ] Perlin noise implementation passes comparison tests
+- [ ] Side-by-side screenshot comparison with Processing version
+- [ ] Performance benchmarked (frame rate, memory)
+- [ ] Differences documented and evaluated
+- [ ] GO/NO-GO decision made based on POC results
+
+**Technical Notes**:
+- Use same noise seed for comparison
+- Capture 100+ frames from both versions
+- Use image diff tools to validate visual parity
+- If any significant differences found, STOP and re-evaluate
+
+**Risk**: If POC fails or shows unacceptable differences, entire migration approach needs reconsideration.
+
+#### P0.2: Extract Rendering Interfaces
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: None (can be done in parallel with P0.1)
+
+**Description**:
+Refactor current Processing code to separate business logic from rendering. Create interfaces that both Processing and LibGDX can implement.
+
+**Acceptance Criteria**:
+- [ ] `IRenderer` interface created with draw methods
+- [ ] OnScreen.java refactored to implement IRenderer
+- [ ] TesseractMain uses IRenderer instead of direct OnScreen
+- [ ] Clip classes use abstract vector/math APIs where possible
+- [ ] All tests still pass with refactored code
+- [ ] No functionality changes, only structure
+
+**Technical Notes**:
+```java
+public interface IRenderer {
+    void initialize();
+    void render();
+    void drawPoint(float x, float y, float z, int r, int g, int b);
+    void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
+    void drawText(String text, float x, float y);
+    void setCamera(float rotX, float rotY);
+    Vector3 project(float x, float y, float z);
+}
+```
+
+**Risk**: Low - This improves architecture regardless of migration decision.
+
+---
+
+### Phase 1: Core Infrastructure
+
+**Duration**: 50-70 complexity units
+**Purpose**: Build LibGDX foundation
+**Status**: Not Started
+**Prerequisites**: Phase 0 POC successful (GO decision)
+
+#### P1.1: Build System Migration
+**Effort**: MEDIUM (6-8 units)
+**Dependencies**: None
+
+**Description**:
+Update build.gradle to support both Processing and LibGDX during transition. Add LibGDX dependencies, configure multi-platform natives.
+
+**Acceptance Criteria**:
+- [ ] LibGDX dependencies added to build.gradle
+- [ ] All platform natives configured (macOS ARM64/x64, Linux x64/ARM64/ARMhf)
+- [ ] Processing dependencies retained (for parallel implementation)
+- [ ] Fat jar task updated for LibGDX natives
+- [ ] Build succeeds with both dependencies present
+- [ ] No dependency conflicts
+
+**Technical Notes**:
+```gradle
+ext {
+    gdxVersion = '1.12.0'
+}
+
+dependencies {
+    // LibGDX core
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+
+    // Platform natives
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+    // Keep Processing during transition
+    implementation fileTree(dir: 'lib', include: ['**/*.jar'])
+}
+```
+
+**File**: `/Users/bmf/code/brandon-fryslie_tesseract_java/build.gradle`
+
+#### P1.2: Utility Classes
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: None
+
+**Description**:
+Create LibGDX-based utility classes to replace Processing static methods. These are used throughout the codebase.
+
+**Acceptance Criteria**:
+- [ ] `TesseractMathUtils.java` created with map, constrain, dist methods
+- [ ] `ProcessingPerlinNoise.java` created with noise() and noiseDetail()
+- [ ] `ColorUtils.java` created for RGB/HSB conversion
+- [ ] Unit tests for all utility methods
+- [ ] Output matches Processing for 1000+ test cases
+- [ ] Perlin noise specifically validated against Processing's output
+
+**Technical Notes**:
+```java
+public class TesseractMathUtils {
+    public static float map(float value, float start1, float stop1, float start2, float stop2) {
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    }
+
+    public static float constrain(float value, float min, float max) {
+        return MathUtils.clamp(value, min, max);
+    }
+
+    public static float dist(float x1, float y1, float x2, float y2) {
+        return Vector2.dst(x1, y1, x2, y2);
+    }
+}
+
+public class ColorUtils {
+    // HSB to RGB conversion
+    public static int colorHSB(float h, float s, float b) {
+        // Implement HSB→RGB algorithm matching Processing
+    }
+
+    // RGB color creation
+    public static int colorRGB(int r, int g, int b) {
+        return ((0xFF << 24) | (r << 16) | (g << 8) | b);
+    }
+}
+```
+
+**Files**:
+- New: `src/main/util/TesseractMathUtils.java`
+- New: `src/main/util/ProcessingPerlinNoise.java`
+- New: `src/main/util/ColorUtils.java`
+- New: `src/test/util/UtilityClassesTest.groovy`
+
+#### P1.3: Vector3 Migration
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: P1.2 (utility classes)
+
+**Description**:
+Replace all PVector usage with LibGDX Vector3. This affects physics calculations in particle system and clips.
+
+**Acceptance Criteria**:
+- [ ] All PVector imports removed
+- [ ] All PVector instances replaced with Vector3
+- [ ] `.mult()` calls changed to `.scl()`
+- [ ] `.copy()` calls changed to `new Vector3(v)`
+- [ ] `PVector.dist()` changed to `v1.dst(v2)`
+- [ ] Physics behavior tested and validated
+- [ ] Unit tests for Particle physics
+
+**Technical Notes**:
+- PVector and Vector3 are similar but have method name differences
+- Must update ~30+ locations
+- Pay special attention to physics in Particle.java, ParticleClip.java, LinesClip.java
+
+**Files**:
+- Modify: `src/main/clip/Particle.java`
+- Modify: `src/main/clip/ParticleClip.java`
+- Modify: `src/main/clip/LinesClip.java`
+- Modify: `src/main/app/TesseractMain.java` (particleX/Y/Z fields)
+
+#### P1.4: Application Lifecycle
+**Effort**: HIGH (12-16 units)
+**Dependencies**: P1.1 (build system)
+
+**Description**:
+Create LibGDX ApplicationListener implementation as alternative to PApplet. Support both windowed and headless modes.
+
+**Acceptance Criteria**:
+- [ ] `TesseractLibGDXMain.java` created implementing ApplicationListener
+- [ ] create() method mirrors setup() logic
+- [ ] render() method mirrors draw() logic (without rendering)
+- [ ] Headless mode detection working
+- [ ] Configuration loading functional
+- [ ] WebSocket server initializes
+- [ ] All business logic executes without rendering
+- [ ] Unit tests for headless mode
+
+**Technical Notes**:
+```java
+public class TesseractLibGDXMain implements ApplicationListener {
+    private boolean headless;
+    private TesseractRenderer renderer;
+    private UDPModel udpModel;
+    private Stage stage;
+    private Channel channel1;
+
+    @Override
+    public void create() {
+        // Mirror TesseractMain.setup() logic
+        headless = Gdx.app.getType() == Application.ApplicationType.HeadlessDesktop;
+
+        if (!headless) {
+            renderer = new TesseractRenderer();
+        }
+
+        // Rest of initialization...
+    }
+
+    @Override
+    public void render() {
+        // Mirror TesseractMain.draw() logic
+        channel1.run();
+
+        // Compute node colors...
+
+        if (!headless && renderer != null) {
+            renderer.render(stage.nodes);
+        }
+
+        udpModel.send();
+    }
+
+    public static void main(String[] args) {
+        boolean headless = System.getProperty("headless") != null;
+
+        if (headless) {
+            HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
+            new HeadlessApplication(new TesseractLibGDXMain(), config);
+        } else {
+            LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+            config.width = 1400;
+            config.height = 800;
+            config.title = "Tesseract LED Visualizer";
+            new LwjglApplication(new TesseractLibGDXMain(), config);
+        }
+    }
+}
+```
+
+**File**: New `src/main/app/TesseractLibGDXMain.java`
+
+#### P1.5: Input Handling
+**Effort**: MEDIUM (6-8 units)
+**Dependencies**: P1.4 (application lifecycle)
+
+**Description**:
+Implement InputProcessor to replace Processing's event methods (mousePressed, keyPressed).
+
+**Acceptance Criteria**:
+- [ ] `TesseractInputProcessor.java` created
+- [ ] touchDown() handles mouse press
+- [ ] touchUp() handles mouse release
+- [ ] keyDown() handles key press
+- [ ] Mouse drag events captured
+- [ ] Input processor registered with Gdx.input
+- [ ] All existing keyboard shortcuts functional ('s' for sending, 'd' for drawing)
+
+**Technical Notes**:
+```java
+public class TesseractInputProcessor implements InputProcessor {
+    private TesseractLibGDXMain app;
+    private TesseractRenderer renderer;
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (renderer != null) {
+            renderer.handleMousePressed(screenX, screenY);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.S) {
+            app.toggleSending();
+        } else if (keycode == Input.Keys.D) {
+            app.toggleDrawing();
+        }
+        return true;
+    }
+
+    // ... other InputProcessor methods
+}
+```
+
+**File**: New `src/main/app/TesseractInputProcessor.java`
+
+---
+
+### Phase 2: 3D Rendering System
+
+**Duration**: 60-80 complexity units
+**Purpose**: Replace Processing's immediate-mode rendering with LibGDX
+**Status**: Not Started
+**Prerequisites**: Phase 1 complete
+
+#### P2.1: Camera System
+**Effort**: HIGH (12-16 units)
+**Dependencies**: P1.4 (application lifecycle), P1.5 (input handling)
+
+**Description**:
+Implement LibGDX camera to replace Processing's automatic projection. Support orthographic projection and mouse-based rotation matching OnScreen.java behavior.
+
+**Acceptance Criteria**:
+- [ ] `TesseractCamera.java` created managing OrthographicCamera
+- [ ] Orthographic projection configured matching Processing's ortho()
+- [ ] Mouse drag rotation working (matching OnScreen.java easing)
+- [ ] Camera.project() method replaces screenX/screenY
+- [ ] Camera positioned and oriented correctly
+- [ ] View frustum configured for stage bounding box
+- [ ] Manual testing confirms camera behavior matches Processing
+
+**Technical Notes**:
+```java
+public class TesseractCamera {
+    private OrthographicCamera camera;
+    private float xrot, yrot;
+    private float targetXrot, targetYrot;
+    private Vector3 tmpVec = new Vector3();
+
+    public TesseractCamera(int viewportWidth, int viewportHeight) {
+        camera = new OrthographicCamera(viewportWidth, viewportHeight);
+        camera.near = 1f;
+        camera.far = 10000f;
+        camera.position.set(0, 0, 500);
+        camera.lookAt(0, 0, 0);
+        camera.update();
+    }
+
+    public void update(float deltaTime) {
+        // Implement easing like OnScreen.java
+        float diff = xrot - targetXrot;
+        if (Math.abs(diff) > 0.01f) {
+            xrot -= diff / 6.0f;
+        }
+        // ... same for yrot
+
+        camera.direction.set(0, 0, -1);
+        camera.up.set(0, 1, 0);
+        camera.rotateAround(Vector3.Zero, new Vector3(1,0,0), xrot);
+        camera.rotateAround(Vector3.Zero, new Vector3(0,1,0), yrot);
+        camera.update();
+    }
+
+    public Vector2 project(float x, float y, float z) {
+        tmpVec.set(x, y, z);
+        camera.project(tmpVec);
+        return new Vector2(tmpVec.x, tmpVec.y);
+    }
+}
+```
+
+**File**: New `src/main/rendering/TesseractCamera.java`
+
+#### P2.2: Shape Renderer for Points/Lines
+**Effort**: HIGH (12-16 units)
+**Dependencies**: P2.1 (camera system)
+
+**Description**:
+Implement point and line rendering using LibGDX ShapeRenderer to replace Processing's point() and line() calls.
+
+**Acceptance Criteria**:
+- [ ] ShapeRenderer configured for 3D rendering
+- [ ] Point rendering functional with per-point colors
+- [ ] Line rendering functional (for axes, bounding box)
+- [ ] strokeWeight() replacement working (glLineWidth)
+- [ ] Performance acceptable (30fps with 1000+ points)
+- [ ] Visual output matches Processing screenshots
+- [ ] Depth sorting working correctly
+
+**Technical Notes**:
+```java
+public class TesseractShapeRenderer {
+    private ShapeRenderer shapeRenderer;
+    private TesseractCamera camera;
+
+    public void begin() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Point);
+        shapeRenderer.setProjectionMatrix(camera.getCamera().combined);
+    }
+
+    public void drawPoint(float x, float y, float z, Color color) {
+        shapeRenderer.setColor(color);
+        shapeRenderer.point(x, y, z);
+    }
+
+    public void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, Color color) {
+        shapeRenderer.setColor(color);
+        shapeRenderer.line(x1, y1, z1, x2, y2, z2);
+    }
+
+    public void end() {
+        shapeRenderer.end();
+    }
+}
+```
+
+**File**: New `src/main/rendering/TesseractShapeRenderer.java`
+
+#### P2.3: Renderer Implementation
+**Effort**: VERY HIGH (20-30 units)
+**Dependencies**: P2.1 (camera), P2.2 (shape renderer)
+
+**Description**:
+Create complete rendering system to replace OnScreen.java. Handle all 3D visualization including nodes, axes, bounding box, text, and framerate display.
+
+**Acceptance Criteria**:
+- [ ] `TesseractRenderer.java` created implementing IRenderer interface
+- [ ] All OnScreen.java drawing logic ported
+- [ ] Axes drawing functional (red/green/blue lines)
+- [ ] Bounding box drawing functional
+- [ ] Node point cloud rendering functional with colors
+- [ ] Text rendering working (FPS, status messages)
+- [ ] Camera rotation and positioning matching OnScreen.java
+- [ ] Screen projection for node.screenX/Y working
+- [ ] Performance at 30fps with full stage
+- [ ] Side-by-side visual comparison with Processing version passes
+
+**Technical Notes**:
+```java
+public class TesseractRenderer implements IRenderer {
+    private TesseractCamera camera;
+    private TesseractShapeRenderer shapeRenderer;
+    private SpriteBatch spriteBatch;
+    private BitmapFont font;
+    private boolean drawingEnabled = true;
+
+    @Override
+    public void render(Node[] nodes) {
+        Gdx.gl.glClearColor(20f/255f, 20f/255f, 20f/255f, 1f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+
+        camera.update(Gdx.graphics.getDeltaTime());
+
+        if (!drawingEnabled) {
+            drawFramerate();
+            return;
+        }
+
+        shapeRenderer.begin();
+
+        // Draw axes
+        drawAxes(600);
+
+        // Draw bounding box
+        drawBoundingBox(stage);
+
+        // Draw all nodes as points
+        for (Node node : nodes) {
+            Color color = new Color(node.r/255f, node.g/255f, node.b/255f, 1f);
+            shapeRenderer.drawPoint(node.x, node.y, node.z, color);
+
+            // Update screen coordinates
+            Vector2 screenPos = camera.project(node.x, node.y, node.z);
+            node.screenX = screenPos.x;
+            node.screenY = screenPos.y;
+        }
+
+        shapeRenderer.end();
+
+        drawFramerate();
+    }
+
+    private void drawFramerate() {
+        spriteBatch.begin();
+        font.draw(spriteBatch, "FPS " + Gdx.graphics.getFramesPerSecond(),
+                  Gdx.graphics.getWidth() - 60, 20);
+        spriteBatch.end();
+    }
+}
+```
+
+**File**: New `src/main/rendering/TesseractRenderer.java`
+
+#### P2.4: Matrix Transformation System
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: P2.3 (renderer)
+
+**Description**:
+Implement matrix stack and custom rotation (rotateXYZ) to replace Processing's pushMatrix/popMatrix and applyMatrix.
+
+**Acceptance Criteria**:
+- [ ] Manual matrix stack implemented
+- [ ] pushMatrix()/popMatrix() equivalent methods working
+- [ ] rotateXYZ() custom rotation for Tesseract cube working
+- [ ] Matrix transformations applied correctly to camera/models
+- [ ] Tesseract cube orientation matches Processing output
+- [ ] No matrix leaks or stack issues
+
+**Technical Notes**:
+```java
+public class MatrixStack {
+    private Array<Matrix4> stack = new Array<>();
+    private Matrix4 current = new Matrix4();
+
+    public void pushMatrix() {
+        stack.add(current.cpy());
+    }
+
+    public void popMatrix() {
+        if (stack.size > 0) {
+            current.set(stack.pop());
+        }
+    }
+
+    public void rotateXYZ(float xx, float yy, float zz) {
+        float cx = MathUtils.cos(xx);
+        float cy = MathUtils.cos(yy);
+        float cz = MathUtils.cos(zz);
+        float sx = MathUtils.sin(xx);
+        float sy = MathUtils.sin(yy);
+        float sz = MathUtils.sin(zz);
+
+        Matrix4 rotMat = new Matrix4();
+        // Set matrix values matching OnScreen.java rotateXYZ
+        current.mul(rotMat);
+    }
+}
+```
+
+**File**: New `src/main/rendering/MatrixStack.java`
+
+---
+
+### Phase 3: Clip System Migration
+
+**Duration**: 50-70 complexity units
+**Purpose**: Port all animation clips to LibGDX APIs
+**Status**: Not Started
+**Prerequisites**: Phase 1 complete, Phase 2 for visual testing
+
+#### P3.1: Abstract Clip Refactoring
+**Effort**: MEDIUM (6-8 units)
+**Dependencies**: P1.2 (utility classes), P1.3 (vector migration)
+
+**Description**:
+Update AbstractClip base class to use LibGDX utilities instead of Processing. Ensure all clips can access utility methods.
+
+**Acceptance Criteria**:
+- [ ] AbstractClip no longer depends on PApplet
+- [ ] References to `_myMain` for utilities replaced with static utility classes
+- [ ] All subclasses still compile
+- [ ] No behavioral changes
+- [ ] Tests pass
+
+**Technical Notes**:
+- Replace `_myMain.noise()` with `ProcessingPerlinNoise.noise()`
+- Replace `_myMain.color()` with `ColorUtils.colorRGB()`
+- Replace `PApplet.map()` with `TesseractMathUtils.map()`
+
+**File**: Modify `src/main/clip/AbstractClip.java`
+
+#### P3.2: PerlinNoiseClip Migration
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: P3.1 (abstract clip), P1.2 (perlin noise implementation)
+
+**Description**:
+Port PerlinNoiseClip to use LibGDX utilities. This is the POC clip, so should be straightforward if Phase 0 POC succeeded.
+
+**Acceptance Criteria**:
+- [ ] All Processing API calls removed
+- [ ] Uses ProcessingPerlinNoise for noise generation
+- [ ] Uses ColorUtils for color operations
+- [ ] Uses TesseractMathUtils for map/floor
+- [ ] Visual output matches Processing version pixel-perfect
+- [ ] Performance acceptable
+- [ ] Unit tests for noise calculation
+
+**Technical Notes**:
+```java
+// Before (Processing)
+float n = _myMain.noise(nX, nY, _theta);
+int c = _myMain.color(r, g, b);
+
+// After (LibGDX)
+float n = ProcessingPerlinNoise.noise(nX, nY, _theta);
+int c = ColorUtils.colorRGB(r, g, b);
+```
+
+**File**: Modify `src/main/clip/PerlinNoiseClip.java`
+
+#### P3.3: Particle Physics Migration
+**Effort**: MEDIUM (6-8 units)
+**Dependencies**: P1.3 (Vector3 migration)
+
+**Description**:
+Update Particle.java to use Vector3 instead of PVector. Ensure physics calculations remain identical.
+
+**Acceptance Criteria**:
+- [ ] All PVector references replaced with Vector3
+- [ ] Vector math operations updated (mult→scl, copy→new)
+- [ ] Physics behavior validated (position, velocity, acceleration)
+- [ ] Fade calculation using TesseractMathUtils.map()
+- [ ] Unit tests for particle physics
+- [ ] Visual behavior matches Processing version
+
+**File**: Modify `src/main/clip/Particle.java`
+
+#### P3.4: ParticleClip & LinesClip Migration
+**Effort**: MEDIUM (12-16 units)
+**Dependencies**: P3.1 (abstract clip), P3.3 (particle physics)
+
+**Description**:
+Port ParticleClip and LinesClip to LibGDX utilities. Both use PVector extensively for particle systems.
+
+**Acceptance Criteria**:
+- [ ] All Processing API calls removed from ParticleClip
+- [ ] All Processing API calls removed from LinesClip
+- [ ] Uses TesseractMathUtils for dist, map, constrain
+- [ ] Uses ColorUtils for color operations
+- [ ] Particle movement and behavior matches Processing
+- [ ] Visual output validated
+- [ ] Performance acceptable
+
+**Files**:
+- Modify `src/main/clip/ParticleClip.java`
+- Modify `src/main/clip/LinesClip.java`
+
+#### P3.5: ColorWashClip & SolidColorClip Migration
+**Effort**: LOW-MEDIUM (6-8 units)
+**Dependencies**: P3.1 (abstract clip)
+
+**Description**:
+Port color-based clips. ColorWashClip uses HSB color mode which needs custom implementation.
+
+**Acceptance Criteria**:
+- [ ] ColorWashClip uses ColorUtils.colorHSB() for HSB→RGB conversion
+- [ ] SolidColorClip uses ColorUtils.colorRGB()
+- [ ] No colorMode switching needed
+- [ ] Visual output matches Processing (HSB conversion critical)
+- [ ] Color values validated against Processing output
+
+**Files**:
+- Modify `src/main/clip/ColorWashClip.java`
+- Modify `src/main/clip/SolidColorClip.java`
+
+#### P3.6: NodeScanClip & TilesTestClip Migration
+**Effort**: LOW-MEDIUM (6-8 units)
+**Dependencies**: P3.1 (abstract clip)
+
+**Description**:
+Port utility/test clips to LibGDX APIs.
+
+**Acceptance Criteria**:
+- [ ] All Processing API calls removed
+- [ ] Uses LibGDX utility classes
+- [ ] Visual output validated
+- [ ] Clips functional for testing purposes
+
+**Files**:
+- Modify `src/main/clip/NodeScanClip.java`
+- Modify `src/main/clip/TilesTestClip.java`
+
+#### P3.7: VideoClip Migration
+**Effort**: LOW (4-6 units)
+**Dependencies**: None (already uses JavaCV)
+
+**Description**:
+JavaCVVideoClip already doesn't use Processing APIs except for coordinate mapping. Minimal work needed.
+
+**Acceptance Criteria**:
+- [ ] Any remaining Processing dependencies removed
+- [ ] Uses TesseractMathUtils for coordinate mapping
+- [ ] Video playback functional
+- [ ] No behavioral changes
+
+**File**: Modify `src/main/clip/JavaCVVideoClip.groovy`
+
+---
+
+### Phase 4: Supporting Systems
+
+**Duration**: 20-30 complexity units
+**Purpose**: Migrate remaining components
+**Status**: Not Started
+**Prerequisites**: Phase 3 complete
+
+#### P4.1: Image Loading (Tile.java)
+**Effort**: LOW-MEDIUM (4-6 units)
+**Dependencies**: None
+
+**Description**:
+Replace PImage with LibGDX Pixmap for tile number images.
+
+**Acceptance Criteria**:
+- [ ] PImage replaced with Pixmap
+- [ ] loadImage() replaced with `new Pixmap(Gdx.files.internal())`
+- [ ] Pixel array access updated to pixmap.getPixel()
+- [ ] Tile numbers display correctly
+- [ ] Images loaded from correct data folder
+
+**Technical Notes**:
+```java
+// Before (Processing)
+PImage numberPImage = loadImage("data/numbers/" + number + ".png");
+int pixel = numberPImage.pixels[loc];
+
+// After (LibGDX)
+Pixmap numberPixmap = new Pixmap(Gdx.files.internal("data/numbers/" + number + ".png"));
+int pixel = numberPixmap.getPixel(x, y);
+```
+
+**File**: Modify `src/main/hardware/Tile.java`
+
+#### P4.2: Remove PApplet References
+**Effort**: LOW (4-6 units)
+**Dependencies**: None
+
+**Description**:
+Clean up remaining PApplet references in supporting classes that don't actively use Processing APIs.
+
+**Acceptance Criteria**:
+- [ ] Palette.java no longer references PApplet
+- [ ] Channel.java unused PApplet method removed
+- [ ] PixelPusher.java PApplet reference removed
+- [ ] UDPModel.java unhex() replaced with custom implementation
+- [ ] PixelPlane.java PApplet reference removed
+- [ ] All files compile without Processing imports
+
+**Files**:
+- Modify `src/main/model/Palette.java`
+- Modify `src/main/model/Channel.java`
+- Modify `src/main/hardware/PixelPusher.java`
+- Modify `src/main/output/UDPModel.java`
+- Modify `src/main/environment/PixelPlane.java`
+
+#### P4.3: Scene & Clip Management
+**Effort**: LOW-MEDIUM (4-6 units)
+**Dependencies**: P3.x (all clips migrated)
+
+**Description**:
+Update Scene.java to instantiate LibGDX-based clips. Ensure clip lifecycle works with new application.
+
+**Acceptance Criteria**:
+- [ ] Scene.java creates clips correctly
+- [ ] Clip initialization functional
+- [ ] Clip switching working
+- [ ] No dependency on PApplet instance
+- [ ] All clip types can be instantiated
+
+**File**: Modify `src/main/show/Scene.java`
+
+---
+
+### Phase 5: Testing & Validation
+
+**Duration**: 40-60 complexity units
+**Purpose**: Verify migration correctness
+**Status**: Not Started
+**Prerequisites**: Phases 1-4 complete
+
+#### P5.1: Visual Regression Testing
+**Effort**: HIGH (16-24 units)
+**Dependencies**: All phases complete
+
+**Description**:
+Create comprehensive visual comparison between Processing and LibGDX versions to ensure LED mapping correctness.
+
+**Acceptance Criteria**:
+- [ ] Side-by-side comparison for each clip type
+- [ ] Automated screenshot capture from both versions
+- [ ] Image diff analysis tool created
+- [ ] Pixel-level comparison for critical clips (PerlinNoise, ColorWash)
+- [ ] Acceptable threshold defined for minor differences (e.g., anti-aliasing)
+- [ ] All clips pass visual comparison within threshold
+- [ ] Differences documented and approved
+
+**Technical Notes**:
+- Capture 100+ frames per clip from both versions
+- Use same seeds/parameters for deterministic clips
+- Compare RGB values at node positions
+- Document any unavoidable differences
+
+**Files**:
+- New: `src/test/visual/VisualRegressionTest.groovy`
+- New: `scripts/capture-screenshots.sh`
+
+#### P5.2: Physics & Math Validation
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: P3.3 (particle physics), P1.2 (utility classes)
+
+**Description**:
+Unit tests to validate math operations, physics calculations, and noise generation match Processing.
+
+**Acceptance Criteria**:
+- [ ] 1000+ test cases for TesseractMathUtils methods
+- [ ] 1000+ test cases for Perlin noise (comparing to Processing output)
+- [ ] Unit tests for Particle physics (position, velocity over time)
+- [ ] Vector3 operations validated
+- [ ] Color conversion tests (RGB, HSB)
+- [ ] All tests pass with zero failures
+
+**Files**:
+- New: `src/test/util/MathUtilsValidationTest.groovy`
+- New: `src/test/util/NoiseValidationTest.groovy`
+- New: `src/test/clip/ParticlePhysicsTest.groovy`
+
+#### P5.3: Cross-Platform Testing
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: All phases complete
+
+**Description**:
+Validate LibGDX application runs on all target platforms with correct native library loading.
+
+**Acceptance Criteria**:
+- [ ] Fat jar builds successfully
+- [ ] Application runs on macOS ARM64 (Apple Silicon)
+- [ ] Application runs on macOS x86_64 (Intel)
+- [ ] Application runs on Linux x86_64
+- [ ] Headless mode runs on Linux ARM64 (Raspberry Pi 4)
+- [ ] Headless mode runs on Linux ARMhf (Raspberry Pi 3)
+- [ ] All native libraries load correctly on each platform
+- [ ] Performance acceptable on all platforms (≥30fps)
+- [ ] No platform-specific crashes or errors
+
+**Technical Notes**:
+- Test on physical hardware where possible
+- Use VMs/Docker for platforms without physical access
+- Monitor memory usage and CPU on constrained platforms (Pi)
+
+#### P5.4: Integration Testing
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: All phases complete
+
+**Description**:
+Update existing integration tests and create new ones for LibGDX application lifecycle.
+
+**Acceptance Criteria**:
+- [ ] TesseractAppTest updated for LibGDX (or new LibGDXAppTest created)
+- [ ] Application launches without errors
+- [ ] Configuration loading functional
+- [ ] WebSocket server initializes
+- [ ] UDP output functional
+- [ ] Playlist playback working
+- [ ] Scene switching working
+- [ ] Shutdown hook functional
+- [ ] Headless mode integration test created
+- [ ] All integration tests pass
+
+**Files**:
+- Modify: `src/test/integration/TesseractAppTest.groovy`
+- New: `src/test/integration/LibGDXHeadlessTest.groovy`
+
+---
+
+### Phase 6: Cleanup & Polish
+
+**Duration**: 20-30 complexity units
+**Purpose**: Remove Processing dependencies, optimize, document
+**Status**: Not Started
+**Prerequisites**: Phase 5 validation successful
+
+#### P6.1: Remove Processing Dependencies
+**Effort**: MEDIUM (8-12 units)
+**Dependencies**: All validation complete, confidence in LibGDX version
+
+**Description**:
+Remove all Processing dependencies from build system. Delete old Processing-based code.
+
+**Acceptance Criteria**:
+- [ ] Processing core dependency removed from build.gradle
+- [ ] Processing serial library dependency removed
+- [ ] lib/processing-core/ directory deleted
+- [ ] lib/jogl-* directories cleaned up (keep only what's needed)
+- [ ] TesseractMain.java (PApplet version) deleted or archived
+- [ ] OnScreen.java deleted or archived
+- [ ] VideoClip.groovy deleted (replaced by JavaCVVideoClip)
+- [ ] Processing video library removed
+- [ ] Gradle download tasks for Processing removed
+- [ ] Build succeeds with only LibGDX dependencies
+- [ ] Fat jar size documented (before/after comparison)
+
+**Files**:
+- Modify: `build.gradle`
+- Delete: `src/main/app/TesseractMain.java` (old PApplet version)
+- Delete: `src/main/app/OnScreen.java`
+- Delete: `src/main/clip/VideoClip.groovy`
+- Delete: `lib/processing-core/`, `lib/video/`, `lib/jogl-2.3.2-patched/`
+
+#### P6.2: Performance Optimization
+**Effort**: MEDIUM (6-8 units)
+**Dependencies**: P6.1 (Processing removed)
+
+**Description**:
+Profile and optimize LibGDX rendering pipeline. Ensure performance meets or exceeds Processing version.
+
+**Acceptance Criteria**:
+- [ ] Profiling performed with VisualVM or YourKit
+- [ ] Bottlenecks identified and documented
+- [ ] Frame rate stable at 30fps with full stage (1000+ nodes)
+- [ ] Memory usage acceptable (no leaks over 8+ hour run)
+- [ ] GPU usage monitored and optimized if needed
+- [ ] Batch rendering optimized (minimize state changes)
+- [ ] Performance metrics documented (before/after)
+
+**Technical Notes**:
+- Consider using ModelBatch for geometry instead of ShapeRenderer if performance issues
+- Optimize node iteration and color updates
+- Consider culling off-screen nodes
+
+#### P6.3: Documentation Update
+**Effort**: MEDIUM (6-8 units)
+**Dependencies**: Migration complete
+
+**Description**:
+Update all documentation to reflect LibGDX architecture. Create migration guide for future maintainers.
+
+**Acceptance Criteria**:
+- [ ] README.md updated with LibGDX dependencies
+- [ ] Architecture documentation created/updated
+- [ ] Build instructions updated
+- [ ] Deployment instructions updated (headless mode)
+- [ ] API documentation for new renderer classes
+- [ ] Migration lessons learned documented
+- [ ] Known issues and limitations documented
+
+**Files**:
+- Modify: `README.md`
+- New: `docs/ARCHITECTURE.md`
+- New: `docs/LIBGDX_MIGRATION.md`
+
+---
+
+## Testing Strategy
+
+### Visual Validation
+
+**Critical Requirement**: LED mapping depends on exact pixel colors. Any visual difference could mean lights look wrong.
+
+**Approach**:
+1. **Reference Capture**: Run Processing version, capture screenshots of each clip
+2. **Comparison Capture**: Run LibGDX version with same parameters, capture screenshots
+3. **Image Diff Analysis**: Use tools to compare images pixel-by-pixel
+4. **Acceptance Threshold**: Define acceptable difference (e.g., <1% pixels differ by <5 RGB units)
+
+**Tools**:
+- ImageMagick `compare` command
+- Custom Groovy script for automated comparison
+- Manual visual inspection for edge cases
+
+### Unit Testing
+
+**Coverage Targets**:
+- **Utility Classes**: 100% coverage (critical for correctness)
+  - TesseractMathUtils: All math operations
+  - ProcessingPerlinNoise: Noise generation vs. Processing baseline
+  - ColorUtils: RGB/HSB conversion
+- **Physics**: High coverage
+  - Particle motion over time
+  - Vector operations
+- **Rendering**: Moderate coverage (harder to test OpenGL)
+  - Camera projection calculations
+  - Matrix transformations
+
+### Integration Testing
+
+**Headless Mode Testing** (Critical for Raspberry Pi):
+```java
+@Test
+public void testHeadlessMode() {
+    System.setProperty("headless", "true");
+    TesseractLibGDXMain app = new TesseractLibGDXMain();
+
+    HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
+    new HeadlessApplication(app, config);
+
+    // Wait for initialization
+    Thread.sleep(5000);
+
+    // Verify UDP output happening
+    assertTrue(app.getUdpModel().isSending());
+
+    // Verify no rendering calls
+    assertNull(app.getRenderer());
+}
+```
+
+### Performance Testing
+
+**Benchmarks**:
+- Frame rate with 1000+ nodes: Should maintain 30fps
+- Memory usage over 8 hours: Should be stable (no leaks)
+- CPU usage: Should be reasonable on Raspberry Pi
+- Cold start time: Should be similar to Processing
+
+**Platforms**:
+- macOS ARM64 (Apple Silicon)
+- Linux x86_64 (Intel NUC)
+- Linux ARM64 (Raspberry Pi 4)
+- Linux ARMhf (Raspberry Pi 3)
+
+---
+
+## Risk Mitigation
+
+### CRITICAL RISKS
+
+#### Risk 1: Visual Output Differs from Processing
+**Impact**: LED mapping incorrect, lights look wrong
+**Likelihood**: HIGH
+**Mitigation**:
+- Phase 0 POC validates visual parity before committing
+- Automated visual regression tests
+- Pixel-perfect comparison for critical clips
+- Ability to rollback to Processing if migration fails
+
+**Contingency**: If visual differences unacceptable, keep both Processing and LibGDX versions, make LibGDX optional.
+
+#### Risk 2: Perlin Noise Implementation Differs
+**Impact**: Procedural animations look wrong
+**Likelihood**: MEDIUM-HIGH
+**Mitigation**:
+- Port Processing's exact noise implementation
+- 1000+ test cases comparing noise output
+- Visual comparison of PerlinNoiseClip
+- Document any unavoidable differences
+
+**Contingency**: If exact match impossible, provide noise seed adjustment to compensate.
+
+#### Risk 3: Performance Regression
+**Impact**: System unusable, especially on Raspberry Pi
+**Likelihood**: MEDIUM
+**Mitigation**:
+- Performance benchmarking at each phase
+- Profile and optimize bottlenecks
+- Test on constrained hardware early
+- Consider GPU vs CPU rendering tradeoffs
+
+**Contingency**: Optimize rendering (LOD, culling, batching) or use headless-only mode on Pi.
+
+#### Risk 4: Development Time Exceeds Estimate
+**Impact**: Project incomplete, wasted effort
+**Likelihood**: HIGH (complex migrations often overrun)
+**Mitigation**:
+- Phased approach allows early evaluation
+- Stop-points at Phase 0 (POC) and end of each phase
+- Realistic estimates with contingency
+- User commitment to long timeline (2-3 months)
+
+**Contingency**: Define MVP scope (headless mode only? subset of clips?) and ship that first.
+
+### HIGH RISKS
+
+#### Risk 5: LibGDX on Raspberry Pi Issues
+**Impact**: Primary use case (headless Pi) doesn't work
+**Likelihood**: MEDIUM
+**Mitigation**:
+- Test headless mode early (Phase 1.4)
+- Validate on actual Raspberry Pi hardware
+- Use HeadlessApplication backend (no OpenGL needed)
+
+**Contingency**: Fall back to Processing for Pi, use LibGDX only for development machines.
+
+#### Risk 6: Subtle Physics Bugs
+**Impact**: Animations look slightly wrong, hard to debug
+**Likelihood**: MEDIUM
+**Mitigation**:
+- Extensive unit tests for physics
+- Visual comparison of particle animations
+- Code review of vector math conversions
+
+**Contingency**: Detailed logging of particle positions, compare with Processing version.
+
+### MEDIUM RISKS
+
+#### Risk 7: Cross-Platform Native Library Issues
+**Impact**: Application doesn't run on some platforms
+**Likelihood**: LOW-MEDIUM
+**Mitigation**:
+- Test on all platforms early
+- Use LibGDX's well-tested native packaging
+- Fat jar includes all necessary natives
+
+**Contingency**: Platform-specific builds if fat jar problematic.
+
+#### Risk 8: HSB Color Conversion Inaccurate
+**Impact**: Colors don't match Processing
+**Likelihood**: MEDIUM
+**Mitigation**:
+- Test HSB→RGB conversion against Processing
+- Use Processing's algorithm if necessary
+- Visual comparison of ColorWashClip
+
+**Contingency**: Port Processing's exact HSB code.
+
+---
+
+## Build System Changes
+
+### Gradle Configuration
+
+**Add LibGDX Dependencies**:
+```gradle
+ext {
+    gdxVersion = '1.12.0'
+}
+
+dependencies {
+    // LibGDX core
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+
+    // LibGDX LWJGL3 backend (desktop)
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+
+    // Platform natives (included in fat jar)
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+    // Headless backend (for Raspberry Pi)
+    implementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+
+    // Optional: FreeType for better font rendering
+    // implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    // implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+}
+```
+
+**Update Fat Jar Task**:
+```gradle
+tasks.register('fatJar', Jar) {
+  manifest {
+    attributes 'Main-Class': 'app.TesseractLibGDXMain'
+  }
+  archiveBaseName = 'TesseractLibGDX'
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  from {
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+  with jar
+}
+```
+
+**Remove Processing Tasks** (after Phase 6.1):
+- Delete `downloadProcessingCoreLibrary`, `untarProcessingCoreLibrary`
+- Delete `downloadProcessingVideoLibrary`, `unzipProcessingVideoLibrary`
+- Delete `downloadJoglJar`
+
+---
+
+## Detailed File Changes
+
+### Files to Create (23 new files)
+
+1. **src/main/app/TesseractLibGDXMain.java** - New application entry point (ApplicationListener)
+2. **src/main/app/TesseractInputProcessor.java** - Input handling
+3. **src/main/rendering/IRenderer.java** - Renderer interface
+4. **src/main/rendering/TesseractRenderer.java** - Main 3D renderer
+5. **src/main/rendering/TesseractCamera.java** - Camera management
+6. **src/main/rendering/TesseractShapeRenderer.java** - Point/line rendering
+7. **src/main/rendering/MatrixStack.java** - Matrix push/pop
+8. **src/main/util/TesseractMathUtils.java** - Math utilities
+9. **src/main/util/ProcessingPerlinNoise.java** - Perlin noise implementation
+10. **src/main/util/ColorUtils.java** - Color conversion utilities
+11. **src/test/util/MathUtilsValidationTest.groovy** - Math utility tests
+12. **src/test/util/NoiseValidationTest.groovy** - Noise validation tests
+13. **src/test/clip/ParticlePhysicsTest.groovy** - Physics unit tests
+14. **src/test/visual/VisualRegressionTest.groovy** - Visual comparison tests
+15. **src/test/integration/LibGDXHeadlessTest.groovy** - Headless mode tests
+16. **scripts/capture-screenshots.sh** - Screenshot automation
+17. **scripts/compare-visual-output.groovy** - Image diff tool
+18. **docs/ARCHITECTURE.md** - Architecture documentation
+19. **docs/LIBGDX_MIGRATION.md** - Migration guide
+
+### Files to Modify (16 existing files)
+
+1. **build.gradle** - Add LibGDX dependencies, update tasks
+2. **src/main/clip/AbstractClip.java** - Remove PApplet dependency
+3. **src/main/clip/PerlinNoiseClip.java** - Use LibGDX utilities
+4. **src/main/clip/Particle.java** - Replace PVector with Vector3
+5. **src/main/clip/ParticleClip.java** - Use LibGDX utilities
+6. **src/main/clip/LinesClip.java** - Use LibGDX utilities
+7. **src/main/clip/ColorWashClip.java** - Use ColorUtils for HSB
+8. **src/main/clip/SolidColorClip.java** - Use ColorUtils
+9. **src/main/clip/NodeScanClip.java** - Use LibGDX utilities
+10. **src/main/clip/TilesTestClip.java** - Use LibGDX utilities
+11. **src/main/clip/JavaCVVideoClip.groovy** - Remove Processing dependencies
+12. **src/main/hardware/Tile.java** - Replace PImage with Pixmap
+13. **src/main/model/Palette.java** - Remove PApplet reference
+14. **src/main/model/Channel.java** - Clean up PApplet usage
+15. **src/main/hardware/PixelPusher.java** - Remove PApplet reference
+16. **src/main/output/UDPModel.java** - Replace unhex() utility
+17. **src/main/environment/PixelPlane.java** - Remove PApplet reference
+18. **src/main/show/Scene.java** - Update clip instantiation
+19. **src/test/integration/TesseractAppTest.groovy** - Update for LibGDX
+20. **README.md** - Update documentation
+
+### Files to Delete (after Phase 6.1)
+
+1. **src/main/app/TesseractMain.java** - Old PApplet-based main (archive first)
+2. **src/main/app/OnScreen.java** - Replaced by TesseractRenderer
+3. **src/main/clip/VideoClip.groovy** - Replaced by JavaCVVideoClip
+4. **lib/processing-core/** - Processing libraries
+5. **lib/video/** - Processing video library
+6. **lib/jogl-2.3.2-patched/** - Old JOGL (cleanup)
+
+---
+
+## Project Timeline (Estimated)
+
+### Sprint 1 (Weeks 1-2): Phase 0 - Validation
+- P0.1: Proof of Concept (15-20 units)
+- P0.2: Extract Rendering Interfaces (8-12 units)
+- **Milestone**: GO/NO-GO decision
+
+### Sprint 2 (Weeks 3-4): Phase 1 - Foundation
+- P1.1: Build System (6-8 units)
+- P1.2: Utility Classes (8-12 units)
+- P1.3: Vector Migration (8-12 units)
+- P1.4: Application Lifecycle (12-16 units)
+- P1.5: Input Handling (6-8 units)
+- **Milestone**: Headless mode functional
+
+### Sprint 3 (Weeks 5-7): Phase 2 - Rendering
+- P2.1: Camera System (12-16 units)
+- P2.2: Shape Renderer (12-16 units)
+- P2.3: Renderer Implementation (20-30 units)
+- P2.4: Matrix Transformations (8-12 units)
+- **Milestone**: 3D visualization working
+
+### Sprint 4 (Weeks 8-10): Phase 3 - Clips
+- P3.1: Abstract Clip Refactoring (6-8 units)
+- P3.2: PerlinNoiseClip (8-12 units)
+- P3.3: Particle Physics (6-8 units)
+- P3.4: ParticleClip & LinesClip (12-16 units)
+- P3.5: ColorWash & SolidColor (6-8 units)
+- P3.6: NodeScan & TilesTest (6-8 units)
+- P3.7: VideoClip (4-6 units)
+- **Milestone**: All clips functional
+
+### Sprint 5 (Weeks 11-12): Phase 4 - Supporting Systems
+- P4.1: Image Loading (4-6 units)
+- P4.2: Remove PApplet References (4-6 units)
+- P4.3: Scene & Clip Management (4-6 units)
+- **Milestone**: Full feature parity
+
+### Sprint 6 (Weeks 13-15): Phase 5 - Testing & Validation
+- P5.1: Visual Regression Testing (16-24 units)
+- P5.2: Physics & Math Validation (8-12 units)
+- P5.3: Cross-Platform Testing (8-12 units)
+- P5.4: Integration Testing (8-12 units)
+- **Milestone**: Production-ready quality
+
+### Sprint 7 (Weeks 16-17): Phase 6 - Cleanup & Polish
+- P6.1: Remove Processing Dependencies (8-12 units)
+- P6.2: Performance Optimization (6-8 units)
+- P6.3: Documentation Update (6-8 units)
+- **Milestone**: Migration complete
+
+**Total Timeline**: 17 weeks (4.25 months) for one developer
+**Total Effort**: 224-342 complexity units
+
+---
+
+## Success Criteria
+
+### Must Have (MVP)
+- [ ] Application builds with only LibGDX dependencies
+- [ ] Headless mode runs on Raspberry Pi
+- [ ] All 8 clips functional with LibGDX
+- [ ] Visual output matches Processing (within 1% threshold)
+- [ ] Performance ≥30fps on desktop, ≥20fps on Pi headless
+- [ ] UDP output functional
+- [ ] WebSocket control functional
+- [ ] No memory leaks over 8+ hour run
+
+### Should Have
+- [ ] Perlin noise matches Processing exactly
+- [ ] All unit tests pass (100+ tests)
+- [ ] Visual regression tests automated
+- [ ] Cross-platform validated (macOS, Linux, Pi)
+- [ ] Documentation complete
+- [ ] Clean architecture (no Processing remnants)
+
+### Nice to Have
+- [ ] Modern shader support for effects
+- [ ] Performance better than Processing
+- [ ] Smaller fat jar size
+- [ ] Better error handling/logging
+- [ ] Improved testability
+
+---
+
+## Alternative: Stay on Processing (DO NOT IGNORE)
+
+### Recommendation from STATUS-libgdx-migration.md
+
+The evaluator **strongly recommended NOT migrating** based on:
+
+1. **Processing 4 already solves ARM64 problem** - No technical gap
+2. **Risk/effort ratio is terrible** - 170-300 units for uncertain benefit
+3. **High regression risk** - Visual output must be EXACTLY correct
+4. **No clear business value** - What does LibGDX solve that Processing 4 doesn't?
+
+### If Reconsidering Migration
+
+**Questions to answer**:
+1. What specific problems does LibGDX solve that Processing 4 doesn't?
+2. Has Processing 4 been tested on Apple Silicon? What's the actual performance?
+3. Does headless mode actually need LibGDX, or can Processing run headless?
+4. What's the opportunity cost? What else could be built in 200+ hours?
+5. Is the team committed to a 4+ month project with high risk?
+
+### Hybrid Approach (Lower Risk)
+
+Instead of full migration:
+1. **Keep Processing** for window/context management
+2. **Use direct OpenGL** for rendering control if needed
+3. **Implement shader support** via Processing's OpenGL access
+4. **Effort**: 40-80 units vs. 170-300 units
+5. **Risk**: Much lower, Processing provides safety net
+
+---
+
+## Questions for User Before Starting
+
+### Critical Questions (Must Answer Before ANY Work)
+
+1. **WHY LibGDX?**
+   - What specific problems does it solve that Processing 4 doesn't?
+   - Is this based on actual Processing 4 testing, or assumptions?
+
+2. **What's the success criteria?**
+   - How will we verify visual output is correct?
+   - What's acceptable performance?
+   - What's the rollback plan if migration fails?
+
+3. **What's the resource commitment?**
+   - Who will do this work?
+   - What's the realistic timeline? (4+ months for one developer)
+   - What's the opportunity cost?
+
+4. **Has Processing 4 been tested?**
+   - Does it work on Apple Silicon?
+   - What's the actual performance?
+   - Are there REAL limitations?
+
+5. **What's the risk tolerance?**
+   - OK if visual output differs slightly?
+   - OK if migration takes 2x longer than estimated?
+   - OK if some features need to be cut?
+
+### Technical Questions
+
+6. **Headless requirements?**
+   - Must LibGDX be used for headless, or can Processing's headless mode work?
+   - What's the actual Pi deployment scenario?
+
+7. **Shader requirements?**
+   - What specific shader features are needed?
+   - Can Processing 4's shader support work?
+
+8. **Visual accuracy requirements?**
+   - Must match Processing pixel-perfect?
+   - Acceptable threshold for differences?
+
+---
+
+## Next Steps
+
+### If Proceeding with Migration
+
+1. **User confirms commitment** - Answers critical questions above
+2. **Phase 0.1: Proof of Concept** - 2-3 weeks, validates approach
+3. **GO/NO-GO Decision** - Based on POC results
+4. **Phase 1-6 execution** - If POC successful
+
+### If Reconsidering Migration (RECOMMENDED)
+
+1. **Test Processing 4 thoroughly** - Apple Silicon, headless mode, performance
+2. **Document actual limitations** - What doesn't work, what's slow
+3. **Evaluate hybrid approach** - Keep Processing, add features incrementally
+4. **Re-assess business case** - Is LibGDX migration truly necessary?
+
+---
+
+## Summary
+
+This plan provides a **realistic, phased approach** to migrating from Processing to LibGDX, acknowledging the **VERY HIGH** complexity and risk. The migration touches **45% of the codebase** and requires **170-300 complexity units** of careful, skilled work.
+
+**Key Success Factors**:
+- Phase 0 POC validates approach before committing
+- Automated visual regression testing ensures correctness
+- Phased approach allows course correction
+- Headless mode validated early
+- Clear success criteria and stop-points
+
+**Critical Warning**: This is NOT a simple library swap. It's a complete architectural rewrite with high risk of visual regressions that would break LED mapping. The STATUS report recommended **NOT migrating** unless there's a compelling reason.
+
+**Recommendation**: Answer the critical questions above, run the Phase 0 POC, and make an informed GO/NO-GO decision before committing to the full migration.
+
+---
+
+**Plan Generated**: 2025-12-10-012838
+**Estimated Total Effort**: 224-342 complexity units
+**Estimated Timeline**: 17 weeks (single developer)
+**Risk Level**: VERY HIGH
+**Recommendation**: Validate with POC before proceeding

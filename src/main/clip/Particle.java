@@ -1,7 +1,7 @@
 package clip;
 
-import processing.core.PApplet;
-import processing.core.PVector;
+import render.Vec3;
+import render.ProcessingCompat;
 
 import java.util.Random;
 
@@ -12,9 +12,9 @@ public class Particle
 
     public int color;
 
-    public PVector position;
-    PVector velocity;
-    PVector acceleration;
+    public Vec3 position;
+    Vec3 velocity;
+    Vec3 acceleration;
 
     public float size = 100.0f;
     public float ramp = 100.0f;
@@ -23,7 +23,7 @@ public class Particle
 
 
     //constructor
-    public Particle(PVector theL, int theC, float theSize, float theRamp, PVector theSpeed, PVector theAccel) {
+    public Particle(Vec3 theL, int theC, float theSize, float theRamp, Vec3 theSpeed, Vec3 theAccel) {
 
         position = theL.copy();
 
@@ -46,7 +46,7 @@ public class Particle
         position.add(velocity);
 
         lifespan -= 1;
-        fade = PApplet.map(lifespan, 0, 200, 0.0f, 1.0f);
+        fade = ProcessingCompat.map(lifespan, 0, 200, 0.0f, 1.0f);
 
         /*
         if(size <100){

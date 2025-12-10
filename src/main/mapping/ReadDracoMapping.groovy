@@ -1,5 +1,9 @@
 package mapping
 
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+
 // This will parse a CSV file in the format Aaron invented on Google Sheets.  Create a spreadsheet with a matrix of cells each representing one LED in your grid
 // There are three types of cells:
 // - node cells
@@ -23,7 +27,10 @@ class ReadDracoMapping {
 
   // Parse all of the CSVs and return a list of results
   public static List<Map> parseCsvs(csvDir) {
-    List<String> csvPaths = new FileNameFinder().getFileNames(csvDir, '**/*.csv')
+    // Use Java NIO to find CSV files (replaces FileNameFinder from groovy-ant)
+    List<String> csvPaths = Files.walk(Paths.get(csvDir))
+        .filter { Files.isRegularFile(it) && it.toString().endsWith('.csv') }
+        .collect { it.toString() }
 
     // 'collect' calls a function once for each list element, creating a new list of the same length with the result of the function
     // its useful to transform one list into another, for example here we are transforming a list of CSV paths (String) into a list of nodes (Map)

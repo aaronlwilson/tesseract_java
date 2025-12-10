@@ -1,0 +1,414 @@
+package app;
+
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+
+import environment.Node;
+import environment.Stage;
+import model.Channel;
+import output.UDPModel;
+import render.IRenderer;
+import render.LibGDXRenderer;
+import render.HeadlessRenderer;
+import render.ProcessingCompat;
+import show.Playlist;
+import show.PlaylistManager;
+import stores.ConfigStore;
+import stores.PlaylistStore;
+import stores.SceneStore;
+import util.Util;
+import websocket.WebsocketInterface;
+import clip.Particle;
+import render.Vec3;
+
+/**
+ * Main Tesseract application using LibGDX.
+ * Replaces TesseractMain (which extended Processing's PApplet).
+ */
+public class TesseractApp implements ApplicationListener, InputProcessor {
+
+    // Singleton instance
+    private static TesseractApp instance;
+
+    // Rendering
+    private IRenderer renderer;
+    private boolean headless;
+    private int width;
+    private int height;
+
+    // Particles (public for clip access - matches original TesseractMain)
+    public Particle particleX;
+    public Particle particleY;
+    public Particle particleZ;
+
+    // Clip class constants (matches original TesseractMain)
+    public static final int NODESCAN = 0;
+    public static final int SOLID = 1;
+    public static final int COLORWASH = 2;
+    public static final int VIDEO = 3;
+    public static final int PARTICLE = 4;
+    public static final int PERLINNOISE = 5;
+    public static final int LINESCLIP = 6;
+    public static final int TILESTEST = 7;
+
+    // Core components
+    public UDPModel udpModel;
+    public Stage stage;
+    public Channel channel1;
+    public Boolean setupComplete = false;
+    public Boolean drawing = true;
+    public Boolean sending = true;
+
+    // Camera rotation state (for mouse-controlled viewing)
+    private float xRot = 0;
+    private float yRot = 0;
+    private float newXrot = 0;
+    private float newYrot = 0;
+    private float xStart = 0;
+    private float yStart = 0;
+    private float xDelta = 0;
+    private float yDelta = 0;
+    private float xMove = 0;
+    private float yMove = 0;
+    private boolean mousePressed = false;
+
+    public TesseractApp(boolean headless, int width, int height) {
+        this.headless = headless;
+        this.width = width;
+        this.height = height;
+        instance = this;
+    }
+
+    public static TesseractApp get() {
+        return instance;
+    }
+
+    // For backwards compatibility with code expecting TesseractMain
+    public static TesseractApp getMain() {
+        return instance;
+    }
+
+    @Override
+    public void create() {
+        // Initialize renderer
+        if (headless) {
+            renderer = new HeadlessRenderer();
+        } else {
+            renderer = new LibGDXRenderer();
+            // Set up input processing
+            Gdx.input.setInputProcessor(this);
+        }
+        renderer.init(width, height);
+
+        // Initialize particles with default values
+        particleX = new Particle(new Vec3(0, 0, 0), 0xFF0000, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
+        particleY = new Particle(new Vec3(0, 0, 0), 0x00FF00, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
+        particleZ = new Particle(new Vec3(0, 0, 0), 0x0000FF, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
+
+        Util.enableColorization();
+
+        // Start listening for UDP messages
+        udpModel = new UDPModel();
+
+        // The stage is the LED mapping
+        stage = new Stage();
+
+        // Create channel
+        channel1 = new Channel(1);
+
+        // Complete configuration in separate thread (matches original)
+        new Thread(this::completeConfiguration).start();
+    }
+
+    private void completeConfiguration() {
+        // Configure Data and Stores
+        Util.createBuiltInScenes();
+        Util.createBuiltInPlaylists();
+
+        // Save the default data
+        SceneStore.get().saveDataToDisk();
+        PlaylistStore.get().saveDataToDisk();
+
+        // Load configuration from file
+        ConfigStore.get();
+
+        // Initialize websocket connection
+        WebsocketInterface.get();
+
+        // Get the configured stage value
+        String stageType = ConfigStore.get().getString("stageType");
+
+        // Build the stage
+        stage.buildStage(stageType);
+
+        // Tell the PlaylistManager which channel to play playlists in
+        PlaylistManager.get().setChannel(this.channel1);
+
+        // Get initial playlist & playState from config
+        Playlist initialPlaylist = PlaylistStore.get().find("displayName", ConfigStore.get().getString("initialPlaylist"));
+        Playlist.PlayState initialPlayState = Util.getPlayState(ConfigStore.get().getString("initialPlayState"));
+
+        // Play the playlist with the playState defined in our configuration
+        PlaylistManager.get().play(initialPlaylist.getId(), null, initialPlayState);
+
+        // Create shutdown hook
+        createShutdownHook();
+
+        setupComplete = true;
+    }
+
+    @Override
+    public void render() {
+        // Wait for configuration to complete
+        if (!setupComplete) return;
+
+        // Run clips
+        channel1.run();
+
+        // Get the full list of hardware nodes
+        int l = stage.nodes.length;
+        Node[] nextNodes = stage.nodes;
+        stage.prevNodes = stage.nodes;
+
+        for (int i = 0; i < l; i++) {
+            Node n = nextNodes[i];
+            int[] rgb = renderNode(n);
+
+            // Store color on the node for UDP output
+            n.r = rgb[0];
+            n.g = rgb[1];
+            n.b = rgb[2];
+
+            nextNodes[i] = n;
+        }
+
+        stage.nodes = nextNodes;
+
+        // Draw visualization
+        if (drawing && !renderer.isHeadless()) {
+            drawVisualization();
+        }
+
+        // Send UDP data to LEDs
+        if (sending) {
+            udpModel.send();
+        }
+    }
+
+    private void drawVisualization() {
+        renderer.beginFrame();
+
+        // Draw framerate
+        renderer.drawText("FPS " + Math.floor(renderer.getFrameRate()), width - 60, 20, 160, 160, 160);
+
+        if (sending) {
+            renderer.drawText("SENDING", width - 110, 40, 160, 160, 160);
+        } else {
+            renderer.drawText("NOT SENDING", width - 110, 40, 160, 160, 160);
+        }
+
+        if (!drawing) {
+            renderer.drawText("NOT DRAWING", width - 110, 70, 160, 160, 160);
+            renderer.endFrame();
+            return;
+        }
+
+        // Update camera rotation with mouse
+        updateCameraRotation();
+        renderer.setCameraRotation(xRot, yRot);
+
+        // Draw axes
+        drawAxes(600);
+
+        // Draw particles
+        renderer.drawNode(createNodeFromParticle(particleX));
+        renderer.drawNode(createNodeFromParticle(particleY));
+        renderer.drawNode(createNodeFromParticle(particleZ));
+
+        // Draw bounding box
+        float boxX = stage.minX + (stage.maxW / 2);
+        float boxY = stage.minY + (stage.maxH / 2);
+        float boxZ = stage.minZ + (stage.maxD / 2);
+        renderer.drawBox(boxX, boxY, boxZ, stage.maxW, stage.maxH, stage.maxD, 60, 60, 60);
+
+        // Draw all nodes
+        renderer.drawNodes(stage.nodes);
+
+        renderer.endFrame();
+    }
+
+    private Node createNodeFromParticle(Particle p) {
+        Node n = new Node();
+        n.x = (int) p.position.x;
+        n.y = (int) p.position.y;
+        n.z = (int) p.position.z;
+        n.r = (p.color >> 16) & 0xFF;
+        n.g = (p.color >> 8) & 0xFF;
+        n.b = p.color & 0xFF;
+        return n;
+    }
+
+    private void updateCameraRotation() {
+        if (mousePressed) {
+            xDelta = xStart - renderer.getMouseX();
+            yDelta = yStart - renderer.getMouseY();
+        } else {
+            xDelta = 0;
+            yDelta = 0;
+        }
+
+        newXrot = xMove - xDelta;
+        newYrot = yMove - yDelta;
+
+        // Easing
+        float diff = xRot - newXrot;
+        if (Math.abs(diff) > 0.01) {
+            xRot -= diff / 6.0;
+        }
+
+        diff = yRot - newYrot;
+        if (Math.abs(diff) > 0.01) {
+            yRot -= diff / 6.0;
+        }
+    }
+
+    private void drawAxes(float size) {
+        // X - red
+        renderer.drawLine(0, 0, 0, size, 0, 0, 220, 0, 0);
+        // Y - green
+        renderer.drawLine(0, 0, 0, 0, size, 0, 0, 220, 0);
+        // Z - blue
+        renderer.drawLine(0, 0, 0, 0, 0, size, 0, 0, 220);
+    }
+
+    private int[] renderNode(Node node) {
+        int[] rgb1 = channel1.drawNode(node);
+
+        // Apply channel brightness
+        rgb1[0] = Math.round(rgb1[0] / 2);
+        rgb1[1] = Math.round(rgb1[1] / 2);
+        rgb1[2] = Math.round(rgb1[2] / 2);
+
+        return rgb1;
+    }
+
+    private void createShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            WebsocketInterface.get().shutdownServer();
+            if (renderer != null) {
+                renderer.dispose();
+            }
+        }));
+    }
+
+    // ===== Processing compatibility methods =====
+    // These allow existing code to work without modification
+
+    public int color(int r, int g, int b) {
+        return ProcessingCompat.color(r, g, b);
+    }
+
+    public float noise(float x, float y, float z) {
+        return ProcessingCompat.noise(x, y, z);
+    }
+
+    public void noiseDetail(int lod, float falloff) {
+        ProcessingCompat.noiseDetail(lod, falloff);
+    }
+
+    public float map(float value, float start1, float stop1, float start2, float stop2) {
+        return ProcessingCompat.map(value, start1, stop1, start2, stop2);
+    }
+
+    public float screenX(float x, float y, float z) {
+        return renderer.screenX(x, y, z);
+    }
+
+    public float screenY(float x, float y, float z) {
+        return renderer.screenY(x, y, z);
+    }
+
+    // ===== LibGDX ApplicationListener methods =====
+
+    @Override
+    public void resize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void dispose() {
+        if (renderer != null) {
+            renderer.dispose();
+        }
+    }
+
+    // ===== InputProcessor methods =====
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        System.out.println(character);
+        if (character == 's') {
+            sending = !sending;
+        }
+        if (character == 'd') {
+            drawing = !drawing;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        mousePressed = true;
+        xStart = screenX;
+        yStart = screenY;
+        return true;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        mousePressed = false;
+        xMove = xMove - xDelta;
+        yMove = yMove - yDelta;
+        return true;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        return false;
+    }
+}

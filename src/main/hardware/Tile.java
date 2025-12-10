@@ -1,13 +1,11 @@
 package hardware;
 
 import environment.Node;
-import processing.core.PImage;
 
 public class Tile extends Fixture {
   public static int numLEDperTile = 144;
 
   public int[][] numberPImageArray;
-  public PImage numberPImage;
 
   //this tile holds references to all its nodes, and where they are mapped considering rotation
   public Node[][] tileNodeArray = new Node[12][12];
@@ -27,19 +25,14 @@ public class Tile extends Fixture {
     super(theId);
     id = theId;
 
-    String imagePath = "tiles/pixel_number_" + id + ".gif";
-    numberPImage = app.TesseractMain.getMain().loadImage(imagePath);
-
+    // Initialize empty number image array (tile numbering not used in headless mode)
+    // This was previously used for debug visualization with Processing images
     numberPImageArray = new int[12][12];
-    //convert the image to a 2d array so that it can be rotated
-    int loc = 0;
     for (int j = 0; j < 12; j++) {
       for (int i = 0; i < 12; i++) {
-        int c = numberPImage.pixels[loc];
-        numberPImageArray[i][j] = c;
-        loc++;
+        numberPImageArray[i][j] = 0;
       }
-    }//end convert
+    }
   }//end constructor
 
 

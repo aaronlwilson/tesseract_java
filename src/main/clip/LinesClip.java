@@ -2,12 +2,10 @@ package clip;
 
 import java.util.*;
 
-
-import processing.core.PVector;
-import static processing.core.PApplet.dist;
-import static processing.core.PApplet.map;
-import static processing.core.PApplet.constrain;
-
+import render.Vec3;
+import static render.ProcessingCompat.dist;
+import static render.ProcessingCompat.map;
+import static render.ProcessingCompat.constrain;
 
 import environment.Node;
 import util.Util;
@@ -45,17 +43,17 @@ public class LinesClip  extends AbstractClip {
 
 
         //X
-        PVector xLoc = new PVector(200.0f, 0.0f, 0.0f);
+        Vec3 xLoc = new Vec3(200.0f, 0.0f, 0.0f);
         int xC = _myMain.color(255, 0, 0);
         _myMain.particleX = addParticle(xLoc, xC);
 
         //Y
-        PVector yLoc = new PVector(0.0f, 200.0f, 0.0f);
+        Vec3 yLoc = new Vec3(0.0f, 200.0f, 0.0f);
         int yC = _myMain.color(0, 255, 0);
         _myMain.particleY = addParticle(yLoc, yC);
 
         //Z
-        PVector zLoc = new PVector(0.0f, 0.0f, 200.0f);
+        Vec3 zLoc = new Vec3(0.0f, 0.0f, 200.0f);
         int zC = _myMain.color(0, 0, 255);
         _myMain.particleZ = addParticle(zLoc, zC);
 
@@ -95,15 +93,15 @@ public class LinesClip  extends AbstractClip {
 
 
 
-    public Particle addParticle(PVector theLoc, int theC ){
+    public Particle addParticle(Vec3 theLoc, int theC ){
 
         float lowVel = -_pSpeed;
         float highVel = _pSpeed;
 
-        //PVector theSpeed = new PVector(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
+        //Vec3 theSpeed = new Vec3(Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel), Util.randFloatRange(lowVel,highVel));
 
-        PVector theSpeed = new PVector(0.0f, 0.0f, 0.0f);
-        PVector theAccel = new PVector(0.0f, 0.0f, 0.0f);
+        Vec3 theSpeed = new Vec3(0.0f, 0.0f, 0.0f);
+        Vec3 theAccel = new Vec3(0.0f, 0.0f, 0.0f);
 
 
         Particle p = new Particle(theLoc, theC,_pSize, _pRamp, theSpeed, theAccel);
@@ -125,7 +123,7 @@ public class LinesClip  extends AbstractClip {
 
         for(Particle particle : _particles) {
 
-            PVector l = particle.position;
+            Vec3 l = particle.position;
             float dist = dist(node.x, node.y, node.z, l.x, l.y, l.z);
             float surface = particle.size;
 

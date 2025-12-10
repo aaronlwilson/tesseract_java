@@ -1,11 +1,10 @@
 package hardware;
 
-import app.TesseractMain;
+import app.TesseractApp;
 import com.heroicrobot.dropbit.registry.*;
 import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 import com.heroicrobot.dropbit.devices.pixelpusher.Strip;
 import environment.Node;
-import processing.core.PApplet;
 
 import java.util.*;
 
