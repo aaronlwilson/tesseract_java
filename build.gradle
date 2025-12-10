@@ -1,13 +1,13 @@
 plugins {
-  id "de.undercouch.download" version "5.5.0"
+  id "de.undercouch.download" version "5.6.0"
   id 'java'
   id 'groovy'
 }
 
-// Java 17 compatibility
+// Java 21 LTS compatibility
 java {
-  sourceCompatibility = JavaVersion.VERSION_17
-  targetCompatibility = JavaVersion.VERSION_17
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -27,20 +27,22 @@ sourceSets {
 
 // LibGDX version
 ext {
-  gdxVersion = '1.12.1'
+  gdxVersion = '1.14.0'
+  javacvVersion = '1.5.12'
+  ffmpegVersion = '7.1.1-1.5.12'
 }
 
 dependencies {
-  // Groovy 4.0 - Java 17 compatible
-  implementation 'org.apache.groovy:groovy:4.0.17'
-  implementation 'org.apache.groovy:groovy-json:4.0.17'
+  // Groovy 5.0 - Java 21 compatible
+  implementation 'org.apache.groovy:groovy:5.0.3'
+  implementation 'org.apache.groovy:groovy-json:5.0.3'
 
   // Common lib for logging
-  implementation 'org.slf4j:slf4j-api:2.0.9'
-  implementation 'org.slf4j:slf4j-simple:2.0.9'
+  implementation 'org.slf4j:slf4j-api:2.0.17'
+  implementation 'org.slf4j:slf4j-simple:2.0.17'
 
   // Websocket library used to communicate with the UI
-  implementation 'org.java-websocket:Java-WebSocket:1.5.4'
+  implementation 'org.java-websocket:Java-WebSocket:1.6.0'
 
   // LibGDX - Cross-platform graphics (replaces JOGL)
   implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
@@ -51,59 +53,56 @@ dependencies {
 
   // JavaCV for cross-platform video playback (replacing Processing video library)
   // Core JavaCV and JavaCPP
-  implementation 'org.bytedeco:javacv:1.5.9'
+  implementation "org.bytedeco:javacv:$javacvVersion"
 
   // FFmpeg Java bindings (for video decoding)
-  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9'
+  implementation "org.bytedeco:ffmpeg:$ffmpegVersion"
 
   // Platform-specific native libraries
   // macOS ARM64 (Apple Silicon)
-  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:macosx-arm64'
+  implementation "org.bytedeco:ffmpeg:$ffmpegVersion:macosx-arm64"
   // macOS x86_64 (Intel)
-  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:macosx-x86_64'
+  implementation "org.bytedeco:ffmpeg:$ffmpegVersion:macosx-x86_64"
   // Linux x86_64
-  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:linux-x86_64'
-  // Linux ARM64 (Raspberry Pi 4 64-bit)
-  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:linux-arm64'
-  // Linux ARM (Raspberry Pi 32-bit)
-  implementation 'org.bytedeco:ffmpeg:6.0-1.5.9:linux-armhf'
+  implementation "org.bytedeco:ffmpeg:$ffmpegVersion:linux-x86_64"
+  // Linux ARM64 (Raspberry Pi 4/5 64-bit)
+  implementation "org.bytedeco:ffmpeg:$ffmpegVersion:linux-arm64"
+  // Note: linux-armhf (32-bit) dropped in JavaCV 1.5.12+
 
   // JavaCPP platform natives (required by JavaCV)
-  implementation 'org.bytedeco:javacpp:1.5.9:macosx-arm64'
-  implementation 'org.bytedeco:javacpp:1.5.9:macosx-x86_64'
-  implementation 'org.bytedeco:javacpp:1.5.9:linux-x86_64'
-  implementation 'org.bytedeco:javacpp:1.5.9:linux-arm64'
-  implementation 'org.bytedeco:javacpp:1.5.9:linux-armhf'
+  implementation "org.bytedeco:javacpp:$javacvVersion:macosx-arm64"
+  implementation "org.bytedeco:javacpp:$javacvVersion:macosx-x86_64"
+  implementation "org.bytedeco:javacpp:$javacvVersion:linux-x86_64"
+  implementation "org.bytedeco:javacpp:$javacvVersion:linux-arm64"
 
   // YAML parser used for reading config files
-  implementation 'org.yaml:snakeyaml:2.2'
+  implementation 'org.yaml:snakeyaml:2.5'
 
   // Include specific jars from lib directory (PixelPusher and UDP libraries)
   implementation fileTree(dir: 'lib', include: ['PixelPusher/**/*.jar', 'udp/**/*.jar'])
 
   //////////////// For unit/integration tests
 
-  // JUnit 5 (Jupiter) - required for junit-pioneer
-  testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+  // JUnit 6 (unified versioning for Platform, Jupiter, Vintage)
+  testImplementation 'org.junit.jupiter:junit-jupiter:6.0.1'
 
   // JUnit 4 for backwards compatibility (most tests still use JUnit 4)
   testImplementation 'junit:junit:4.13.2'
 
-  // JUnit Vintage engine to run JUnit 4 tests with JUnit 5
-  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.10.1'
+  // JUnit Vintage engine to run JUnit 4 tests with JUnit 6
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:6.0.1'
 
-  // Mockito 4.x (Java 17 compatible, no PowerMock needed)
-  testImplementation 'org.mockito:mockito-core:4.11.0'
-  testImplementation 'org.mockito:mockito-inline:4.11.0'
+  // Mockito 5.x (Java 21 compatible, inline mock maker is default)
+  testImplementation 'org.mockito:mockito-core:5.20.0'
 
   // Hamcrest junit matchers
   testImplementation 'org.hamcrest:hamcrest:2.2'
 
-  // JUnit Pioneer for environment variable testing (Java 17 compatible, replaces system-rules)
-  testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
+  // JUnit Pioneer for environment variable testing (Java 21 compatible)
+  testImplementation 'org.junit-pioneer:junit-pioneer:2.3.0'
 
   // IO utilities
-  testImplementation 'commons-io:commons-io:2.15.1'
+  testImplementation 'commons-io:commons-io:2.21.0'
 }
 
 import de.undercouch.gradle.tasks.download.Download
@@ -143,9 +142,9 @@ tasks.register('fatJar', Jar) {
 
 test {
   dependsOn cleanTest
-  useJUnitPlatform() // Enable JUnit 5
+  useJUnitPlatform() // Enable JUnit Platform
 
-  // Required for JUnit Pioneer to modify environment variables in Java 17+
+  // Required for JUnit Pioneer to modify environment variables in Java 21+
   jvmArgs = [
     '--add-opens=java.base/java.util=ALL-UNNAMED',
     '--add-opens=java.base/java.lang=ALL-UNNAMED'
