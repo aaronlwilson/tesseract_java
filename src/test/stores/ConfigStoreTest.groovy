@@ -1,6 +1,6 @@
 package stores
 
-import app.TesseractMain
+import app.TesseractApp
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -11,18 +11,13 @@ import org.junit.contrib.java.lang.system.SystemErrRule
 import org.junit.contrib.java.lang.system.SystemOutRule
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.powermock.core.classloader.annotations.PrepareForTest
-import org.powermock.modules.junit4.PowerMockRunner
 import testUtil.TestUtil
 import util.Util
 
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.Matchers.matchesPattern
-import static org.hamcrest.junit.MatcherAssert.assertThat
+import static org.hamcrest.MatcherAssert.assertThat
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest([TesseractMain.class, Util.class])
 class ConfigStoreTest {
 
   // Creates a temporary directory that is cleaned up after the test suite
@@ -53,7 +48,7 @@ class ConfigStoreTest {
 
     TestUtil.mockUtilClass(tmpDir)
 
-    TestUtil.mockTesseractMain()
+    TestUtil.mockTesseractApp()
   }
 
   @After

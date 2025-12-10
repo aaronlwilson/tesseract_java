@@ -1,32 +1,53 @@
 package testUtil
 
-import app.TesseractMain
+import app.TesseractApp
 import groovy.json.JsonBuilder
 import org.apache.commons.io.FileUtils
 import org.junit.rules.TemporaryFolder
-import org.powermock.api.mockito.PowerMockito
+import org.mockito.MockedStatic
+import org.mockito.Mockito
 import org.yaml.snakeyaml.Yaml
 import util.Util
 
 import java.nio.charset.Charset
 import java.util.regex.Pattern
 
-import static org.mockito.Mockito.when
-
 class TestUtil {
-  public static void mockTesseractMain() {
-    PowerMockito.mockStatic(TesseractMain.class)
-    when(TesseractMain.getMain()).thenReturn(TestUtil.getMockMain())
+  // Store the static mock so we can close it later if needed
+  private static MockedStatic<TesseractApp> tesseractAppMock
+  private static MockedStatic<Util> utilMock
+
+  public static void mockTesseractApp() {
+    // Use Mockito's mockStatic instead of PowerMockito
+    if (tesseractAppMock != null) {
+      tesseractAppMock.close()
+    }
+    tesseractAppMock = Mockito.mockStatic(TesseractApp.class)
+    tesseractAppMock.when { TesseractApp.getMain() }.thenReturn(TestUtil.getMockMain())
   }
 
-  public static TesseractMain getMockMain() { new MockMain() }
+  public static TesseractApp getMockMain() { new MockMain() }
 
   // Mock some of the functions in the util class
   public static void mockUtilClass(TemporaryFolder tmpDir) {
-    // By using 'stub', we can mock specific methods without messing with the rest of them
-    // We MUST specify the parameter types or it will silently ignore our mock!
+    // Use Mockito's mockStatic for stubbing static methods
     String dataDir = tmpDir.getRoot().getCanonicalPath()
-    PowerMockito.stub(PowerMockito.method(Util.class, "getDataDir", String)).toReturn(dataDir);
+    if (utilMock != null) {
+      utilMock.close()
+    }
+    utilMock = Mockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS)
+    utilMock.when { Util.getDataDir(Mockito.anyString()) }.thenReturn(dataDir)
+  }
+
+  public static void cleanupMocks() {
+    if (tesseractAppMock != null) {
+      tesseractAppMock.close()
+      tesseractAppMock = null
+    }
+    if (utilMock != null) {
+      utilMock.close()
+      utilMock = null
+    }
   }
 
   public static Map getMockPlaylist(Map data) {

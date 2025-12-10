@@ -1,21 +1,16 @@
 package mapping
 
-import app.TesseractMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.powermock.core.classloader.annotations.PrepareForTest
-import org.powermock.modules.junit4.PowerMockRunner
 import util.Util
 
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.notNullValue
-import static org.hamcrest.junit.MatcherAssert.assertThat
+import static org.hamcrest.MatcherAssert.assertThat
 
-@PrepareForTest([TesseractMain.class, Util.class])
 class ReadDracoMappingTest {
 
   // Creates a temporary directory that is cleaned up after the test suite
@@ -45,11 +40,13 @@ class ReadDracoMappingTest {
 
   @Test
   void testCanParseSimpleCsv() {
-    String csv = createSimpleCsv()
+    // Must include species metadata for parseCsvs to work (it creates mirrored versions)
+    String csv = createSimpleCsv([species: 'test_panel'])
     tmpDir.newFile('mapping-1.csv').write(csv)
 
     List<Map> results = ReadDracoMapping.parseCsvs(tmpDir.getRoot().getCanonicalPath())
-    assertThat results.size(), equalTo(1)
+    // Returns 2 results: original + mirrored version
+    assertThat results.size(), equalTo(2)
 
     results[0].nodes.each { node ->
       def strandIdx = (node.y - 1) * 10 + node.x
@@ -63,7 +60,7 @@ class ReadDracoMappingTest {
         panelName    : 'chuck',
         panelLocation: 'bottom',
         globalX      : '4',
-        globalX      : '7',
+        species      : 'test_panel',
     ]
 
     String csv = createSimpleCsv(metadata)
@@ -72,7 +69,8 @@ class ReadDracoMappingTest {
     println csv
 
     List<Map> results = ReadDracoMapping.parseCsvs(tmpDir.getRoot().getCanonicalPath())
-    assertThat results.size(), equalTo(1)
+    // Returns 2 results: original + mirrored version
+    assertThat results.size(), equalTo(2)
 
     Map result = results[0]
 
