@@ -116,9 +116,21 @@ public class LibGDXRenderer implements IRenderer {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (Node node : nodes) {
-            shapeRenderer.setColor(node.r / 255f, node.g / 255f, node.b / 255f, 1);
-            // Draw a small circle for each LED node
-            shapeRenderer.circle(node.x, node.y, 2);
+            // For black nodes, draw them as dim gray so we can see the structure
+            float r = node.r / 255f;
+            float g = node.g / 255f;
+            float b = node.b / 255f;
+
+            if (node.r == 0 && node.g == 0 && node.b == 0) {
+                // Dim gray for "off" LEDs so we can still see the cube structure
+                r = 0.15f;
+                g = 0.15f;
+                b = 0.15f;
+            }
+
+            shapeRenderer.setColor(r, g, b, 1);
+            // Draw a small 3D box at each LED position (uses x, y, z coordinates)
+            shapeRenderer.box(node.x - 3, node.y - 3, node.z + 3, 6, 6, 6);
 
             // Update screen coordinates for this node (used by Perlin noise)
             node.screenX = screenX(node.x, node.y, node.z);

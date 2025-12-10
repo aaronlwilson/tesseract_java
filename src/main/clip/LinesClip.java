@@ -63,32 +63,15 @@ public class LinesClip  extends AbstractClip {
     }
 
     public void run() {
+        // Map local vars to abstract clip parameters
+        _pSize = p1 * 200.0f;
+        _pRamp = p2 * 200.0f;
 
-        /*
-        //map local vars to abstract clip parameters
-        _pSize = p1*200.0f;
-        _pRamp = p2*200.0f;
-
-        _pSpeed = p3*20.0f;
-        _pAccel = p4;
-        _pDensity = (p5*30)+1;
-
-
-        int length = _particles.size()-1;
-        for (int i = length; i >= 0; i--) {
-            Particle p = _particles.get(i);
-            p.run();
-            if (p.isDead()) {
-                _particles.remove(i);
-            }
+        // Update existing particles with current size/ramp values
+        for (Particle p : _particles) {
+            p.size = _pSize;
+            p.ramp = _pRamp;
         }
-
-        _counter++;
-        if(_counter >= _pDensity){
-            _counter = 0;
-            addParticle();
-        }
-        */
     }
 
 
