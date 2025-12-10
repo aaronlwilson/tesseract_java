@@ -28,10 +28,15 @@ class TestUtil {
 
   public static TesseractApp getMockMain() { new MockMain() }
 
-  // Mock some of the functions in the util class
+  // Mock some of the functions in the util class (JUnit 4 version)
   public static void mockUtilClass(TemporaryFolder tmpDir) {
+    mockUtilClass(tmpDir.getRoot())
+  }
+
+  // Mock some of the functions in the util class (JUnit 5 version - accepts File)
+  public static void mockUtilClass(File tmpDir) {
     // Use Mockito's mockStatic for stubbing static methods
-    String dataDir = tmpDir.getRoot().getCanonicalPath()
+    String dataDir = tmpDir.getCanonicalPath()
     if (utilMock != null) {
       utilMock.close()
     }
@@ -70,8 +75,19 @@ class TestUtil {
     new File(playlistJsonPath).write "${new JsonBuilder(playlists).toPrettyString()}\n"
   }
 
-  public static void mockConfigFile(tmpDir, Map configData) {
+  // JUnit 4 version - accepts TemporaryFolder
+  public static void mockConfigFile(TemporaryFolder tmpDir, Map configData) {
     File configFile = tmpDir.newFile()
+    FileUtils.writeStringToFile(configFile, new Yaml().dump(configData), Charset.defaultCharset())
+
+    // Set the config path for the application
+    System.setProperty('configPath', configFile.getCanonicalPath())
+  }
+
+  // JUnit 5 version - accepts File
+  public static void mockConfigFile(File tmpDir, Map configData) {
+    File configFile = new File(tmpDir, "config-${System.currentTimeMillis()}.yml")
+    configFile.createNewFile()
     FileUtils.writeStringToFile(configFile, new Yaml().dump(configData), Charset.defaultCharset())
 
     // Set the config path for the application

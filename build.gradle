@@ -83,8 +83,14 @@ dependencies {
 
   //////////////// For unit/integration tests
 
-  // JUnit 4
+  // JUnit 5 (Jupiter) - required for junit-pioneer
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+
+  // JUnit 4 for backwards compatibility (most tests still use JUnit 4)
   testImplementation 'junit:junit:4.13.2'
+
+  // JUnit Vintage engine to run JUnit 4 tests with JUnit 5
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.10.1'
 
   // Mockito 4.x (Java 17 compatible, no PowerMock needed)
   testImplementation 'org.mockito:mockito-core:4.11.0'
@@ -93,8 +99,8 @@ dependencies {
   // Hamcrest junit matchers
   testImplementation 'org.hamcrest:hamcrest:2.2'
 
-  // Allows capturing logs and exit status from commands
-  testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
+  // JUnit Pioneer for environment variable testing (Java 17 compatible, replaces system-rules)
+  testImplementation 'org.junit-pioneer:junit-pioneer:2.2.0'
 
   // IO utilities
   testImplementation 'commons-io:commons-io:2.15.1'
@@ -102,6 +108,7 @@ dependencies {
 
 import de.undercouch.gradle.tasks.download.Download
 
+// UDP networking library (originally from Processing, now standalone)
 task downloadProcessingUdpLibrary(type: Download) {
   src 'http://ubaa.net/shared/processing/udp/udp.zip'
   dest new File("${rootDir}/tmp", 'udp.zip')
@@ -133,6 +140,14 @@ tasks.register('fatJar', Jar) {
 
 test {
   dependsOn cleanTest
+  useJUnitPlatform() // Enable JUnit 5
+
+  // Required for JUnit Pioneer to modify environment variables in Java 17+
+  jvmArgs = [
+    '--add-opens=java.base/java.util=ALL-UNNAMED',
+    '--add-opens=java.base/java.lang=ALL-UNNAMED'
+  ]
+
   testLogging {
     showStandardStreams = true
     events "passed", "skipped", "failed"
