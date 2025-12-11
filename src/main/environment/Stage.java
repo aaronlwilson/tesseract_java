@@ -306,13 +306,16 @@ public class Stage {
     private void buildCubotron() {
 
         int counter = 0;
-        nodes = new Node[30 * 30 * 30];
+        int size = 30;  // 30x30x30 cube
+        int spacing = 10;  // spacing between nodes
+        nodes = new Node[size * size * size];
 
-        // Initialize a crap-ton of nodes, just a big basic cubeotron
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 30; j++) {
-                for (int k = 0; k < 30; k++) {
-                    nodes[counter] = new Node(10 * i, 10 * j, 10 * k, counter, null);
+        // Initialize nodes in a volumetric cube grid
+        System.out.println("Built CUBOTRON: " + size + "x" + size + "x" + size + " = " + (size*size*size) + " nodes");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                for (int k = 0; k < size; k++) {
+                    nodes[counter] = new Node(spacing * i, spacing * j, spacing * k, counter, null);
                     counter++;
                 }
             }
