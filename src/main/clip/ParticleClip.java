@@ -139,7 +139,6 @@ public class ParticleClip  extends AbstractClip {
         if(newGreen > 0) nodestate[1] = newGreen;
         if(newBlue > 0) nodestate[2] = newBlue;
 
-
         return nodestate;
     }
 

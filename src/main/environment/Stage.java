@@ -50,7 +50,6 @@ public class Stage {
             buildDracoStage();
         } else if (stageType.equals("SCARED")) {
             buildScared();
-            //buildCubotron();
         } else {
             throw new RuntimeException("ERROR: Invalid stage of type: " + stageType);
         }
@@ -183,7 +182,7 @@ public class Stage {
     }
 
     private void buildScared() {
-        int numberTeensies = 4;
+        int numberTeensies = 5; //use 5 with base
         _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
         //Teensy 4.1
@@ -191,6 +190,8 @@ public class Stage {
         _myMain.udpModel.teensies[1] = new Teensy("192.168.50.102", 2, "mac_address");
         _myMain.udpModel.teensies[2] = new Teensy("192.168.50.103", 3, "mac_address");
         _myMain.udpModel.teensies[3] = new Teensy("192.168.50.104", 4, "mac_address");
+        //for Tesseract base
+        _myMain.udpModel.teensies[4] = new Teensy("192.168.50.105", 5, "mac_address");
 
         //ESP8266
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
@@ -207,15 +208,18 @@ public class Stage {
         double exponent = 2.5;
         int yHeight = 600;
 
-        for (int k = 0; k < numberTeensies; k++) {
+        for (int k = 0; k < 4; k++) {
+            //correct rotation when we flip directions (z axis is a quarter turn from x axis on the plane of rotation)
+            if (k == 2) startAngle = 90;
+
             //pins on the teensy are 1 through 8
-            int pinz = numPins; //gets decremented
+            int pinz = 1;
 
             for (int i = 0; i < numPins; i++) {
                 Node[] stripNodes = new Node[numLedsPerStrip];
 
                 Strip strip = new Strip(i, numLedsPerStrip, pinz);
-                pinz--;
+                pinz++;
                 strip.setMyController(_myMain.udpModel.teensies[k]);
 
                 float x;  // node position
@@ -246,7 +250,7 @@ public class Stage {
 
                     // each tube has 2 LED strips, so the second one is shown here with a lil more Z
                     if (i%2 != 0) {
-                        z += 7;
+                        z -= 7;
                     }
 
                     //true Scared mapping
@@ -269,6 +273,86 @@ public class Stage {
                 nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
             }
         }
+
+
+
+        //Now build cross-thing for the tubes on the Tesseract metal base
+        int numLedsLegs = 104;
+        //pins on the teensy are 1 through 8
+        int pin = numPins; //gets decremented
+
+        for (int a = 0; a < 4; a++) { //4 legs
+            float x = 0;  // node position
+            float y = 0;
+            float z = -200;
+
+            //the pattern is basically a cross, coming from the center, radiating up, down, left & right
+
+            for (int b = 0; b < 2; b++) {
+                Node[] stripNodes = new Node[numLedsLegs];
+
+                Strip strip = new Strip(pin + numPins, numLedsLegs, pin);
+                pin--;
+                if (_myMain.udpModel.teensies.length >= 5) {
+                    strip.setMyController(_myMain.udpModel.teensies[4]);
+                }
+
+                int start = 10;
+                int space = 3;
+
+                //make some nodes in x y z space
+                for (int c = 0; c < numLedsLegs; c++) {
+
+                    //pick the axis that is the direction of motion
+                    switch (a) {
+                        case 0:
+                            if (c == 0) {
+                                x = start;
+                                y = start;
+                            }
+                            x += space;
+                            y += space;
+                            break;
+                        case 1:
+                            if (c == 0) {
+                                y = start;
+                                x = -start;
+                            }
+                            y += space;
+                            x -= space;
+                            break;
+                        case 2:
+                            if (c == 0) {
+                                x = start;
+                                y = -start;
+                            }
+                            x += space;
+                            y -= space;
+                            break;
+                        case 3:
+                            if (c == 0) {
+                                y = -start;
+                                x = -start;
+                            }
+                            y -= space;
+                            x -= space;
+                            break;
+                    }
+                    z += space;
+
+
+                    //simple rows of strips
+                    stripNodes[c] = new Node(x, y, z, c, strip);
+                }
+                strip.nodeArray = stripNodes;
+                nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
+
+                //each tube is actually 2 pins, 2 individually addressable strips that don't connect at the end.
+                z = -240;
+                x = 0;
+            }
+        }
+
 
     }
 

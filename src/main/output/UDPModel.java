@@ -260,6 +260,16 @@ public class UDPModel {
                 data[(i*3) + 1 +2] = (byte) node.g;
                 data[(i*3) + 2 +2] = (byte) node.b;
 
+                //HACK
+                //One of the strips on the Tesseract base must be older and has r and g swapped, so 2 pins corrected here
+                if (teensy.ip == "192.168.50.105") {
+                    if (fixture.pinNum < 3) {
+                        data[(i * 3) + 0 + 2] = (byte) node.g;
+                        data[(i * 3) + 1 + 2] = (byte) node.r;
+                        data[(i * 3) + 2 + 2] = (byte) node.b;
+                    }
+                }
+
 //                int c = 255;
 //                if (fixture.pinNum != 8) {
 //                    c = 0;

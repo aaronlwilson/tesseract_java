@@ -133,44 +133,24 @@ public class LinesClip  extends AbstractClip {
         if(newGreen > 0) nodestate[1] = newGreen;
         if(newBlue > 0) nodestate[2] = newBlue;
 
-        /*
-        float brightness = 0.0f;
 
-        int newRed = 0;
-        int newGreen = 0;
-        int newBlue = 0;
 
-        for(Particle particle : _particles) {
+        //PINWHEEL effect
+        int spokes = 1;
 
-            PVector l = particle.position;
-            float dist = dist(node.x, node.y, node.z, l.x, l.y, l.z);
-            float surface = particle.size;
 
-            if (dist < surface) {
-                brightness = 1.0f;
+        float t = atan2(node.x, node.y);         // Convert cartesian to polar
 
-                newRed = (int) (Util.getR(particle.color) * brightness);
-                newGreen = (int) (Util.getG(particle.color) * brightness);
-                newBlue = (int) (Util.getB(particle.color) * brightness);
+        // Compute 2D polar coordinate function
+        float val = sin((t*spokes) + _speed/10);
+        int b = (int) ((val + 1.0) * (255.0/2.0));
 
-            }else if (dist >= surface+particle.ramp) {
-                //this particle has no effect on this node
-            }else{
-                //ramp calculates a soft leading edge to the brightness threshold
-                brightness = map(dist, surface, surface+particle.ramp, 1.0f, 0);
-                brightness = constrain(brightness, 0, 1.0f);
+        //leds[i] = setPixelBrightness(color, b);
+//        if(b > 0) nodestate[0] = b;
+//        if(b > 0) nodestate[1] = b;
+//        if(b > 0) nodestate[2] = b;
 
-                newRed += (int)(Util.getR(particle.color) * brightness);
-                newGreen += (int)(Util.getG(particle.color) * brightness);
-                newBlue  += (int)(Util.getB(particle.color) * brightness);
-            }
 
-        }
-
-        if(newRed > 0) nodestate[0] = newRed;
-        if(newGreen > 0) nodestate[1] = newGreen;
-        if(newBlue > 0) nodestate[2] = newBlue;
-        */
 
 
         return nodestate;
