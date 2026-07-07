@@ -18,12 +18,12 @@ RUN apt-get install -y xvfb libxrender1
 # Install gstreamer native library
 RUN apt-get install -y libgstreamer1.0-dev
 
-### Java 17
+### Java 21
 
-# Install OpenJDK 17 (available in Ubuntu 22.04 repositories)
-RUN apt-get install -y openjdk-17-jdk
+# Install OpenJDK 21 (available in Ubuntu 22.04 repositories)
+RUN apt-get install -y openjdk-21-jdk
 
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-21-openjdk-amd64
 
 RUN mkdir -p /app
 

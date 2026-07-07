@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Tesseract Java is a LibGDX-based control system for interactive Kinetic LED and Flame FX sculptures. It displays procedurally-generated visual content on LED arrays while simultaneously sending color data to physical hardware controllers via UDP.
 
-**Tech Stack**: Java 21, Groovy 4.0.29, LibGDX 1.14.0, JavaCV 1.5.12 (FFmpeg 7.1.1), WebSocket
+**Tech Stack**: Java 21, Groovy 5.0.3, LibGDX 1.14.0, JavaCV 1.5.12 (FFmpeg 7.1.1), WebSocket
 
 ## Build Commands
 

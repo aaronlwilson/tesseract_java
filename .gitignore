@@ -124,3 +124,7 @@ data/default/*.json
 
 # ignore video content, its too big
 data/videos
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log

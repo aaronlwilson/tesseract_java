@@ -6,15 +6,15 @@ This project was created for IntelliJ Idea IDE.
 
 ## Requirements
 
-**MUST USE JAVA SDK 17+!** The project uses LibGDX 1.12.1, Groovy 4, and JavaCV which require Java 17.
+**MUST USE JAVA SDK 21+!** The project uses LibGDX, Groovy, and JavaCV which require Java 21.
 
 ## Architecture
 
-- **Graphics Engine**: LibGDX 1.12.1 (cross-platform, headless-capable)
-- **Video Playback**: JavaCV 1.5.9 with FFmpeg (cross-platform video support)
+- **Graphics Engine**: LibGDX 1.14.0 (cross-platform, headless-capable)
+- **Video Playback**: JavaCV 1.5.12 with FFmpeg 7.1.1 (cross-platform video support)
 - **LED Output**: UDP networking to Teensy/PixelPusher hardware via custom UDP library
 - **UI Control**: Websocket server (port 8883) for remote browser-based control
-- **Language**: Groovy 4.0.17 on Java 17
+- **Language**: Groovy on Java 21
 
 ### Rendering Modes
 
@@ -42,7 +42,7 @@ To configure the project from scratch in IntelliJ, follow these steps:
   - IntelliJ will open and show you a dialog box
   - You can accept the default settings
   - You can check 'Enable auto-import' if you want IntelliJ to automatically watch your project configuration for changes and update itself. This can be very helpful, or annoying depending on the situation.
-  - Note: you must have a JVM installed on your machine. Make sure the Gradle JVM box is not empty and points to Java 17+
+  - Note: you must have a JVM installed on your machine. Make sure the Gradle JVM box is not empty and points to Java 21+
 
 Once you click OK, the project will be configured. IntelliJ will start downloading and indexing dependencies.
 

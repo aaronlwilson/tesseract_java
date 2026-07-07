@@ -4,7 +4,7 @@
 default:
     @just --list
 
-# Run locally on macOS with display (requires Java 17 via SDKMAN)
+# Run locally on macOS with display (requires Java 21 via SDKMAN)
 # Uses LibGDX for rendering (no JOGL dependency)
 run-local:
     java -XstartOnFirstThread -jar build/libs/TesseractFatJar.jar
@@ -13,7 +13,7 @@ run-local:
 run-headless:
     java -jar build/libs/TesseractFatJar.jar --headless
 
-# Build fat JAR (requires Gradle 7.6.4 and Java 17)
+# Build fat JAR (uses the bundled Gradle wrapper; requires Java 21)
 build-local:
     ./gradlew fatJar
 
