@@ -3,11 +3,8 @@ package app;
 //temp
 import clip.Particle;
 
-
 import processing.core.PApplet;
-
 import environment.*;
-
 
 public class OnScreen {
     private PApplet p;
@@ -79,6 +76,8 @@ public class OnScreen {
         //center camera and move backward
         p.translate(p.width/2, (p.height/2), 0);
 
+        //TODO: use number keys to snap to common views
+        //TODO: add drag-zoom and spacebar to reset
         //explore the world
         if(p.mousePressed) {
             _xDelta = _xStart - p.mouseX;
@@ -118,16 +117,17 @@ public class OnScreen {
         p.stroke(_myMain.particleZ.color);
         p.point(_myMain.particleZ.position.x, _myMain.particleZ.position.y, _myMain.particleZ.position.z);
 
+        p.stroke(_myMain.particleSpin.color);
+        p.point(_myMain.particleSpin.position.x, _myMain.particleSpin.position.y, _myMain.particleSpin.position.z);
+
         p.pushMatrix();
 
-
-        //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
-        //we want to translate the object on multiple axes using the current global coordinates.
-        float valueX = 45, valueY = 0, valueZ = 35.3f;
-
         //for Tesseract CUBE only (so it spins upon one corner)
-        if(_myMain.stage.stageType.equals("TESSERACT")) {
-          rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
+        if (_myMain.stage.stageType.equals("TESSERACT")) {
+            //because the coordinate system changes with every rotate call, the axes of rotation "sticks" to our object. This is not what we want.
+            //we want to translate the object on multiple axes using the current global coordinates.
+            float valueX = 45, valueY = 0, valueZ = 35.3f;
+            rotateXYZ(p.radians(valueX), p.radians(valueY), p.radians(valueZ));
         }
 
         p.strokeWeight(1);

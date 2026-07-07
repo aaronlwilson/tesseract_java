@@ -3,17 +3,21 @@ package environment;
 
 import app.TesseractMain;
 import hardware.*;
+import processing.core.PApplet;
+
+import static java.lang.Math.*;
+import static processing.core.PApplet.radians;
 
 public class Stage {
 
     //used to automatically define bounding box
-    public int maxX;
-    public int maxY;
-    public int maxZ;
+    public float maxX;
+    public float maxY;
+    public float maxZ;
 
-    public int minX;
-    public int minY;
-    public int minZ;
+    public float minX;
+    public float minY;
+    public float minZ;
 
     public float maxW;
     public float maxH;
@@ -178,50 +182,184 @@ public class Stage {
     }
 
     private void buildScared() {
-        int numberTeensies = 2;
+        int numberTeensies = 5; //use 5 with base
         _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
         //Teensy 4.1
-        _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
-        _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
+        _myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
+        _myMain.udpModel.teensies[1] = new Teensy("192.168.50.102", 2, "mac_address");
+        _myMain.udpModel.teensies[2] = new Teensy("192.168.50.103", 3, "mac_address");
+        _myMain.udpModel.teensies[3] = new Teensy("192.168.50.104", 4, "mac_address");
+        //for Tesseract base
+        //_myMain.udpModel.teensies[4] = new Teensy("192.168.50.105", 5, "mac_address");
 
         //ESP8266
         //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
 
         nodes = new Node[0];
+        int nodeIndex = 0;
 
-        //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
-        //800 pixels per teensy 3.2 is the current max. That should be higher...
+        int numPins = 8;
         int numLedsPerStrip = 200;
 
-        for (int k = 0; k < numberTeensies; k++) {
+        float startRadius = 20;
+        float radius = startRadius;
+        float startAngle = 0;
+        double exponent = 2.5;
+        int yHeight = 600;
+
+        for (int k = 0; k < 4; k++) {
+            //correct rotation when we flip directions (z axis is a quarter turn from x axis on the plane of rotation)
+            if (k == 2) startAngle = 90;
+
             //pins on the teensy are 1 through 8
-            int pinz = 8; //gets decremented
-            int numPins = pinz;
+            int pinz = 1;
 
             for (int i = 0; i < numPins; i++) {
                 Node[] stripNodes = new Node[numLedsPerStrip];
 
                 Strip strip = new Strip(i, numLedsPerStrip, pinz);
-                pinz--;
+                pinz++;
                 strip.setMyController(_myMain.udpModel.teensies[k]);
+
+                float x;  // node position
+                float y;
+                float z;
 
                 //make some nodes in x y z space
                 for (int j = 0; j < numLedsPerStrip; j++) {
-                    stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
+                    //distribute 200 into 6/16th of a circle
+                    float angle = PApplet.map(j, 0, numLedsPerStrip, 0, 135) + startAngle;
+
+                    if (k < 2) { // half spiral clockwise, the other half - counter clockwise
+                        z = (float) (radius * Math.cos(radians(angle)));
+                        x = (float) (radius * Math.sin(radians(angle)));
+                    } else {
+                        // x and z are the circle part
+                        x = (float) (radius * Math.cos(radians(angle)));
+                        z = (float) (radius * Math.sin(radians(angle)));
+                    }
+
+                    //increase the radius as we move down, "christmas tree"
+                    radius += 2;
+
+                    // y is the height (which makes the circle to a spiral)
+                    //y = PApplet.map(j, 0, numLedsPerStrip, -250, 250);
+                    float percent = PApplet.map(j, 0, numLedsPerStrip, 0, 1);
+                    y = (float) ((pow(percent, exponent) * yHeight) - (yHeight/2));
+
+                    // each tube has 2 LED strips, so the second one is shown here with a lil more Z
+                    if (i%2 != 0) {
+                        z -= 7;
+                    }
+
+                    //true Scared mapping
+                    stripNodes[j] = new Node(x, z, y, nodeIndex, strip);
+                    nodeIndex++;
+                    //stripNodes[j].port = i; //used for "TilesTestClip", each Teensy has 8 outputs (octo board)
+
+                    //simple rows of strips
+                    //stripNodes[j] = new Node((3 * j) -300, (10 + (i * 10) + (k * 90)) -175, 10, j, strip);
                 }
 
-                strip.addNodesToFixture(stripNodes);
+                if (i%2 != 0) {
+                    startAngle += 360 / 8; // based on an octagon
+                }
 
+                radius = startRadius;
+
+               // strip.addNodesToFixture(stripNodes); // this was doubling the length of the array! = bad things
+                strip.nodeArray = stripNodes;
                 nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
             }
         }
 
+       // buildTesseractLegs();
+
+    }
+
+    private void buildTesseractLegs() {
+        int numPins = 8;
+        //Now build cross-thing for the tubes on the Tesseract metal base
+        int numLedsLegs = 110;
+        //pins on the teensy are 1 through 8
+        int pin = numPins; //gets decremented
+
+        for (int a = 0; a < 4; a++) { //4 legs
+            float x = 0;  // node position
+            float y = 0;
+            float z = -200;
+
+            //the pattern is basically a cross, coming from the center, radiating up, down, left & right
+
+            for (int b = 0; b < 2; b++) {
+                Node[] stripNodes = new Node[numLedsLegs];
+
+                Strip strip = new Strip(pin + numPins, numLedsLegs, pin);
+                pin--;
+                if (_myMain.udpModel.teensies.length >= 5) {
+                    strip.setMyController(_myMain.udpModel.teensies[4]);
+                }
+
+                int start = 10;
+                int space = 3;
+
+                //make some nodes in x y z space
+                for (int c = 0; c < numLedsLegs; c++) {
+
+                    //pick the axis that is the direction of motion
+                    switch (a) {
+                        case 0:
+                            if (c == 0) {
+                                x = start;
+                                y = start;
+                            }
+                            x += space;
+                            y += space;
+                            break;
+                        case 1:
+                            if (c == 0) {
+                                y = start;
+                                x = -start;
+                            }
+                            y += space;
+                            x -= space;
+                            break;
+                        case 2:
+                            if (c == 0) {
+                                x = start;
+                                y = -start;
+                            }
+                            x += space;
+                            y -= space;
+                            break;
+                        case 3:
+                            if (c == 0) {
+                                y = -start;
+                                x = -start;
+                            }
+                            y -= space;
+                            x -= space;
+                            break;
+                    }
+                    z += space;
+
+
+                    //simple rows of strips
+                    stripNodes[c] = new Node(x, y, z, c, strip);
+                }
+                strip.nodeArray = stripNodes;
+                nodes = (Node[]) TesseractMain.concat(nodes, stripNodes);
+
+                //each tube is actually 2 pins, 2 individually addressable strips that don't connect at the end.
+                z = -240;
+                x = 0;
+            }
+        }
     }
 
 
     private void buildDracoStage() {
-
         nodes = new Node[0];
 
         int h = 5; //number of teensies
@@ -254,12 +392,9 @@ public class Stage {
         talonNodes = buildSmallTalon(_myMain.udpModel.teensies[3], 450, 0, 300);
         nodes = (Node[]) _myMain.concat(nodes, talonNodes);
 
-
         //center tower
         Node[] towerNodes = buildCenterTower(_myMain.udpModel.teensies[4], 0, 0, 0);
         nodes = (Node[]) _myMain.concat(nodes, towerNodes);
-
-
     }
 
     private Node[] buildSmallTalon(Teensy teensy, int startX, int startY, int startZ) {
@@ -302,9 +437,8 @@ public class Stage {
         return towerNodes;
     }
 
-
     private void buildCubotron() {
-
+        // a 30 x 30 x 30 solid cube
         int counter = 0;
         nodes = new Node[30 * 30 * 30];
 
@@ -312,7 +446,7 @@ public class Stage {
         for (int i = 0; i < 30; i++) {
             for (int j = 0; j < 30; j++) {
                 for (int k = 0; k < 30; k++) {
-                    nodes[counter] = new Node(10 * i, 10 * j, 10 * k, counter, null);
+                    nodes[counter] = new Node(20*i - (15*20), 20*j - (15*20), 20*k -(15*20), counter, null);
                     counter++;
                 }
             }

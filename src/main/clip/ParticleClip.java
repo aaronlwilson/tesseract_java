@@ -35,7 +35,6 @@ public class ParticleClip  extends AbstractClip {
     }
 
     public void init() {
-
         clipId = "particle_clip";
         super.init();
 
@@ -43,15 +42,13 @@ public class ParticleClip  extends AbstractClip {
     }
 
     public void run() {
-
         //map local vars to abstract clip parameters
         _pSize = p1*200.0f;
         _pRamp = p2*200.0f;
 
-        _pSpeed = p3*20.0f;
+        _pSpeed = p3*10.0f;
         _pAccel = p4;
         _pDensity = (p5*30)+1;
-
 
         int length = _particles.size()-1;
         for (int i = length; i >= 0; i--) {
@@ -141,7 +138,6 @@ public class ParticleClip  extends AbstractClip {
         if(newRed > 0) nodestate[0] = newRed;
         if(newGreen > 0) nodestate[1] = newGreen;
         if(newBlue > 0) nodestate[2] = newBlue;
-
 
         return nodestate;
     }

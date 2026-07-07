@@ -3,8 +3,14 @@ package clip;
 import app.TesseractMain;
 import environment.Node;
 
-public class AbstractClip  {
 
+// interface
+interface ClipInterface {
+  public void run(); // interface method (does not have a body)
+  public int[] drawNode(Node node);
+}
+
+public class AbstractClip  {
   //CLASS VARS
   protected TesseractMain _myMain;
 
@@ -26,16 +32,14 @@ public class AbstractClip  {
 
   }
 
-
   // ---- TO BE OVERWRITTEN by Clip Class ------
   public void init() {
     _myMain = app.TesseractMain.getMain();
   }
 
-  public void run() {// animation logic that runs per frame
+  public void run() {// animation logic that runs once per frame
 
   }
-
 
   public void die() {
 
@@ -50,10 +54,7 @@ public class AbstractClip  {
     return this.filename;
   }
 
-  public int[] drawNode(Node node) {// apply the animation logic calculated above to each node
-
+  public int[] drawNode(Node node) {// apply the animation logic calculated above to every node, every frame
     return new int[3];
   }
-
-
 }

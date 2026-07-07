@@ -3,10 +3,7 @@ package output;
 
 import environment.Node;
 import environment.StrandPanel;
-import hardware.PixelPusher;
-import hardware.Rabbit;
-import hardware.Teensy;
-import hardware.TilePP;
+import hardware.*;
 import hypermedia.net.UDP;
 import processing.core.PApplet;
 import stores.ConfigStore;
@@ -160,7 +157,7 @@ public class UDPModel {
             if (teensy == null)
                 continue;
 
-            sendPanelFrame(teensy);
+            sendFixturesFrame(teensy);
 
             //swap command, makes all the tiles change at once
             byte[] data = new byte[1];
@@ -231,19 +228,66 @@ public class UDPModel {
 
 
     // Send data to the Draco panels via Teensy
-    public void sendPanelFrame(Teensy teensy) {
+    public void sendFixturesFrame(Teensy teensy) {
 
         //octo pin order is orange, blue, green, brown
         if (teensy == null) {
             return;
         }
 
-        if (teensy.strandPanelArray == null) {
+        if (teensy.fixtureArray == null) {
             return;
         }
 
-        for(StrandPanel strandPanel : teensy.strandPanelArray) {
+        for(Fixture fixture : teensy.fixtureArray) {
+ //           System.out.println("F.pin " + fixture.pinNum);
 
+            int l = fixture.nodeArray.length;
+//            System.out.println("l " + l);
+//            System.out.println(" ");
+
+            byte[] data = new byte[(l*3) + 2];
+
+            data[0] = (byte) ('l'); //LIGHTS command
+            data[1] = (byte) fixture.pinNum; // pins on teensy+octo are 1-8
+
+            for (int i=0; i<l; i++){
+                Node node = fixture.nodeArray[i];
+                if (node == null) {
+                    continue;
+                }
+                data[(i*3) + 0 +2] = (byte) node.r;
+                data[(i*3) + 1 +2] = (byte) node.g;
+                data[(i*3) + 2 +2] = (byte) node.b;
+
+                //HACK
+                //One of the strips on the Tesseract base must be older and has r and g swapped, so 2 pins corrected here
+                if (teensy.ip == "192.168.50.105") {
+                    if (fixture.pinNum < 3) {
+                        data[(i * 3) + 0 + 2] = (byte) node.g;
+                        data[(i * 3) + 1 + 2] = (byte) node.r;
+                        data[(i * 3) + 2 + 2] = (byte) node.b;
+                    }
+                }
+
+//                int c = 255;
+//                if (fixture.pinNum != 8) {
+//                    c = 0;
+//                }
+//                data[(i*3) + 0 +2] = (byte) c;
+//                data[(i*3) + 1 +2] = (byte) c;
+//                data[(i*3) + 2 +2] = (byte) c;
+            }
+
+            udp.send( data, teensy.ip, teensyPort );
+        }
+
+        /*
+        if (teensy.strandPanelArray == null) {
+            return;
+        }
+        //Strand Panels were used on Draco only
+        for(StrandPanel strandPanel : teensy.strandPanelArray) {
             int l = strandPanel.strandNodeArray.length;
 
             byte[] data = new byte[(l*3) + 2];
@@ -271,9 +315,10 @@ public class UDPModel {
             //String s = new String(data);
             //System.out.println(strandPanel.pinNum);
 
-
             udp.send( data, teensy.ip, teensyPort );
         }
+        */
+
     }//end sendPanelFrame
 
 

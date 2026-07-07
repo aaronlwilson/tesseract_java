@@ -9,7 +9,6 @@ public class Particle
 {
     //variable definition
     int lifespan = 200;
-
     public int color;
 
     public PVector position;
@@ -21,20 +20,13 @@ public class Particle
     public float fade = 1.0f;
 
 
-
     //constructor
     public Particle(PVector theL, int theC, float theSize, float theRamp, PVector theSpeed, PVector theAccel) {
-
         position = theL.copy();
-
         color = theC;
-
         size = theSize;
-
         ramp = theRamp;
-
         velocity = theSpeed.copy();
-
         acceleration = theAccel;
     }
 
