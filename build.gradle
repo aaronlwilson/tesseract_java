@@ -1,5 +1,4 @@
 plugins {
-  id "de.undercouch.download" version "5.6.0"
   id 'java'
   id 'groovy'
 }
@@ -30,6 +29,7 @@ ext {
   gdxVersion = '1.14.0'
   javacvVersion = '1.5.12'
   ffmpegVersion = '7.1.1-1.5.12'
+  appVersion = '1.0.0'
 }
 
 dependencies {
@@ -105,24 +105,22 @@ dependencies {
   testImplementation 'commons-io:commons-io:2.21.0'
 }
 
-import de.undercouch.gradle.tasks.download.Download
-
-// UDP networking library download task
-// Note: This library was originally part of Processing's contributed libraries,
-// but is now used standalone for UDP communication with LED hardware.
-// It is kept as source in lib/udp/ and has no dependency on Processing.
-task downloadProcessingUdpLibrary(type: Download) {
-  src 'http://ubaa.net/shared/processing/udp/udp.zip'
-  dest new File("${rootDir}/tmp", 'udp.zip')
-  overwrite false
-}
-
-task unzipProcessingUdpLibrary(dependsOn: downloadProcessingUdpLibrary) {
+// UDP networking library.
+// This library was originally downloaded from Processing's contributed libraries,
+// but the prebuilt jar (lib/udp/library/udp.jar) and its source (lib/udp/src/UDP.java)
+// are now vendored directly in this repo and picked up by the fileTree dependency above.
+// It has no dependency on Processing and requires no network access to build.
+//
+// This task is retained (as a no-op verification) so existing docs/commands like
+// `./gradlew unzipProcessingUdpLibrary fatJar` keep working; `fatJar` alone is sufficient.
+tasks.register('unzipProcessingUdpLibrary') {
+  description = 'Verifies the vendored UDP library jar is present (no network access).'
   doLast {
-    copy {
-      println "Unzipping UDP networking library"
-      from zipTree("${rootDir}/tmp/udp.zip")
-      into "${rootDir}/lib"
+    def udpJar = file("${rootDir}/lib/udp/library/udp.jar")
+    if (udpJar.exists()) {
+      println "Vendored UDP library present: ${udpJar}"
+    } else {
+      throw new GradleException("Vendored UDP library missing at ${udpJar}. It should be committed to the repo.")
     }
   }
 }
@@ -138,6 +136,36 @@ tasks.register('fatJar', Jar) {
     configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
   }
   with jar
+}
+
+// Run launcher with Gradle while preserving full JVM exception output.
+tasks.register('runLauncher', JavaExec) {
+  group = 'application'
+  description = 'Runs app.TesseractLauncher'
+  classpath = sourceSets.main.runtimeClasspath
+  mainClass = 'app.TesseractLauncher'
+  standardInput = System.in
+}
+
+// macOS + LWJGL requires starting on the first thread for GLFW window creation.
+def isMacOs = System.getProperty('os.name').toLowerCase().contains('mac')
+tasks.withType(JavaExec).configureEach {
+  if (isMacOs) {
+    jvmArgs '-XstartOnFirstThread'
+  }
+}
+
+// macOS DMG packaging via jpackage (JDK 21+)
+// Usage: ./gradlew dmg
+// Output: build/dmg/Tesseract Desktop-<version>.dmg
+//
+// Optional icon: place a 1024x1024 PNG at pkg/macos/icon.png
+// See bin/package_dmg.sh for full packaging details.
+tasks.register('dmg', Exec) {
+  group = 'distribution'
+  description = 'Builds a macOS DMG installer for Tesseract Desktop'
+  dependsOn fatJar
+  commandLine 'bash', 'bin/package_dmg.sh', appVersion
 }
 
 test {

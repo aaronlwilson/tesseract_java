@@ -11,17 +11,14 @@ Tesseract Java is a LibGDX-based control system for interactive Kinetic LED and 
 ## Build Commands
 
 ```bash
-# Download UDP library (required once before building)
-./gradlew unzipProcessingUdpLibrary
-
-# Build fat JAR with all dependencies
+# Build fat JAR with all dependencies (UDP library jar is vendored in lib/udp/)
 ./gradlew fatJar
 
 # Run tests
 ./gradlew test
 
-# Combined: download deps and build
-./gradlew unzipProcessingUdpLibrary fatJar
+# Build a macOS DMG installer (jpackage; JDK 21+)
+./gradlew dmg
 ```
 
 ## Running the Application
@@ -33,9 +30,8 @@ java -XstartOnFirstThread -jar build/libs/TesseractFatJar.jar
 # Headless mode (server/Raspberry Pi - no window, UDP output only)
 java -jar build/libs/TesseractFatJar.jar --headless
 
-# macOS helpers
-./bin/build_macos.sh
-./bin/start_macos.sh
+# Package a macOS DMG installer
+./bin/package_dmg.sh 1.0.0    # or: ./gradlew dmg
 ```
 
 **Note**: The `-XstartOnFirstThread` flag is required on macOS for LibGDX/LWJGL to work properly.
@@ -75,7 +71,7 @@ Key config options:
 
 **State Management** (`state/`):
 - `StateManager` maintains app state and syncs with WebSocket UI clients (port 8883)
-- Stores persist to JSON files (`stores/`)
+- Stores persist to JSON files under `./data/default/` (e.g. `Scene.json`, `Playlist.json`) at runtime, via `Util.getDataFilePath`
 
 **Hardware Output** (`hardware/`, `output/`):
 - `Stage` holds 3D coordinates for all LEDs as `Node` objects

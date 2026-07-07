@@ -55,7 +55,7 @@ It also allows us to transparently integrate code written in other JVM languages
 
 If you've created the project from scratch, you can create the 'run configuration' easily. This allows you to click the green 'play' button near the top right of the screen to launch the application.
 
-**IMPORTANT:** First, you'll need to ensure you have all of the dependencies. Run `./gradlew unzipProcessingUdpLibrary` to install the UDP library.
+**IMPORTANT:** The UDP library jar is vendored in `lib/udp/`, so no extra dependency-download step is required — Gradle picks it up automatically.
 
 - Open the project
 - Open the file `TesseractLauncher.java` (in `src/main/app/`)
@@ -74,10 +74,10 @@ A fat jar file is a jar (compiled java application) that contains all necessary 
 To build a fat jar, run the command:
 
 ```bash
-./gradlew unzipProcessingUdpLibrary fatJar
+./gradlew fatJar
 ```
 
-The UDP library download adds a bit to the application startup time when running in IntelliJ, so it doesn't automatically run by default and must be run manually.
+All dependencies (including the vendored UDP library in `lib/udp/`) are resolved automatically — no separate download step is needed.
 
 The jar will be created in the `./build/libs` directory.
 
@@ -95,15 +95,21 @@ java -jar ./build/libs/TesseractFatJar.jar --headless
 
 ### macOS
 
-There are helper scripts in the `bin` directory to enable you to easily build and run the application.
+On macOS, LibGDX/LWJGL requires the `-XstartOnFirstThread` JVM flag:
 
-Use `./bin/build_macos.sh` to build the jar and `./bin/start_macos.sh` to run the application.
+```bash
+java -XstartOnFirstThread -jar ./build/libs/TesseractFatJar.jar
+```
 
-Running `./bin/start_macos.sh` will automatically build the jar if it doesn't exist.
+To build a distributable `.dmg` installer (via `jpackage`, requires JDK 21+):
+
+```bash
+./gradlew dmg   # runs bin/package_dmg.sh; output in build/dmg/
+```
 
 ### Linux
 
-The process is largely the same for Linux. The same scripts may even work, but they are untested on Linux.
+The same fat jar runs on Linux (x86_64 and arm64). No `-XstartOnFirstThread` flag is needed. For headless production/server deployment, use the `--headless` flag (see above).
 
 ## Configuration
 
@@ -159,24 +165,17 @@ This option controls the initial 'playState' of the application. Applicable valu
 
 Chooses which stage to initialize in the application. Current values are 'CUBOTRON', 'DRACO', and 'TESSERACT'. Default is 'CUBOTRON'.
 
-## Docker Deployment
+## Deployment
 
-The project includes Docker configuration for deployment on Raspberry Pi or server environments.
-
-### Building the Docker image
+For production/server/embedded (Raspberry Pi) deployment, run the fat jar directly in headless mode:
 
 ```bash
-cd docker
-./build.sh
+java -jar ./build/libs/TesseractFatJar.jar --headless
 ```
 
-### Running in Docker
+Headless mode is windowless (no LWJGL/OpenGL/X server required) and outputs only UDP to LED hardware. It is auto-selected when no `DISPLAY` is set on non-macOS hosts.
 
-```bash
-docker run tesseractpixel/tesseract-java --headless
-```
-
-The Docker image uses headless mode by default for server/embedded deployments.
+> **Note:** The `docker/` configuration is legacy (x86_64, runs the GUI under Xvfb rather than true `--headless`) and is not the recommended path. A native systemd-based Raspberry Pi deployment lives under `deploy/`.
 
 ## Testing
 
