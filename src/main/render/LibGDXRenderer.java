@@ -18,6 +18,10 @@ import environment.Node;
  */
 public class LibGDXRenderer implements IRenderer {
 
+    // On-screen radius (in pixels) of each LED dot. Nodes are billboarded, so
+    // this is a constant screen size regardless of 3D depth (matches Processing's point()).
+    private static final float NODE_RADIUS = 2f;
+
     private int width;
     private int height;
 
@@ -26,6 +30,10 @@ public class LibGDXRenderer implements IRenderer {
     private SpriteBatch spriteBatch;
     private BitmapFont font;
     private OrthographicCamera camera;
+
+    // Screen-space (2D) projection used to draw billboarded node dots at their
+    // projected positions. Origin bottom-left, matching camera.project() output.
+    private Matrix4 screenMatrix;
 
     // Camera rotation state (for mouse-controlled viewing)
     private float xRot = 0;
@@ -49,11 +57,19 @@ public class LibGDXRenderer implements IRenderer {
         // Setup orthographic camera (matches Processing's ortho())
         camera = new OrthographicCamera(width, height);
         camera.position.set(width / 2f, height / 2f, 0);
+        // Wide near/far so the rotated 3D scene (axes, bounding box) is never
+        // clipped. The default 0..100 range slices through the rotated geometry.
+        camera.near = -10000;
+        camera.far = 10000;
         camera.update();
 
         // Initialize matrices for 3D projection
         projectionMatrix = new Matrix4();
         transformMatrix = new Matrix4();
+
+        // 2D screen-space projection for billboarded node dots
+        screenMatrix = new Matrix4();
+        screenMatrix.setToOrtho2D(0, 0, width, height);
 
         System.out.println("LibGDXRenderer initialized (" + width + "x" + height + ")");
     }
@@ -95,37 +111,47 @@ public class LibGDXRenderer implements IRenderer {
 
     @Override
     public void drawNode(Node node) {
-        shapeRenderer.setProjectionMatrix(projectionMatrix);
-        // Use filled circles instead of points for better visibility
+        // Billboard pass: 2D dots at projected positions, painter's order.
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        shapeRenderer.setProjectionMatrix(screenMatrix);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(node.r / 255f, node.g / 255f, node.b / 255f, 1);
-        // Draw a small circle to represent the LED node
-        shapeRenderer.circle(node.x, node.y, 2);
+        drawNodeBillboard(node);
         shapeRenderer.end();
-
-        // Update screen coordinates for this node (used by Perlin noise)
-        node.screenX = screenX(node.x, node.y, node.z);
-        node.screenY = screenY(node.x, node.y, node.z);
     }
 
     @Override
     public void drawNodes(Node[] nodes) {
         if (nodes == null) return;
 
-        shapeRenderer.setProjectionMatrix(projectionMatrix);
+        // Billboard pass: project each node's true 3D (x,y,z) to screen space and
+        // draw a constant-size 2D circle there. This reproduces Processing's point():
+        // a flat sprite at the correct 3D position, so all X/Y/Z layers are visible.
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        shapeRenderer.setProjectionMatrix(screenMatrix);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         for (Node node : nodes) {
-            shapeRenderer.setColor(node.r / 255f, node.g / 255f, node.b / 255f, 1);
-            // Draw a small circle for each LED node
-            shapeRenderer.circle(node.x, node.y, 2);
-
-            // Update screen coordinates for this node (used by Perlin noise)
-            node.screenX = screenX(node.x, node.y, node.z);
-            node.screenY = screenY(node.x, node.y, node.z);
+            drawNodeBillboard(node);
         }
 
         shapeRenderer.end();
+    }
+
+    // Projects a node to screen space and draws its dot. Must be called between
+    // shapeRenderer.begin()/end() with screenMatrix as the projection.
+    private void drawNodeBillboard(Node node) {
+        // Project true 3D position (x, y, z) through the rotation + camera.
+        tempVec.set(node.x, node.y, node.z);
+        tempVec.mul(transformMatrix);
+        camera.project(tempVec); // -> window coords, origin bottom-left, z = depth
+
+        shapeRenderer.setColor(node.r / 255f, node.g / 255f, node.b / 255f, 1);
+        shapeRenderer.circle(tempVec.x, tempVec.y, NODE_RADIUS);
+
+        // Record projected position for clips (e.g. Perlin) in Processing's
+        // top-left coordinate convention.
+        node.screenX = tempVec.x;
+        node.screenY = height - tempVec.y;
     }
 
     @Override
