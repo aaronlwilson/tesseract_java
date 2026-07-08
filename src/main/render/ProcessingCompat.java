@@ -7,8 +7,12 @@ package render;
  */
 public class ProcessingCompat {
 
-    // Perlin noise state
-    private static final int PERLIN_SIZE = 4096;
+    // Perlin noise state.
+    // PERLIN_SIZE is used as a bitmask (perlin[of & PERLIN_SIZE]), so it MUST be 2^n - 1 (0x0FFF).
+    // Using 4096 (0x1000) makes the mask isolate a single bit — every lookup collapses to perlin[0]
+    // or perlin[4096], flattening the noise field into a near-solid/banded output. This matches
+    // Processing's own value (PERLIN_SIZE = 4095, table sized PERLIN_SIZE + 1 = 4096).
+    private static final int PERLIN_SIZE = 4095;
     private static final float[] perlin = new float[PERLIN_SIZE + 1];
     private static int perlin_octaves = 4;
     private static float perlin_amp_falloff = 0.5f;
