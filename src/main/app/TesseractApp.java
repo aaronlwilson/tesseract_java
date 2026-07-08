@@ -2,6 +2,7 @@ package app;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
 import environment.Node;
@@ -362,7 +363,28 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        // Arrow keys drive the mapping-tool selection (see TilesTestClip / ScaredGeometry).
+        // UP/DOWN cycle the controller (1..4), LEFT/RIGHT cycle the pin (1..8).
+        if (keycode == Input.Keys.UP) {
+            mapController++;
+            if (mapController > 4) mapController = 1;
+            System.out.println("mapController:" + mapController);
+        } else if (keycode == Input.Keys.DOWN) {
+            mapController--;
+            if (mapController < 1) mapController = 4;
+            System.out.println("mapController:" + mapController);
+        } else if (keycode == Input.Keys.RIGHT) {
+            mapPort++;
+            if (mapPort > 8) mapPort = 1;
+            System.out.println("mapPort:" + mapPort);
+        } else if (keycode == Input.Keys.LEFT) {
+            mapPort--;
+            if (mapPort < 1) mapPort = 8;
+            System.out.println("mapPort:" + mapPort);
+        } else {
+            return false;
+        }
+        return true;
     }
 
     @Override
