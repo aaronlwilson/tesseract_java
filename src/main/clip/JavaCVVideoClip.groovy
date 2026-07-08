@@ -194,16 +194,31 @@ public class JavaCVVideoClip extends AbstractClip {
         }
     }
 
+    // Reused across frames by the (single) decode thread to avoid per-frame byte[] allocation.
+    private byte[] bgrScratch = null;
+
     // Convert a decoded BGR24 frame to a fresh 0xAARRGGBB int[] (Processing's pixels[] semantics),
     // reading the raw frame buffer directly. We deliberately avoid Java2DFrameConverter: it is
     // AWT/Java2D based, and on macOS AWT contends with LWJGL/GLFW's -XstartOnFirstThread main thread,
     // which deadlocks the decode thread — the video opens but never produces a single frame.
-    private static int[] frameToArgb(Frame frame) {
+    //
+    // Perf: bulk-copy the native buffer into a Java byte[] once, then pack. ByteBuffer.get(index)
+    // per pixel is ~an order of magnitude slower than array access, and at ~690k accesses/frame it
+    // overran the frame budget under the app's heavy render thread (video crawled at a few fps).
+    private int[] frameToArgb(Frame frame) {
         int w = frame.imageWidth;
         int h = frame.imageHeight;
         int ch = frame.imageChannels;      // 3 for BGR24
         int stride = frame.imageStride;    // bytes per row (may include padding)
         ByteBuffer src = (ByteBuffer) frame.image[0];
+
+        int need = stride * h;
+        if (bgrScratch == null || bgrScratch.length < need) {
+            bgrScratch = new byte[need];
+        }
+        src.position(0);
+        src.get(bgrScratch, 0, Math.min(need, src.remaining()));
+        byte[] bgr = bgrScratch;
 
         int[] out = new int[w * h];
         for (int y = 0; y < h; y++) {
@@ -211,9 +226,9 @@ public class JavaCVVideoClip extends AbstractClip {
             int dstRow = y * w;
             for (int x = 0; x < w; x++) {
                 int s = srcRow + x * ch;
-                int b = src.get(s) & 0xFF;
-                int g = src.get(s + 1) & 0xFF;
-                int r = src.get(s + 2) & 0xFF;
+                int b = bgr[s] & 0xFF;
+                int g = bgr[s + 1] & 0xFF;
+                int r = bgr[s + 2] & 0xFF;
                 out[dstRow + x] = (0xFF << 24) | (r << 16) | (g << 8) | b;
             }
         }
