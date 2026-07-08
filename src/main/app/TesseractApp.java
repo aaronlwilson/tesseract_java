@@ -370,10 +370,12 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         // Arrow keys drive the mapping-tool selection (see TilesTestClip / ScaredGeometry).
         // UP/DOWN cycle the controller (1..4), LEFT/RIGHT cycle the pin (1..8).
         if (keycode == Input.Keys.UP) {
+            mapPort = 1;
             mapController++;
             if (mapController > 4) mapController = 1;
             System.out.println("mapController:" + mapController);
         } else if (keycode == Input.Keys.DOWN) {
+            mapPort = 1;
             mapController--;
             if (mapController < 1) mapController = 4;
             System.out.println("mapController:" + mapController);
