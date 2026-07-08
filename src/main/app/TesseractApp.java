@@ -240,9 +240,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     private Node createNodeFromParticle(Particle p) {
         Node n = new Node();
-        n.x = (int) p.position.x;
-        n.y = (int) p.position.y;
-        n.z = (int) p.position.z;
+        n.x = p.position.x;
+        n.y = p.position.y;
+        n.z = p.position.z;
         n.r = (p.color >> 16) & 0xFF;
         n.g = (p.color >> 8) & 0xFF;
         n.b = p.color & 0xFF;

@@ -3,9 +3,11 @@ package environment;
 import hardware.*;
 
 public class Node  {
-  public int x;
-  public int y;
-  public int z;
+  // World-space coordinates. Float (not int) so geometry built from trig/Sketchup
+  // mappings (e.g. the SCARED spiral) keeps sub-unit precision.
+  public float x;
+  public float y;
+  public float z;
 
   public float screenX;
   public float screenY;
@@ -21,8 +23,8 @@ public class Node  {
   public int g;
   public int b;
 
-  //constructor
-  public Node(int theX, int theY, int theZ, int theIndex, Fixture theFixture) {
+  //constructor (int coords widen to float; keeps existing int-literal call sites working)
+  public Node(float theX, float theY, float theZ, int theIndex, Fixture theFixture) {
     x = theX;
     y = theY;
     z = theZ;

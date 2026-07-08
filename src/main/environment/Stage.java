@@ -4,16 +4,19 @@ package environment;
 import app.TesseractApp;
 import hardware.*;
 
+import static render.ProcessingCompat.map;
+import static render.ProcessingCompat.radians;
+
 public class Stage {
 
     //used to automatically define bounding box
-    public int maxX;
-    public int maxY;
-    public int maxZ;
+    public float maxX;
+    public float maxY;
+    public float maxZ;
 
-    public int minX;
-    public int minY;
-    public int minZ;
+    public float minX;
+    public float minY;
+    public float minZ;
 
     public float maxW;
     public float maxH;
@@ -178,41 +181,89 @@ public class Stage {
     }
 
     private void buildScared() {
-        int numberTeensies = 2;
+        // SCARED = a "christmas-tree" spiral zome. Each of 4 Teensies drives 8 strips (octo board);
+        // each tube carries 2 strips. Ported from the original Processing build (Grandma Millers mapping).
+        // Set numberTeensies to 5 and uncomment teensies[4] below to add the Tesseract base.
+        int numberTeensies = 4;
         _myMain.udpModel.teensies = new Teensy[numberTeensies];
 
         //Teensy 4.1
-        _myMain.udpModel.teensies[0] = new Teensy("192.168.0.101", 1, "mac_address");
-        _myMain.udpModel.teensies[1] = new Teensy("192.168.0.102", 2, "mac_address");
-
-        //ESP8266
-        //_myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
+        _myMain.udpModel.teensies[0] = new Teensy("192.168.50.101", 1, "mac_address");
+        _myMain.udpModel.teensies[1] = new Teensy("192.168.50.102", 2, "mac_address");
+        _myMain.udpModel.teensies[2] = new Teensy("192.168.50.103", 3, "mac_address");
+        _myMain.udpModel.teensies[3] = new Teensy("192.168.50.104", 4, "mac_address");
+        //for Tesseract base (bump numberTeensies to 5 to enable)
+        //_myMain.udpModel.teensies[4] = new Teensy("192.168.50.105", 5, "mac_address");
 
         nodes = new Node[0];
+        int nodeIndex = 0;
 
-        //with 8 pins of data, the Teensy could not handle 200 nodes per strip. Even over-clocked
-        //800 pixels per teensy 3.2 is the current max. That should be higher...
+        int numPins = 8;
         int numLedsPerStrip = 200;
 
+        float startRadius = 20;
+        float radius = startRadius;
+        float startAngle = 0;
+        double exponent = 2.5;
+        int yHeight = 600;
+
         for (int k = 0; k < numberTeensies; k++) {
+            //correct rotation when we flip directions (z axis is a quarter turn from x axis on the plane of rotation)
+            if (k == 2) startAngle = 90;
+
             //pins on the teensy are 1 through 8
-            int pinz = 8; //gets decremented
-            int numPins = pinz;
+            int pinz = 1;
 
             for (int i = 0; i < numPins; i++) {
                 Node[] stripNodes = new Node[numLedsPerStrip];
 
                 Strip strip = new Strip(i, numLedsPerStrip, pinz);
-                pinz--;
+                pinz++;
                 strip.setMyController(_myMain.udpModel.teensies[k]);
+
+                float x;  // node position
+                float y;
+                float z;
 
                 //make some nodes in x y z space
                 for (int j = 0; j < numLedsPerStrip; j++) {
-                    stripNodes[j] = new Node(3 * j, 10 + (i * 10) + (k * 90), 10, j, strip);
+                    //distribute 200 into 6/16th of a circle
+                    float angle = map(j, 0, numLedsPerStrip, 0, 135) + startAngle;
+
+                    if (k < 2) { // half spiral clockwise, the other half - counter clockwise
+                        z = (float) (radius * Math.cos(radians(angle)));
+                        x = (float) (radius * Math.sin(radians(angle)));
+                    } else {
+                        // x and z are the circle part
+                        x = (float) (radius * Math.cos(radians(angle)));
+                        z = (float) (radius * Math.sin(radians(angle)));
+                    }
+
+                    //increase the radius as we move down, "christmas tree"
+                    radius += 2;
+
+                    // y is the height (which makes the circle into a spiral)
+                    float percent = map(j, 0, numLedsPerStrip, 0, 1);
+                    y = (float) ((Math.pow(percent, exponent) * yHeight) - (yHeight / 2.0));
+
+                    // each tube has 2 LED strips, so the second one is shown here with a lil more Z
+                    if (i % 2 != 0) {
+                        z -= 7;
+                    }
+
+                    //true Scared mapping
+                    stripNodes[j] = new Node(x, z, y, nodeIndex, strip);
+                    nodeIndex++;
                 }
 
-                strip.addNodesToFixture(stripNodes);
+                if (i % 2 != 0) {
+                    startAngle += 360 / 8; // based on an octagon
+                }
 
+                radius = startRadius;
+
+                // NOTE: assign directly, not addNodesToFixture() — the latter doubled the array length (bug).
+                strip.nodeArray = stripNodes;
                 nodes = concatNodes(nodes, stripNodes);
             }
         }
