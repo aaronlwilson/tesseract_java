@@ -30,6 +30,10 @@ public class Fixture {
     myController.addFixture(this);
   }
 
+  // DISABLED: this appended to nodeArray, so callers that also assigned nodeArray
+  // ended up doubling the strip length (frames overlapped onto the wrong pins).
+  // Assign fixture.nodeArray directly instead (see Stage.buildScared). Kept for reference.
+  /*
   public void addNodesToFixture(Node[] newNodes) {
 
     int fal = nodeArray.length;    //determines length of firstArray
@@ -40,6 +44,7 @@ public class Fixture {
 
     nodeArray = resultArray;
   }
+  */
 
   public void addNodeToFixture(Node newNode) {
 

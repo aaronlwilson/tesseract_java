@@ -3,6 +3,7 @@ package output;
 
 import environment.Node;
 import environment.StrandPanel;
+import hardware.Fixture;
 import hardware.PixelPusher;
 import hardware.Rabbit;
 import hardware.Teensy;
@@ -161,7 +162,8 @@ public class UDPModel {
             if (teensy == null)
                 continue;
 
-            sendPanelFrame(teensy);
+            sendFixturesFrame(teensy); // Strip-based stages (e.g. SCARED); no-op if no fixtures
+            sendPanelFrame(teensy);    // StrandPanel-based stages (e.g. Draco); no-op if no panels
 
             //swap command, makes all the tiles change at once
             byte[] data = new byte[1];
@@ -271,6 +273,53 @@ public class UDPModel {
             udp.send( data, teensy.ip, teensyPort );
         }
     }//end sendPanelFrame
+
+
+    // Send data to strip Fixtures via Teensy (used by SCARED and other Strip-based stages).
+    // Each fixture (strip) maps to one octo pin; emit an 'l' (LIGHTS) frame keyed by pinNum.
+    // Ported from the pre-modernization master (commits 9b48290, f9e5edf).
+    public void sendFixturesFrame(Teensy teensy) {
+
+        //octo pin order is orange, blue, green, brown
+        if (teensy == null) {
+            return;
+        }
+
+        if (teensy.fixtureArray == null) {
+            return;
+        }
+
+        for (Fixture fixture : teensy.fixtureArray) {
+            int l = fixture.nodeArray.length;
+
+            byte[] data = new byte[(l * 3) + 2];
+
+            data[0] = (byte) ('l'); //LIGHTS command
+            data[1] = (byte) fixture.pinNum; // pins on teensy+octo are 1-8
+
+            for (int i = 0; i < l; i++) {
+                Node node = fixture.nodeArray[i];
+                if (node == null) {
+                    continue;
+                }
+                data[(i * 3) + 0 + 2] = (byte) node.r;
+                data[(i * 3) + 1 + 2] = (byte) node.g;
+                data[(i * 3) + 2 + 2] = (byte) node.b;
+
+                //HACK: one strip on the Tesseract base (192.168.50.105) is an older unit
+                //with R and G swapped; correct the first two pins.
+                if ("192.168.50.105".equals(teensy.ip)) {
+                    if (fixture.pinNum < 3) {
+                        data[(i * 3) + 0 + 2] = (byte) node.g;
+                        data[(i * 3) + 1 + 2] = (byte) node.r;
+                        data[(i * 3) + 2 + 2] = (byte) node.b;
+                    }
+                }
+            }
+
+            udp.send( data, teensy.ip, teensyPort );
+        }
+    }//end sendFixturesFrame
 
 
     public void sendRabbitTest() {
