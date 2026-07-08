@@ -143,6 +143,10 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         // Initialize websocket connection
         WebsocketInterface.get();
 
+        // Initialize the StateManager now so its inbound handlers (requestInitialState,
+        // stateUpdate) are registered before any client connects — not lazily on first play/stop.
+        state.StateManager.get();
+
         // Get the configured stage value
         String stageType = ConfigStore.get().getString("stageType");
 

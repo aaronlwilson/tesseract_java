@@ -142,19 +142,23 @@ class StateManager {
 
   // Handle receiving a stateUpdate event from a client
   public void handleStateUpdate(conn, inData) {
-    if (inData.stateKey == "activeControls") {
+    // Canonical protocol uses 'key' as the discriminator (matches the outbound stateUpdate shape).
+    // Accept the legacy 'stateKey' as a fallback so older clients keep working.
+    def key = inData.key != null ? inData.key : inData.stateKey
+
+    if (key == "activeControls") {
       this.handleActiveControlsUpdate(inData.value);
-    } else if (inData.stateKey == "playlist") {
+    } else if (key == "playlist") {
       this.handlePlaylistUpdate(inData.value);
-    } else if (inData.stateKey == "scene") {
+    } else if (key == "scene") {
       this.handleSceneUpdate(inData.value);
-    } else if (inData.stateKey == "sceneDelete") {
+    } else if (key == "sceneDelete") {
       this.handleSceneDelete(inData.value);
-    } else if (inData.stateKey == "playState") {
+    } else if (key == "playState") {
       this.handlePlayStateUpdate(inData.value);
     } else {
-      // The reason I use RuntimeException is because they can't be caught (by Processing), so you are always guaranteed to see the stack trace
-      throw new RuntimeException("Error: No handler for state key '${inData.stateKey}'")
+      // Don't throw — a malformed/unknown message from a client must not take down the WS thread.
+      System.err.println("[StateManager] Ignoring stateUpdate with unknown key '${key}'")
     }
 
     // todo: here is where I would determine if the stateUpdate should be broadcast to other clients and send the data

@@ -11,8 +11,9 @@ class ClipMetadata {
 
     //TODO, can we make a checkbox aka boolean control type? like an on/off?
 
-  // Only 'solid_color' is hooked up right now, so the controls for the other clips are dummy data that will be
-  // replaced later
+  // Control metadata sent to the UI. Each control's fieldName maps to a live clip field (p1..p8
+  // or 'filename'); the UI drives these via stateUpdate/activeControls. Keep labels in sync with
+  // the clip implementations.
   public static List<Map> getClipMetadata() {
     [
         [
@@ -85,14 +86,14 @@ class ClipMetadata {
                 displayName: 'Lines Clip',
                 clipId     : 'lines_clip',
                 controls   : [
-                        [displayName: 'Size',         type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
-                        [displayName: 'Ramp',         type: 'knob', defaultValue: 0.5, fieldName: 'p2'],
-                        [displayName: 'Speed',        type: 'knob', defaultValue: 0.5, fieldName: 'p3'],
-                        [displayName: 'Acceleration', type: 'knob', defaultValue: 0.0, fieldName: 'p4'],
-                        [displayName: 'Density',      type: 'knob', defaultValue: 0.5, fieldName: 'p5'],
-                        [displayName: 'BounceX', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
-                        [displayName: 'BounceY', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
-                        [displayName: 'BounceZ', type: 'knob', defaultValue: 1.0, fieldName: 'p8']
+                        [displayName: 'Size',          type: 'knob', defaultValue: 0.5, fieldName: 'p1'],
+                        [displayName: 'Ramp',          type: 'knob', defaultValue: 0.5, fieldName: 'p2'],
+                        [displayName: 'Spin Speed',    type: 'knob', defaultValue: 0.5, fieldName: 'p3'],
+                        [displayName: 'X Alpha',       type: 'knob', defaultValue: 1.0, fieldName: 'p4'],
+                        [displayName: 'Y Alpha',       type: 'knob', defaultValue: 1.0, fieldName: 'p5'],
+                        [displayName: 'Z Alpha',       type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                        [displayName: 'Spinner Alpha', type: 'knob', defaultValue: 1.0, fieldName: 'p7'],
+                        [displayName: 'Color Shift',   type: 'knob', defaultValue: 0.0, fieldName: 'p8']
 
                 ],
         ],

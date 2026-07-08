@@ -100,37 +100,35 @@ class WebsocketInterface extends WebSocketServer {
     // Benefit of groovy: Json parsing is built in and easy, unlike Java
     def jsonSlurper = new JsonSlurper()
 
+    // A malformed or unhandled message must never take down the WS thread — log and ignore.
     def jsonObj
     try {
       jsonObj = jsonSlurper.parseText(message)
     } catch (Exception e) {
-      e.printStackTrace()
-      throw new RuntimeException("Error: Could not parse json message: ${message}")
+      System.err.println("[WS] Could not parse JSON message, ignoring: ${message}")
+      return
     }
 
-//    println "Received JSON object on socket".yellow()
-//    println jsonObj
-
-    if (!jsonObj['action'] || !jsonObj['action'] instanceof String || jsonObj['data'] == null) {
-      println "Error: Invalid websocket format".cyan()
-      println jsonObj
-      throw new RuntimeException("Error: JSON object from websocket must have 'action' and 'data' fields, and 'action' must be a string")
+    if (!jsonObj['action'] || !(jsonObj['action'] instanceof String)) {
+      System.err.println("[WS] Ignoring message with missing/invalid 'action': ${jsonObj}")
+      return
     }
 
     List<Closure> handlers = this.actionHandlers[jsonObj['action'] as String]
 
     if (!handlers) {
-      println "Error: No handlers for action ${jsonObj['action']}"
-      println "Handlers registered for actions:"
-      this.actionHandlers.each { k, v -> println "${k}: ${v}" }
-
-      throw new RuntimeException("Error: No handlers for action ${jsonObj['action']}")
+      System.err.println("[WS] No handler registered for action '${jsonObj['action']}', ignoring")
+      return
     }
 
-
-    // Call all handlers with the payload
+    // Call all handlers with the payload; never let a handler exception kill the socket thread
     handlers.each { Closure handler ->
-      handler(conn, jsonObj['data'])
+      try {
+        handler(conn, jsonObj['data'])
+      } catch (Exception e) {
+        System.err.println("[WS] Handler for action '${jsonObj['action']}' threw: ${e.message}")
+        e.printStackTrace()
+      }
     }
   }
 
@@ -142,11 +140,10 @@ class WebsocketInterface extends WebSocketServer {
 
   @Override
   void onError(WebSocket conn, Exception ex) {
+    // Log, never rethrow — a per-connection error (or a bind error with conn == null)
+    // must not crash the server thread.
+    System.err.println("[WS] WebSocket error" + (conn != null ? " on ${conn.getRemoteSocketAddress()}" : "") + ": ${ex.message}")
     ex.printStackTrace()
-    if (conn != null) {
-      throw new RuntimeException("Error: Websocket had an error")
-      // some errors like port binding failed may not be assignable to a specific websocket
-    }
   }
 
   @Override
