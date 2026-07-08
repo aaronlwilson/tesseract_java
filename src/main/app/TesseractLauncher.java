@@ -33,6 +33,9 @@ public class TesseractLauncher {
                 if (i + 1 < args.length) {
                     height = Integer.parseInt(args[++i]);
                 }
+            } else if (arg.equals("--version") || arg.equals("-v")) {
+                System.out.println("Tesseract Desktop " + getVersion());
+                return;
             } else if (arg.equals("--help")) {
                 printHelp();
                 return;
@@ -89,6 +92,12 @@ public class TesseractLauncher {
         return os.contains("mac");
     }
 
+    /** Reads the version stamped into the JAR manifest (Implementation-Version); "dev" when run from classes. */
+    private static String getVersion() {
+        String v = TesseractLauncher.class.getPackage().getImplementationVersion();
+        return v != null ? v : "dev";
+    }
+
     private static void printHelp() {
         System.out.println("Tesseract LED Controller");
         System.out.println();
@@ -98,10 +107,12 @@ public class TesseractLauncher {
         System.out.println("  --headless, -h     Run without display (for Raspberry Pi/servers)");
         System.out.println("  --width, -w NUM    Window width (default: 1400)");
         System.out.println("  --height, -H NUM   Window height (default: 800)");
+        System.out.println("  --version, -v      Print version and exit");
         System.out.println("  --help             Show this help message");
         System.out.println();
         System.out.println("Keyboard controls (headed mode):");
         System.out.println("  s                  Toggle UDP sending");
         System.out.println("  d                  Toggle visualization drawing");
+        System.out.println("  arrow keys         Mapping tool: UP/DOWN controller, LEFT/RIGHT pin");
     }
 }

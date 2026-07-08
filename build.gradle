@@ -128,7 +128,10 @@ tasks.register('unzipProcessingUdpLibrary') {
 // Build fat JAR with all dependencies
 tasks.register('fatJar', Jar) {
   manifest {
-    attributes 'Main-Class': 'app.TesseractLauncher'
+    attributes 'Main-Class': 'app.TesseractLauncher',
+               'Implementation-Title': 'Tesseract Desktop',
+               'Implementation-Version': appVersion,
+               'Implementation-Vendor': 'Apollo Colorado'
   }
   archiveBaseName = 'TesseractFatJar'
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE

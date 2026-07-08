@@ -61,10 +61,11 @@ jpackage \
   --input        "$STAGING_DIR" \
   --main-jar     TesseractFatJar.jar \
   --main-class   app.TesseractLauncher \
+  --mac-package-identifier com.apollocolorado.tesseract \
   --dest         "$OUTPUT_DIR" \
   --java-options -XstartOnFirstThread \
   --java-options -Xmx512m \
-  --vendor       "Fryslie" \
+  --vendor       "Apollo Colorado" \
   --description  "Kinetic LED and Flame FX control system" \
   "${ICON_ARGS[@]}"
 
