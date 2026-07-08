@@ -76,17 +76,22 @@ public class Util {
 
     // returns relative paths to all files in the directory (relative to the root directory)
     public static getMediaFileList(String type) {
-        String rootPath = "${Util.getRootDataDir()}/${type}"
+        File rootDir = new File("${Util.getRootDataDir()}/${type}")
 
-        // Return empty array if video directory doesn't exist
-        if (!new File(rootPath).isDirectory()) {
+        // Return empty array if the media directory doesn't exist
+        if (!rootDir.isDirectory()) {
             return []
         }
 
         List<String> res = []
 
-        new File(rootPath).eachFileRecurse(groovy.io.FileType.FILES) { File file ->
-            res.push(file.getCanonicalPath().replace("${rootPath}/", ''))
+        // Relativize each file against the media dir rather than using getCanonicalPath():
+        // if the media dir is a symlink (e.g. data/videos -> an external folder), getCanonicalPath()
+        // resolves the link to a different absolute path than rootDir, so the prefix strip fails and
+        // filenames come back as full absolute paths — which then don't resolve as data/videos/<name>.
+        java.nio.file.Path rootPath = rootDir.toPath()
+        rootDir.eachFileRecurse(groovy.io.FileType.FILES) { File file ->
+            res.push(rootPath.relativize(file.toPath()).toString())
         }
 
         return res
