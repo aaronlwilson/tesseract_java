@@ -2,14 +2,12 @@ package clip;
 
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.Java2DFrameConverter;
 
 import environment.Node;
 import stores.MediaStore;
 import util.Util;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
+import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 
 /**
@@ -130,7 +128,6 @@ public class JavaCVVideoClip extends AbstractClip {
     // Runs on the background decode thread; the grabber is created, used, and released here only.
     private void decodeLoop(String name) {
         FFmpegFrameGrabber grabber = null;
-        Java2DFrameConverter converter = new Java2DFrameConverter();
         try {
             String videoPath = Paths.get("data", "videos", name).toString();
             grabber = new FFmpegFrameGrabber(videoPath);
@@ -163,11 +160,8 @@ public class JavaCVVideoClip extends AbstractClip {
                     }
                 }
 
-                if (frame != null && frame.image != null) {
-                    BufferedImage img = converter.convert(frame);
-                    if (img != null) {
-                        currentFrame = new VideoFrame(toArgb(img, w, h), w, h);
-                    }
+                if (frame != null && frame.image != null && frame.image.length > 0 && frame.image[0] != null) {
+                    currentFrame = new VideoFrame(frameToArgb(frame), w, h);
                 }
 
                 // Pace to the video framerate without spinning the CPU
@@ -200,18 +194,29 @@ public class JavaCVVideoClip extends AbstractClip {
         }
     }
 
-    // Convert a decoded frame to a fresh ARGB int[] (same pixel semantics as Processing's pixels[])
-    private static int[] toArgb(BufferedImage img, int w, int h) {
-        BufferedImage argbImage;
-        if (img.getType() == BufferedImage.TYPE_INT_ARGB || img.getType() == BufferedImage.TYPE_INT_RGB) {
-            argbImage = img;
-        } else {
-            argbImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-            argbImage.getGraphics().drawImage(img, 0, 0, null);
-        }
-        int[] src = ((DataBufferInt) argbImage.getRaster().getDataBuffer()).getData();
+    // Convert a decoded BGR24 frame to a fresh 0xAARRGGBB int[] (Processing's pixels[] semantics),
+    // reading the raw frame buffer directly. We deliberately avoid Java2DFrameConverter: it is
+    // AWT/Java2D based, and on macOS AWT contends with LWJGL/GLFW's -XstartOnFirstThread main thread,
+    // which deadlocks the decode thread — the video opens but never produces a single frame.
+    private static int[] frameToArgb(Frame frame) {
+        int w = frame.imageWidth;
+        int h = frame.imageHeight;
+        int ch = frame.imageChannels;      // 3 for BGR24
+        int stride = frame.imageStride;    // bytes per row (may include padding)
+        ByteBuffer src = (ByteBuffer) frame.image[0];
+
         int[] out = new int[w * h];
-        System.arraycopy(src, 0, out, 0, Math.min(src.length, out.length));
+        for (int y = 0; y < h; y++) {
+            int srcRow = y * stride;
+            int dstRow = y * w;
+            for (int x = 0; x < w; x++) {
+                int s = srcRow + x * ch;
+                int b = src.get(s) & 0xFF;
+                int g = src.get(s + 1) & 0xFF;
+                int r = src.get(s + 2) & 0xFF;
+                out[dstRow + x] = (0xFF << 24) | (r << 16) | (g << 8) | b;
+            }
+        }
         return out;
     }
 
