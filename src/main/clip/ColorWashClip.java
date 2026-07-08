@@ -4,6 +4,8 @@ import environment.Node;
 import render.ProcessingCompat;
 import util.Util;
 
+import static render.ProcessingCompat.map;
+
 public class ColorWashClip extends AbstractClip {
 
     //CLASS VARS
@@ -27,7 +29,8 @@ public class ColorWashClip extends AbstractClip {
 
 
     public void run() {
-        _angle1 = p1;
+        // p1 selects the wash direction across the 7 axis combinations below (0..7)
+        _angle1 = map(p1, 0, 1, 0, 7);
         _angle2 = p1;
 
         _speed += p2*3;
@@ -35,8 +38,27 @@ public class ColorWashClip extends AbstractClip {
     }
 
     public int[] drawNode(Node node) {
-        _angleCalc =  node.y * _angle1;
-        _angleCalc += node.x * _angle2;
+        // choose which spatial axis (or combination) the color wash runs along
+        if (_angle1 < 1) {
+            _angleCalc =  node.x;
+        } else if (_angle1 < 2) {
+            _angleCalc =  node.x;
+            _angleCalc += node.y;
+        } else if (_angle1 < 3) {
+            _angleCalc =  node.y;
+        } else if (_angle1 < 4) {
+            _angleCalc =  node.y;
+            _angleCalc += node.z;
+        } else if (_angle1 < 5) {
+            _angleCalc =  node.z;
+        } else if (_angle1 < 6) {
+            _angleCalc =  node.z;
+            _angleCalc += node.x;
+        } else {
+            _angleCalc =  node.x;
+            _angleCalc += node.y;
+            _angleCalc += node.z;
+        }
 
         _angle = _angleCalc*_spreadCalc;
 

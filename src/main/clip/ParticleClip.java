@@ -46,7 +46,7 @@ public class ParticleClip  extends AbstractClip {
         _pSize = p1*200.0f;
         _pRamp = p2*200.0f;
 
-        _pSpeed = p3*20.0f;
+        _pSpeed = p3*10.0f;
         _pAccel = p4;
         _pDensity = (p5*30)+1;
 

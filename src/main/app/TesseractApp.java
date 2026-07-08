@@ -41,6 +41,11 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     public Particle particleX;
     public Particle particleY;
     public Particle particleZ;
+    public Particle particleSpin;
+
+    // Mapping-tool selection (used by TilesTestClip/ScaredGeometry; adjusted via arrow keys)
+    public int mapController = 1;
+    public int mapPort = 1;
 
     // Clip class constants (matches original TesseractMain)
     public static final int NODESCAN = 0;
@@ -105,6 +110,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         particleX = new Particle(new Vec3(0, 0, 0), 0xFF0000, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
         particleY = new Particle(new Vec3(0, 0, 0), 0x00FF00, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
         particleZ = new Particle(new Vec3(0, 0, 0), 0x0000FF, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
+        particleSpin = new Particle(new Vec3(0, 0, 0), 0xFF00FF, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
 
         Util.enableColorization();
 
