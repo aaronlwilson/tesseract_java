@@ -92,7 +92,9 @@ public class Playlist {
       }
     };
 
-    Timer timer = new Timer("Playlist.scheduleNextScene()");
+    // Daemon timer: a non-daemon Timer thread keeps the JVM alive after the window closes, which
+    // stalls shutdown and forces a hard kill. As a daemon it never blocks a clean exit.
+    Timer timer = new Timer("Playlist.scheduleNextScene()", true);
 
     // Keep track of when we started the timer
     this.currentTimerStartTime = System.currentTimeMillis()

@@ -306,10 +306,13 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     private void createShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            // Only non-GL cleanup here. This runs on the shutdown-hook thread, and disposing the
+            // renderer touches OpenGL (glDelete* via SpriteBatch/ShapeRenderer). On macOS the GL
+            // context lives on the -XstartOnFirstThread main thread, so a GL call from any other
+            // thread aborts the process (SIGABRT) — which is exactly the crash report on quit.
+            // GL resources are freed by LibGDX on the main thread in dispose() during a normal
+            // window close, and reclaimed by the OS on a signal-driven exit.
             WebsocketInterface.get().shutdownServer();
-            if (renderer != null) {
-                renderer.dispose();
-            }
         }));
     }
 
