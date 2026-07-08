@@ -2,7 +2,7 @@
 
 LibGDX-based control system for interactive Kinetic LED and Flame FX sculptures.
 
-This project was created for IntelliJ Idea IDE.
+This project was created for IntelliJ IDEA IDE.
 
 ## Requirements
 
