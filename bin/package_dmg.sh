@@ -65,6 +65,7 @@ jpackage \
   --dest         "$OUTPUT_DIR" \
   --java-options -XstartOnFirstThread \
   --java-options -Xmx512m \
+  --java-options -DstageType=SCARED \
   --vendor       "Apollo Colorado" \
   --description  "Kinetic LED and Flame FX control system" \
   "${ICON_ARGS[@]}"
