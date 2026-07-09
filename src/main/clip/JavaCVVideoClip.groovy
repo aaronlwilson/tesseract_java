@@ -129,7 +129,9 @@ public class JavaCVVideoClip extends AbstractClip {
     private void decodeLoop(String name) {
         FFmpegFrameGrabber grabber = null;
         try {
-            String videoPath = Paths.get("data", "videos", name).toString();
+            // Resolve against the same root MediaStore lists from (see Util.getRootDataDir), so a
+            // packaged app that stores media under ~/Library/Application Support/Tesseract works too.
+            String videoPath = Paths.get(Util.getRootDataDir(), "videos", name).toString();
             grabber = new FFmpegFrameGrabber(videoPath);
             grabber.start();
 

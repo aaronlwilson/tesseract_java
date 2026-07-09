@@ -29,11 +29,10 @@ public class Util {
 
     // Ensure data dir exists
     public static initDataDir() {
-        String path = "${new File(".").getAbsoluteFile().getParent()}/data"
-        File dirFile = new File(path)
-        if (!dirFile.exists()) {
-            println "Created data directory at ${path}"
-            dirFile.mkdir()
+        File root = new File(getRootDataDir())
+        if (!root.exists()) {
+            println "Created data directory at ${root}"
+            root.mkdirs()
         }
 
         initGroupDir('default')
@@ -53,8 +52,7 @@ public class Util {
     // 'group' will be a way we can have different sets of files
     // creates any necessary directories to ensure the path exists
     public static String getDataDir(String group = 'default') {
-        // this returns '<repo dir>/data/<group>'
-        String dirPath = "${new File(".").getAbsoluteFile().getParent()}/data/${group}"
+        String dirPath = "${getRootDataDir()}/${group}"
         File dir = new File(dirPath)
         if (!dir.exists()) {
             dir.mkdirs()
@@ -69,9 +67,49 @@ public class Util {
         "${getDataDir(group)}/${type}.json"
     }
 
-    // The root data directory (e.g. repo/data)
+    // Cached, resolved absolute path to the root data directory.
+    private static String resolvedRootDataDir = null
+
+    // The root data directory that holds all persisted JSON + media.
+    //
+    // Resolution (first match wins), so a double-clicked .app works while the dev workflow is
+    // unchanged. Previously this was always CWD-relative "./data"; when the packaged app launches,
+    // its CWD is "/", so it tried to write /data/... which isn't writable — the setup thread threw
+    // and the stage was never built (a black screen with no LED nodes).
+    //   1. Explicit override: -Dtesseract.dataDir=... or TESSERACT_DATA_DIR=...
+    //   2. Project-local ./data when the working directory is writable (running from the repo).
+    //   3. A per-user app-support dir otherwise (packaged app): on macOS
+    //      ~/Library/Application Support/Tesseract/data, else ~/.tesseract/data.
     public static String getRootDataDir() {
-        new File("./data").getCanonicalPath()
+        if (resolvedRootDataDir != null) {
+            return resolvedRootDataDir
+        }
+
+        String override = System.getProperty('tesseract.dataDir') ?: System.getenv('TESSERACT_DATA_DIR')
+        if (override != null && !override.trim().isEmpty()) {
+            resolvedRootDataDir = new File(override.trim()).getAbsoluteFile().getPath()
+        } else {
+            File projectData = new File('data').getAbsoluteFile()   // <cwd>/data
+            File cwd = projectData.getParentFile()
+            if (cwd != null && cwd.canWrite()) {
+                resolvedRootDataDir = projectData.getPath()
+            } else {
+                String home = System.getProperty('user.home')
+                String os = (System.getProperty('os.name') ?: '').toLowerCase()
+                File appData = os.contains('mac') ?
+                        new File(home, 'Library/Application Support/Tesseract/data') :
+                        new File(home, '.tesseract/data')
+                resolvedRootDataDir = appData.getPath()
+                println "Working directory not writable; using per-user data directory: ${resolvedRootDataDir}"
+            }
+        }
+
+        File root = new File(resolvedRootDataDir)
+        if (!root.exists()) {
+            root.mkdirs()
+        }
+
+        return resolvedRootDataDir
     }
 
     // returns relative paths to all files in the directory (relative to the root directory)
