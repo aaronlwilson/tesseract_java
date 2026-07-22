@@ -7,6 +7,8 @@ import environment.Node;
 import stores.MediaStore;
 import util.Util;
 
+import groovy.transform.CompileStatic;
+
 import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 
@@ -142,6 +144,14 @@ public class JavaCVVideoClip extends AbstractClip {
 
             System.out.println("[JavaCVVideoClip] Loaded video: " + name + " (" + w + "x" + h + " @ " + fps + " fps)");
 
+            // Diagnostic timing: split each loop iteration's time between grab (FFmpeg demux/decode +
+            // its internal software colorspace conversion), our own pixel-buffer conversion, and paced
+            // sleep, then log real achieved decode fps once/sec. This tells us WHERE time is going the
+            // next time playback is slow, instead of guessing.
+            long grabNsAccum = 0, convertNsAccum = 0;
+            int framesAccum = 0;
+            long lastFpsLogMs = System.currentTimeMillis();
+
             while (decoding) {
                 // Self-terminate once this clip is no longer the active one (run() stopped ticking).
                 if (System.currentTimeMillis() - lastRunMs > INACTIVE_TIMEOUT_MS) {
@@ -150,6 +160,7 @@ public class JavaCVVideoClip extends AbstractClip {
 
                 long startMs = System.currentTimeMillis();
 
+                long grabStartNs = System.nanoTime();
                 Frame frame = grabber.grabImage();
 
                 // Handle end of video
@@ -161,9 +172,24 @@ public class JavaCVVideoClip extends AbstractClip {
                         break;
                     }
                 }
+                grabNsAccum += System.nanoTime() - grabStartNs;
 
                 if (frame != null && frame.image != null && frame.image.length > 0 && frame.image[0] != null) {
+                    long convertStartNs = System.nanoTime();
                     currentFrame = new VideoFrame(frameToArgb(frame), w, h);
+                    convertNsAccum += System.nanoTime() - convertStartNs;
+                    framesAccum++;
+                }
+
+                long nowMs = System.currentTimeMillis();
+                if (nowMs - lastFpsLogMs >= 1000 && framesAccum > 0) {
+                    double achievedFps = framesAccum * 1000.0 / (nowMs - lastFpsLogMs);
+                    double avgGrabMs = (grabNsAccum / (double) framesAccum) / 1e6;
+                    double avgConvertMs = (convertNsAccum / (double) framesAccum) / 1e6;
+                    System.out.println("[JavaCVVideoClip] " + name + " achieved " + String.format("%.1f", achievedFps)
+                            + " fps (target " + fps + ") — avg grab=" + String.format("%.2f", avgGrabMs)
+                            + "ms convert=" + String.format("%.2f", avgConvertMs) + "ms");
+                    grabNsAccum = 0; convertNsAccum = 0; framesAccum = 0; lastFpsLogMs = nowMs;
                 }
 
                 // Pace to the video framerate without spinning the CPU
@@ -207,6 +233,16 @@ public class JavaCVVideoClip extends AbstractClip {
     // Perf: bulk-copy the native buffer into a Java byte[] once, then pack. ByteBuffer.get(index)
     // per pixel is ~an order of magnitude slower than array access, and at ~690k accesses/frame it
     // overran the frame budget under the app's heavy render thread (video crawled at a few fps).
+    //
+    // @CompileStatic is load-bearing here, not cosmetic. Without it, Groovy dispatches every array
+    // read/write and bitwise op in this 230k-iteration loop dynamically (boxing each byte, resolving
+    // an invokedynamic call site per operation via the MetaClass machinery) instead of emitting plain
+    // Java-equivalent bytecode. Profiling under real load (jstack sampling the decode thread while it
+    // was stuck at ~470ms/frame = ~2.1fps) showed it parked entirely in
+    // IndyInterface/guardWithCatch/linkToCallSite frames inside this method's loop — i.e. the dynamic
+    // dispatch itself was the cost, not the arithmetic. @CompileStatic makes this method compile like
+    // Java: real int[]/byte[] bytecode, JIT-friendly, no MetaClass involved.
+    @CompileStatic
     private int[] frameToArgb(Frame frame) {
         int w = frame.imageWidth;
         int h = frame.imageHeight;

@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ConcurrentHashMap;
 
 // Note: processing.core imports are unused in this project (Processing is not in classpath).
 // The UDP library was originally part of Processing but is used standalone here.
@@ -83,6 +84,23 @@ public class UDP implements Runnable {
 	int timeout			= 0;		// reception timeout > 0=infinite timeout
 	int size			= 65507;	// the socket buffer size in bytes
 	InetAddress group	= null;		// the multicast's group address to join
+
+	// Caches InetAddress.getByName(ip) results, keyed by ip string. UDPModel.send() calls
+	// send(byte[],String,int) once per hardware fixture, every render frame (e.g. 5 Teensies x up to
+	// 8 pins = ~40 calls/frame at 30fps). getByName is a resolver call, not a cheap string parse, even
+	// for literal IPs — on a real LAN with other DHCP/mDNS traffic it's not guaranteed sub-millisecond,
+	// and paying it ~1200 times/sec was a steady tax on the render thread that only appeared once real
+	// hardware was connected (dev/test runs with numTeensies=0 never exercised this path). A given
+	// controller's IP never changes at runtime, so resolve once and reuse.
+	private static final ConcurrentHashMap<String, InetAddress> addressCache = new ConcurrentHashMap<>();
+
+	private static InetAddress resolveAddress( String ip ) throws UnknownHostException {
+		InetAddress cached = addressCache.get( ip );
+		if ( cached != null ) return cached;
+		InetAddress resolved = InetAddress.getByName( ip );
+		addressCache.put( ip, resolved );
+		return resolved;
+	}
 	
 	// the reception Thread > wait automatically for incoming datagram packets
 	// without blocking the current Thread.
@@ -387,7 +405,7 @@ public class UDP implements Runnable {
 		
 		try {
 			
-			pa	= new DatagramPacket( buffer, buffer.length, InetAddress.getByName(ip), port );
+			pa	= new DatagramPacket( buffer, buffer.length, resolveAddress(ip), port );
 				
 			// send
 			if ( isMulticast() ) mcSocket.send( pa );

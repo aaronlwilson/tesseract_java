@@ -203,9 +203,32 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
         // Send UDP data to LEDs
         if (sending) {
+            // Diagnostic timing: udpModel.send() is called synchronously on this (render) thread every
+            // frame. If it's slow on a real network (vs. the quiet dev LAN this was last profiled on),
+            // it eats into the same frame budget the video decode thread needs to stay warmed up, even
+            // if the FPS counter (paced by vsync/foregroundFPS) doesn't visibly drop. Logged periodically,
+            // not every frame, so it's cheap to leave in.
+            long udpSendStartNs = System.nanoTime();
             udpModel.send();
+            long udpSendNs = System.nanoTime() - udpSendStartNs;
+            udpSendTimeAccumNs += udpSendNs;
+            udpSendCountAccum++;
+            long nowMs = System.currentTimeMillis();
+            if (nowMs - lastUdpTimingLogMs > 2000) {
+                double avgMs = (udpSendTimeAccumNs / (double) udpSendCountAccum) / 1e6;
+                System.out.println("[UDP] send() avg " + String.format("%.2f", avgMs) + "ms/frame over "
+                        + udpSendCountAccum + " frames");
+                udpSendTimeAccumNs = 0;
+                udpSendCountAccum = 0;
+                lastUdpTimingLogMs = nowMs;
+            }
         }
     }
+
+    // See the diagnostic-timing block in render() above.
+    private long udpSendTimeAccumNs = 0;
+    private int udpSendCountAccum = 0;
+    private long lastUdpTimingLogMs = 0;
 
     private void drawVisualization() {
         renderer.beginFrame();
