@@ -273,6 +273,13 @@ public class JavaCVVideoClip extends AbstractClip {
         return out;
     }
 
+    // @CompileStatic: drawNode runs once per node, per frame — ~6400 nodes x 30fps = ~192k calls/sec,
+    // the hottest method in the video path after frameToArgb. Dynamically compiled, every map() call,
+    // field/array access, Util.getR/G/B call, and comparison here dispatches through Groovy's MetaClass
+    // machinery. Static compilation makes it plain bytecode (same as the Java clips' drawNode). All
+    // types resolve: _myMain is TesseractApp, node.screenX/Y are float, f.px is int[], Util.getR/G/B
+    // are static int. See frameToArgb (commit 0256774) for the profiling that established this pattern.
+    @CompileStatic
     public int[] drawNode(Node node) {
         int[] nodestate = new int[3];
 
