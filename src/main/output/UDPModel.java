@@ -260,7 +260,7 @@ public class UDPModel {
                     continue;
                 }
 
-                data[(i*3) + 0 +2] = (byte) node.r;
+                data[(i*3) +    2] = (byte) node.r;
                 data[(i*3) + 1 +2] = (byte) node.g;
                 data[(i*3) + 2 +2] = (byte) node.b;
             }
