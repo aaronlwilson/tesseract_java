@@ -320,9 +320,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         int[] rgb1 = channel1.drawNode(node);
 
         // Apply channel brightness
-        rgb1[0] = Math.round(rgb1[0] / 2);
-        rgb1[1] = Math.round(rgb1[1] / 2);
-        rgb1[2] = Math.round(rgb1[2] / 2);
+        rgb1[0] = (int) Math.round(rgb1[0] * 0.9);
+        rgb1[1] = (int) Math.round(rgb1[1] * 0.9);
+        rgb1[2] = (int) Math.round(rgb1[2] * 0.9);
 
         return rgb1;
     }
