@@ -198,7 +198,11 @@ public class Util {
 
 
     //TODO move to another static class
-    public static void createBuiltInPlaylists() {
+    // force=false (default, startup): seed-if-absent — add a built-in playlist only if its id isn't
+    //   already present, so persisted UI edits to built-ins survive a restart.
+    // force=true (Restore to Defaults): overwrite the built-in playlists back to these code defaults.
+    // The "All Videos" playlist (id 3) mirrors the media folder and is ALWAYS regenerated in both modes.
+    public static void createBuiltInPlaylists(boolean force = false) {
         // Arrays.asList makes an immutable list, creating a new LinkedList with those items will make it mutable which we need
         List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
                 new PlaylistItem(UUID.randomUUID().toString(), 'Tiles Test', 30),
@@ -218,7 +222,9 @@ public class Util {
         ));
 
         Playlist playlist1 = new Playlist(1, "Cubotron", 60, playlist1Items);
-        PlaylistStore.get().addOrUpdate(playlist1);
+        if (force || PlaylistStore.get().find('id', 1) == null) {
+            PlaylistStore.get().addOrUpdate(playlist1);
+        }
 
 
 
@@ -231,7 +237,9 @@ public class Util {
         ));
 
         Playlist playlist2 = new Playlist(2, "Color Cube", 60, playlist2Items);
-        PlaylistStore.get().addOrUpdate(playlist2);
+        if (force || PlaylistStore.get().find('id', 2) == null) {
+            PlaylistStore.get().addOrUpdate(playlist2);
+        }
 
         // Determine if there are any videos loaded.  If so, create a playlist containing them all.  If not, delete the playlist if it exists
         List<Scene> allVideoScenes = SceneStore.get().getItems()
@@ -254,10 +262,12 @@ public class Util {
         // This also has the effect of resetting any changes we make to them in the UI once we start the backend
     }
 
-    public static void createBuiltInScenes() {
-        // These are hydrated from the json now.  creating them here will update the existing data in the store, but this can be commented out and it will load entirely from disk
-        // If we specify the id in the constructor and it matches an existing Scene, it will update the data.  omitting the ID from the constructor will use the max id + 1 for the new scene
-        List<Scene> scenes = [
+    // force=false (default, startup): seed-if-absent — add a built-in scene only if its id isn't
+    //   already present, so persisted UI edits to built-ins survive a restart.
+    // force=true (Restore to Defaults): overwrite the built-in scenes back to these code defaults.
+    // Video scenes (ids 10+) mirror the media folder and are ALWAYS regenerated in both modes.
+    public static void createBuiltInScenes(boolean force = false) {
+        List<Scene> builtInScenes = [
                 new Scene(1, "Yellow", TesseractApp.SOLID, [0, 0, 0, 1, 1, 0, 0, 0] as float[]),
                 new Scene(2, "Purple", TesseractApp.SOLID, [0, 0, 0, 1, 0, 1, 0, 0] as float[]),
                 new Scene(3, "Red", TesseractApp.SOLID, [0, 0, 0, 1, 0, 0, 0, 0] as float[]),
@@ -269,26 +279,28 @@ public class Util {
                 new Scene(9, "Tiles Test", TesseractApp.TILESTEST, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
         ]
 
-        // Check to see if we have videos before blindly trying to create scenes.  TODO: improve this logic.  do better at removing scenes for video files that no longer exist
+        builtInScenes.each { Scene s ->
+            if (force || SceneStore.get().find('id', s.id) == null) {
+                SceneStore.get().addOrUpdate(s)
+            }
+        }
+
+        // Video scenes mirror the media folder — always (re)generated regardless of mode.
+        // TODO: improve stale-scene removal when specific video files disappear.
         List<String> allVideos = MediaStore.get().getMediaOfType('videos')
         if (allVideos.size() > 0) {
             int nextIdx = 10
-
-            List<Scene> videoScenes = MediaStore.get().getMediaOfType('videos').collect { String videoPath ->
+            allVideos.each { String videoPath ->
                 Scene s = new Scene(nextIdx, videoPath, TesseractApp.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
+                SceneStore.get().addOrUpdate(s)
                 nextIdx++
-                s
             }
-
-            scenes.addAll(videoScenes)
         } else {
-            // remove all video scenes.  this should be improved, we should remove any scenes for videos that don't exist
+            // remove all video scenes
             SceneStore.get().getItems()
                     .findAll { scene -> scene.clip.clipId == 'video' }
                     .each { scene -> SceneStore.get().remove(scene) }
         }
-
-        scenes.each { SceneStore.get().addOrUpdate(it); }
     }
 
     public static void throwException(String msg) {

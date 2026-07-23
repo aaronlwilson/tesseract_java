@@ -10,6 +10,7 @@ import stores.MediaStore
 import stores.PlaylistStore
 import stores.SceneStore
 import show.PlaylistManager
+import util.Util
 import websocket.WebsocketInterface
 
 // State manager is responsible for managing application state and synchronizing state
@@ -69,14 +70,18 @@ class StateManager {
   public Map getActiveState() {
     String playlistItemId = PlaylistManager.get().getCurrentPlaylist()?.getCurrentItem()?.getId()
 
-    // This is to help track down any issues with telling the UI to play a playlist item that no longer exists
+    // The active item can stop belonging to any playlist — e.g. Restore to Defaults rebuilds a
+    // playlist with fresh item ids, or the currently-playing item was deleted. Degrade gracefully
+    // (report no active item) rather than throwing on the WS path, which is called on every
+    // requestInitialState / activeState broadcast.
     if (playlistItemId != null) {
       Playlist containingPlaylist = PlaylistStore.get().items.find { p ->
         p.items.find { item -> item.id == playlistItemId }
       }
 
       if (containingPlaylist == null) {
-        throw new RuntimeException("Error: active playlist item does not belong to a playlist");
+        System.err.println("[StateManager] Active playlist item '${playlistItemId}' no longer belongs to any playlist; reporting no active item")
+        playlistItemId = null
       }
     }
 
@@ -152,8 +157,14 @@ class StateManager {
       this.handlePlaylistUpdate(inData.value);
     } else if (key == "scene") {
       this.handleSceneUpdate(inData.value);
+    } else if (key == "scenes") {
+      this.handleScenesReplaceAll(inData.value);
+    } else if (key == "playlists") {
+      this.handlePlaylistsReplaceAll(inData.value);
     } else if (key == "sceneDelete") {
       this.handleSceneDelete(inData.value);
+    } else if (key == "restoreDefaults") {
+      this.handleRestoreDefaults();
     } else if (key == "playState") {
       this.handlePlayStateUpdate(inData.value);
     } else {
@@ -220,6 +231,66 @@ class StateManager {
     // This also handles playing the next item, since the current item won't exist
     PlaylistManager.get().removeSceneFromPlaylists(s)
 
+    this.sendStoreRefresh()
+    this.sendActiveState()
+  }
+
+  // Replace-all reconcile of the full scene set from the UI (edits + adds). Scene *deletion* is NOT
+  // done here — it goes through handleSceneDelete (key 'sceneDelete') so playlists get their
+  // references cleaned up; this path only add-or-updates, never removes, to avoid orphaning
+  // playlist items. Persists silently (no storeRefresh broadcast) so a client applying its own edit
+  // doesn't get re-hydrated and echo the same edit back in a loop.
+  public void handleScenesReplaceAll(incoming) {
+    if (!(incoming instanceof List)) {
+      System.err.println("[StateManager] 'scenes' replace-all: expected a List, ignoring")
+      return
+    }
+    incoming.each { sceneJson ->
+      Scene s = SceneStore.get().createSceneFromJson(sceneJson)
+      SceneStore.get().addOrUpdate(s)
+    }
+    SceneStore.get().saveDataToDisk()
+    // activeState (not storeRefresh) so an edit to the live scene re-syncs the control panel without
+    // rebuilding the client stores.
+    this.sendActiveState()
+  }
+
+  // Replace-all reconcile of the full playlist set from the UI. Playlists aren't referenced by
+  // anything else, so delete-by-omission is safe and covers whole-playlist deletion (PL3). Persists
+  // silently (no storeRefresh broadcast) to avoid the edit-echo loop. Ids are normalized to String
+  // for the presence check so Integer/Long/BigInteger JSON parsing can't mis-match built-in ids.
+  public void handlePlaylistsReplaceAll(incoming) {
+    if (!(incoming instanceof List)) {
+      System.err.println("[StateManager] 'playlists' replace-all: expected a List, ignoring")
+      return
+    }
+    // Guard against wiping everything on an empty/malformed payload.
+    if (incoming.isEmpty()) {
+      System.err.println("[StateManager] 'playlists' replace-all: empty list, ignoring to avoid wiping all playlists")
+      return
+    }
+
+    Set<String> incomingIds = incoming.collect { it.id?.toString() } as Set
+    List toRemove = PlaylistStore.get().getItems().findAll { !incomingIds.contains(it.id?.toString()) }
+    toRemove.each { PlaylistStore.get().remove(it) }
+
+    incoming.each { playlistJson ->
+      Playlist p = PlaylistStore.get().createPlaylistFromJson(playlistJson)
+      PlaylistStore.get().addOrUpdate(p)
+    }
+    PlaylistStore.get().saveDataToDisk()
+    this.sendActiveState()
+  }
+
+  // Restore to Defaults: overwrite the built-in scenes/playlists back to their code defaults and
+  // regenerate the video-derived items, LEAVING user-created custom scenes/playlists intact. Then
+  // persist and broadcast a storeRefresh so every client re-hydrates to the restored set.
+  public void handleRestoreDefaults() {
+    println "[StateManager] Restoring built-in scenes/playlists to defaults".yellow()
+    Util.createBuiltInScenes(true)
+    Util.createBuiltInPlaylists(true)
+    SceneStore.get().saveDataToDisk()
+    PlaylistStore.get().saveDataToDisk()
     this.sendStoreRefresh()
     this.sendActiveState()
   }

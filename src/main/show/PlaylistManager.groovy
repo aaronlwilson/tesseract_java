@@ -43,8 +43,22 @@ public class PlaylistManager {
     return this.currentPlaylist.getCurrentPlayState()
   }
 
+  // Re-broadcast the real active state to clients, swallowing any error so a reconcile attempt can
+  // never take down the caller (used by the play/stop unknown-id guards).
+  private void sendActiveStateSafely() {
+    try {
+      state.StateManager.get().sendActiveState()
+    } catch (Exception e) {
+      System.err.println("[PlaylistManager] sendActiveState failed during reconcile: ${e}")
+    }
+  }
+
   // figure out how long we have until our timer expires
   public long getCurrentSceneDurationRemaining() {
+    // Guard: nothing is playing yet (currentPlaylist null) → no time remaining.
+    if (this.currentPlaylist == null) {
+      return -1
+    }
     this.currentPlaylist.getCurrentSceneDurationRemaining()
   }
 
@@ -79,6 +93,12 @@ public class PlaylistManager {
     // for now, just handle playing the first playlist and the first scene
     Playlist p = this.getInitialPlaylist(playlistId)
 
+    // Guard: unknown playlist id → don't NPE (see play()).
+    if (p == null) {
+      System.err.println("[PlaylistManager] Ignoring stop request for unknown playlist id '${playlistId}'")
+      return
+    }
+
     if (this.currentPlaylist != p) {
       //this should be wrapped by a "debug" setting
       //println "[PlaylistManager: Switching playlist from ${this.currentPlaylist.displayName} to ${this.currentPlaylist.displayName}"
@@ -94,6 +114,15 @@ public class PlaylistManager {
   // Play a specific playlist, set the play state
   public play(Integer playlistId = null, String playlistItemId = null, PlayState playState) {
     Playlist p = this.getInitialPlaylist(playlistId)
+
+    // Guard: a client can ask us to play a playlist id we don't have (e.g. a UI-created playlist
+    // that never persisted). Don't NPE — log, and re-broadcast our real active state so the UI
+    // reconciles instead of showing a phantom selection.
+    if (p == null) {
+      System.err.println("[PlaylistManager] Ignoring play request for unknown playlist id '${playlistId}'")
+      this.sendActiveStateSafely()
+      return
+    }
 
     //this should be wrapped by a "debug" setting
     //println "[PlaylistManager] Playing playlist '${p.getDisplayName()}'. PlayState: ${playState}"

@@ -51,6 +51,12 @@ class PlaylistStore extends BaseStore implements IJsonPersistable {
     }
   }
 
+  // Remove a playlist from the store
+  public void remove(Playlist playlist) {
+    println "[PlaylistStore] Removing Playlist '${playlist.displayName}'"
+    this.items.removeElement(playlist)
+  }
+
   public Playlist find(String property, value) {
     items.find { item -> item."${property}" == value }
   }
