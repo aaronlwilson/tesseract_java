@@ -159,8 +159,14 @@ public class Playlist {
     PlaylistItem item = playlistItemId == null ? this.items[0] : this.items.find { it.id == playlistItemId }
 
     if (!item) {
-      //TODO I get runtime exceptions here
-      throw new RuntimeException("[Playlist] ERROR!  Could not find the PlaylistItem on this playlist.  Make sure this PlaylistItem existings on this Playlist!")
+      // A client can legitimately ask to play an item id we don't have yet: a freshly-cloned scene
+      // that was just added to the playlist (its 'playlists' reconcile may not have landed when this
+      // 'playState' arrived), or a stale id left over after a Restore/refresh. Don't throw on the WS
+      // handler thread (that dumps a stack trace and can wedge the connection). Fall back to the
+      // first item and continue — _playPlaylist re-broadcasts activeState so the UI reconciles to
+      // whatever actually ended up playing.
+      println "[Playlist] WARNING: PlaylistItem id '${playlistItemId}' not found on playlist '${this.displayName}'. Falling back to first item.".yellow()
+      item = this.items[0]
     }
 
     this._playPlaylist(item, playState)
