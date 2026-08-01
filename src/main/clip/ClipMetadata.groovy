@@ -20,12 +20,9 @@ class ClipMetadata {
             displayName: 'Solid Color',
             clipId     : 'solid_color',
             controls   : [
-//                [displayName: 'Hue', type: 'knob', defaultValue: 1.0, fieldName: 'p1'],
-//                [displayName: 'Saturation', type: 'knob', defaultValue: 1.0, fieldName: 'p2'],
-//                [displayName: 'Brightness', type: 'knob', defaultValue: 1.0, fieldName: 'p3'],
-                [displayName: 'Red', type: 'knob', defaultValue: 1.0, fieldName: 'p4'],
-                [displayName: 'Green', type: 'knob', defaultValue: 1.0, fieldName: 'p5'],
-                [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p6'],
+                [displayName: 'Red', type: 'knob', defaultValue: 1.0, fieldName: 'p1'],
+                [displayName: 'Green', type: 'knob', defaultValue: 1.0, fieldName: 'p2'],
+                [displayName: 'Blue', type: 'knob', defaultValue: 1.0, fieldName: 'p3'],
             ],
         ],
         [

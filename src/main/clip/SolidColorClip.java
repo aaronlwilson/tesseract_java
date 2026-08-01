@@ -7,11 +7,6 @@ public class SolidColorClip extends AbstractClip{
 
     //CLASS VARS
 
-    //HSB
-    private float hue = 100;
-    private float saturation = 100;
-    private float brightness = 100;
-
     //RGB
     private int red = 0xff;
     private int green = 0xff;
@@ -30,13 +25,9 @@ public class SolidColorClip extends AbstractClip{
 
     public void run() {
         //map local vars to abstract clip parameters
-        hue = p1;
-        saturation = p2;
-        brightness = p3;
-
-        red =   (int)(p4*255);
-        green = (int)(p5*255);
-        blue =  (int)(p6*255);
+        red =   (int)(p1*255);
+        green = (int)(p2*255);
+        blue =  (int)(p3*255);
     }
 
     public int[] drawNode(Node node) {
