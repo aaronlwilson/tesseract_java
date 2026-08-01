@@ -23,6 +23,8 @@ import websocket.WebsocketInterface;
 import clip.Particle;
 import render.Vec3;
 
+import java.util.List;
+
 /**
  * Main Tesseract application using LibGDX.
  * Replaces TesseractMain (which extended Processing's PApplet).
@@ -156,12 +158,25 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         // Tell the PlaylistManager which channel to play playlists in
         PlaylistManager.get().setChannel(this.channel1);
 
-        // Get initial playlist & playState from config
-        Playlist initialPlaylist = PlaylistStore.get().find("displayName", ConfigStore.get().getString("initialPlaylist"));
+        // Get initial playlist & playState from config. 'initialPlaylist' is validated against the
+        // live PlaylistStore by displayName, so a playlist renamed via the UI since this config was
+        // last set makes the configured name stale — don't let that crash this thread and leave the
+        // app stuck with setupComplete=false (render() is a no-op until it's true) forever.
+        Playlist initialPlaylist;
+        try {
+            initialPlaylist = PlaylistStore.get().find("displayName", ConfigStore.get().getString("initialPlaylist"));
+        } catch (RuntimeException e) {
+            List<Playlist> allPlaylists = PlaylistStore.get().getItems();
+            initialPlaylist = allPlaylists.isEmpty() ? null : allPlaylists.get(0);
+            System.err.println("[TesseractApp] WARNING: " + e.getMessage() + ". Falling back to "
+                    + (initialPlaylist != null ? "'" + initialPlaylist.getDisplayName() + "'" : "no playlist (none exist)") + ".");
+        }
         Playlist.PlayState initialPlayState = Util.getPlayState(ConfigStore.get().getString("initialPlayState"));
 
         // Play the playlist with the playState defined in our configuration
-        PlaylistManager.get().play(initialPlaylist.getId(), null, initialPlayState);
+        if (initialPlaylist != null) {
+            PlaylistManager.get().play(initialPlaylist.getId(), null, initialPlayState);
+        }
 
         // Create shutdown hook
         createShutdownHook();
@@ -216,8 +231,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
             long nowMs = System.currentTimeMillis();
             if (nowMs - lastUdpTimingLogMs > 2000) {
                 double avgMs = (udpSendTimeAccumNs / (double) udpSendCountAccum) / 1e6;
-                System.out.println("[UDP] send() avg " + String.format("%.2f", avgMs) + "ms/frame over "
-                        + udpSendCountAccum + " frames");
+               // System.out.println("[UDP] send() avg " + String.format("%.2f", avgMs) + "ms/frame over " + udpSendCountAccum + " frames");
                 udpSendTimeAccumNs = 0;
                 udpSendCountAccum = 0;
                 lastUdpTimingLogMs = nowMs;
