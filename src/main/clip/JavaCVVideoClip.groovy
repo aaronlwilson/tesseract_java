@@ -186,9 +186,11 @@ public class JavaCVVideoClip extends AbstractClip {
                     double achievedFps = framesAccum * 1000.0 / (nowMs - lastFpsLogMs);
                     double avgGrabMs = (grabNsAccum / (double) framesAccum) / 1e6;
                     double avgConvertMs = (convertNsAccum / (double) framesAccum) / 1e6;
-                    System.out.println("[JavaCVVideoClip] " + name + " achieved " + String.format("%.1f", achievedFps)
-                            + " fps (target " + fps + ") — avg grab=" + String.format("%.2f", avgGrabMs)
-                            + "ms convert=" + String.format("%.2f", avgConvertMs) + "ms");
+
+                    //Uncomment this if troubleshooting video playback latency
+                    //System.out.println("[JavaCVVideoClip] " + name + " achieved " + String.format("%.1f", achievedFps)
+//                            + " fps (target " + fps + ") — avg grab=" + String.format("%.2f", avgGrabMs)
+//                            + "ms convert=" + String.format("%.2f", avgConvertMs) + "ms");
                     grabNsAccum = 0; convertNsAccum = 0; framesAccum = 0; lastFpsLogMs = nowMs;
                 }
 
