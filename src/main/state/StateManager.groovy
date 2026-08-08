@@ -6,6 +6,7 @@ import clip.ClipMetadata
 import org.java_websocket.WebSocketImpl
 import show.Playlist
 import show.Scene
+import stores.ConfigStore
 import stores.MediaStore
 import stores.PlaylistStore
 import stores.SceneStore
@@ -112,6 +113,9 @@ class StateManager {
             playlistData: PlaylistStore.get().asJsonObj(),
             mediaData   : MediaStore.get().asJsonObj(),
             activeState : this.getActiveState(),
+            // Immutable for the process lifetime (set once from config at boot), so it's sent
+            // here rather than in activeState, which gets rebroadcast on every mutation.
+            stageType   : ConfigStore.get().getString("stageType"),
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
