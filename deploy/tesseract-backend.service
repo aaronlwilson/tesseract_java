@@ -1,0 +1,29 @@
+[Unit]
+Description=Tesseract LED Controller (headless)
+Documentation=https://github.com/aaronlwilson/tesseract_java
+# The UDP output broadcasts to the LED controllers, so wait for a usable network rather
+# than just for the interface to exist.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Adjust User and the two paths to match the deploy target. deploy/deploy.sh installs to
+# ~/tesseract by default, so for the default 'pi' user these are already correct.
+User=pi
+WorkingDirectory=/home/pi/tesseract
+ExecStart=/home/pi/tesseract/start-backend.sh
+
+# WorkingDirectory matters: the app resolves config/tesseract-config.yml and its runtime
+# data/ directory relative to the working directory, not to the jar's location.
+
+Restart=on-failure
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tesseract
+
+[Install]
+WantedBy=multi-user.target

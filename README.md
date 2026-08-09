@@ -163,7 +163,7 @@ This option controls the initial 'playState' of the application. Applicable valu
 
 #### stageType
 
-Chooses which stage to initialize in the application. Current values are 'CUBOTRON', 'DRACO', and 'TESSERACT'. Default is 'CUBOTRON'.
+Chooses which stage to initialize in the application. Current values are 'CUBOTRON', 'TESSERACT', 'TESSERACT_WALL', 'DRACO', and 'SCARED'. Default is 'CUBOTRON'.
 
 ## Deployment
 
@@ -175,7 +175,11 @@ java -jar ./build/libs/TesseractFatJar.jar --headless
 
 Headless mode is windowless (no LWJGL/OpenGL/X server required) and outputs only UDP to LED hardware. It is auto-selected when no `DISPLAY` is set on non-macOS hosts.
 
-> **Note:** The `docker/` configuration is legacy (x86_64, runs the GUI under Xvfb rather than true `--headless`) and is not the recommended path. A native systemd-based Raspberry Pi deployment lives under `deploy/`.
+Nothing is cross-compiled for the Pi: Java bytecode is platform-neutral and `build.gradle` pulls prebuilt natives for every target including `linux-arm64`, so the jar built on a Mac runs unmodified. The Pi needs only a **JRE 21+**, not a JDK or a dev environment.
+
+**See [`deploy/README.md`](deploy/README.md)** for the full walkthrough — `deploy/deploy.sh` to build and ship, `deploy/start-backend.sh` to run, and a systemd unit to start on boot. It also covers the WebUI container (`aaronlennwilson/tesseract-ui`), which runs alongside the backend rather than containing it: UDP output broadcasts to `255.255.255.255`, which does not traverse Docker's bridge network.
+
+> **Note:** The `docker/` configuration in this repo is legacy (x86_64, runs the GUI under Xvfb rather than true `--headless`) and is not the recommended path.
 
 ## Testing
 
