@@ -175,7 +175,9 @@ java -jar ./build/libs/TesseractFatJar.jar --headless
 
 Headless mode is windowless (no LWJGL/OpenGL/X server required) and outputs only UDP to LED hardware. It is auto-selected when no `DISPLAY` is set on non-macOS hosts.
 
-Nothing is cross-compiled for the Pi: Java bytecode is platform-neutral and `build.gradle` pulls prebuilt natives for every target including `linux-arm64`, so the jar built on a Mac runs unmodified. The Pi needs only a **JRE 21+**, not a JDK or a dev environment.
+Nothing is cross-compiled for the Pi: Java bytecode is platform-neutral and `build.gradle` pulls prebuilt natives for every 64-bit target including `linux-arm64`, so the jar built on a Mac runs unmodified. The Pi needs only a **JRE 21+**, not a JDK or a dev environment.
+
+**The target must run a 64-bit OS** (`uname -m` → `aarch64`). Graphics natives exist for 32-bit ARM, but JavaCV dropped `linux-armhf` in 1.5.12+, so video clips cannot decode there and the arm64-only WebUI container will not run at all. A 32-bit host starts and renders, then silently never plays video.
 
 **See [`deploy/README.md`](deploy/README.md)** for the full walkthrough — `deploy/deploy.sh` to build and ship, `deploy/start-backend.sh` to run, and a systemd unit to start on boot. It also covers the WebUI container (`aaronlennwilson/tesseract-ui`), which runs alongside the backend rather than containing it: UDP output broadcasts to `255.255.255.255`, which does not traverse Docker's bridge network.
 

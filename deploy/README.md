@@ -7,10 +7,35 @@ Deploying Tesseract to a Raspberry Pi (or any Linux host) is two independent pie
 | **Backend** (this repo) | directly on the host | UDP output broadcasts to `255.255.255.255`, which does not traverse Docker's bridge network |
 | **WebUI** (`tesseract_react`) | Docker container | `aaronlennwilson/tesseract-ui`, nginx serving static files |
 
+## The target must be 64-bit
+
+Check this before anything else. 32-bit ARM (armhf) is a dead end for this project, not
+merely a slower path:
+
+| Component | armhf (32-bit) | arm64 (64-bit) |
+|---|---|---|
+| LibGDX / LWJGL graphics | works — `libgdxarm.so` and LWJGL `linux/arm32` are bundled | works |
+| **Video clips** (JavaCV/FFmpeg) | **impossible** — `linux-armhf` dropped in JavaCV 1.5.12+, see `build.gradle:70` | works |
+| WebUI container | won't run — `aaronlennwilson/tesseract-ui` is `linux/arm64` only | works |
+
+The video row is upstream removal, not a missing dependency line. There is no version of
+this project that decodes video on armhf. Because graphics *do* work there, a 32-bit host
+starts up and renders — the failure surfaces later, as clips that never appear.
+
+```bash
+uname -m                    # aarch64 = good; armv7l = 32-bit
+dpkg --print-architecture   # arm64 = good; armhf = 32-bit
+```
+
+`/etc/os-release` is also a giveaway: `Raspbian GNU/Linux` is always the 32-bit port, while
+the 64-bit build reports `Debian GNU/Linux`. To fix, reimage with Raspberry Pi Imager and
+select **Raspberry Pi OS (64-bit)** — supported on Pi 3 and newer. Take the full desktop
+image rather than Lite if you plan to run headed during bring-up.
+
 ## Nothing is cross-compiled
 
 Java bytecode is platform-neutral, and `build.gradle` pulls prebuilt natives for every
-target — including `linux-arm64`. The jar built on a Mac runs unmodified on the Pi.
+64-bit target — including `linux-arm64`. The jar built on a Mac runs unmodified on the Pi.
 
 The Pi needs a **JRE 21+, not a JDK and not a dev environment**. Nothing compiles there.
 `build.gradle` targets bytecode 21, so an older JVM fails with
@@ -21,8 +46,18 @@ apt-cache policy openjdk-21-jre    # check what's available first
 sudo apt install openjdk-21-jre
 ```
 
-Raspberry Pi OS based on **Debian 13 (trixie)** has OpenJDK 21 in main. **Bookworm ships
-17** — use `bookworm-backports`, or an Eclipse Temurin 21 `linux/aarch64` tarball.
+What each Raspberry Pi OS generation ships:
+
+| Base | OpenJDK in main | What to do |
+|---|---|---|
+| Debian 13 (trixie) | 21 | `sudo apt install openjdk-21-jre` |
+| Debian 12 (bookworm) | 17 | `bookworm-backports`, or an Adoptium Temurin 21 `linux/aarch64` build |
+| Debian 10 (buster) and older | 11 | EOL, repos archived, 32-bit only — reimage |
+
+Prefer the full `openjdk-21-jre` over `openjdk-21-jre-headless`. The two senses of
+"headless" are unrelated: Debian's `-headless` package omits AWT, while this app's
+`--headless` mode is a libGDX backend choice. `-headless` is sufficient for production, but
+the full package keeps the headed bring-up test below available.
 
 ## Deploy the backend
 
