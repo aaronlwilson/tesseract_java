@@ -119,9 +119,12 @@ sudo apt install mesa-utils && glxinfo -B | grep -i "OpenGL version"
 
 Two things commonly get in the way:
 
-- **`DISPLAY` is unset over SSH.** `TesseractLauncher` auto-selects headless when there is
-  no display on a non-macOS host, so headed mode over plain SSH silently runs headless.
-  Run from the Pi's own desktop session, or `export DISPLAY=:0`.
+- **`DISPLAY` is unset over SSH.** With neither flag given, the launcher picks the mode by
+  whether `DISPLAY` is set — and it never is in a plain SSH session, so an unqualified run
+  goes headless. `--headed` overrides that detection outright. You still need a display for
+  it to render on, so pair it with `export DISPLAY=:0` to target the Pi's own screen, or
+  run from the Pi's desktop session. Forcing `--headed` with no reachable display warns and
+  then fails at window creation, which is the intended loud failure.
 - **Wayland.** Pi OS Bookworm defaults to it while LWJGL 3.3.3 ships an X11 GLFW. XWayland
   usually bridges this; `raspi-config` can force an X11 session if not.
 

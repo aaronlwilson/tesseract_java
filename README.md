@@ -20,8 +20,10 @@ This project was created for IntelliJ IDEA IDE.
 
 The application supports two rendering modes:
 
-- **Graphical Mode** (default): Opens a LibGDX window and renders visualizations
-- **Headless Mode** (`--headless` flag): Runs without a window, outputs only to UDP for LED hardware
+- **Graphical Mode**: Opens a LibGDX window and renders visualizations
+- **Headless Mode** (`--headless`): Runs without a window, outputs only to UDP for LED hardware
+
+With neither flag, the mode is auto-detected from whether `DISPLAY` is set (always graphical on macOS). Pass `--headed` to force the window and skip that detection — necessary over SSH, where `DISPLAY` is unset and auto-detection would otherwise pick headless.
 
 ## Local Development (IntelliJ)
 

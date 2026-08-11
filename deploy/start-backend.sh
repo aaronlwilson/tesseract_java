@@ -25,11 +25,14 @@ set -euo pipefail
 # so always run from the script's own directory regardless of where it was invoked.
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-headless_flag="--headless"
+# Pass the mode through explicitly rather than by omission. The launcher falls back to
+# display auto-detection only when neither flag is given, and DISPLAY is unset in every
+# plain SSH session — so omitting the flag here would silently run headless.
+mode_flag="--headless"
 for arg in "$@"; do
   case "$arg" in
-    --headed)   headless_flag=""; shift;;
-    --headless) headless_flag="--headless"; shift;;
+    --headed)   mode_flag="--headed"; shift;;
+    --headless) mode_flag="--headless"; shift;;
   esac
 done
 
@@ -48,8 +51,8 @@ if [[ "$java_major" =~ ^[0-9]+$ ]] && (( java_major < 21 )); then
 fi
 
 # -XstartOnFirstThread is a macOS-only requirement for GLFW and must not be passed on Linux.
-if [[ "$(uname -s)" == "Darwin" && -z "$headless_flag" ]]; then
-  exec java -XstartOnFirstThread -jar TesseractFatJar.jar
+if [[ "$(uname -s)" == "Darwin" && "$mode_flag" == "--headed" ]]; then
+  exec java -XstartOnFirstThread -jar TesseractFatJar.jar --headed
 fi
 
-exec java -jar TesseractFatJar.jar ${headless_flag}
+exec java -jar TesseractFatJar.jar "$mode_flag"
