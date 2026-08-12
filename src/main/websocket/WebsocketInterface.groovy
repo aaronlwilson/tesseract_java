@@ -44,6 +44,11 @@ class WebsocketInterface extends WebSocketServer {
     int port = 8883
 
     WebsocketInterface s = new WebsocketInterface(addr, port)
+
+    // Without SO_REUSEADDR the bind fails while a socket from the previous run is still in
+    // TIME_WAIT, which is exactly the window a `systemctl restart` lands in.
+    s.setReuseAddr(true)
+
     s.start()
     println("WebsocketInterface started on port: ${s.getPort()}".cyan())
 
@@ -140,10 +145,23 @@ class WebsocketInterface extends WebSocketServer {
 
   @Override
   void onError(WebSocket conn, Exception ex) {
-    // Log, never rethrow — a per-connection error (or a bind error with conn == null)
-    // must not crash the server thread.
-    System.err.println("[WS] WebSocket error" + (conn != null ? " on ${conn.getRemoteSocketAddress()}" : "") + ": ${ex.message}")
+    // A per-connection error must not take down the server — one misbehaving client is not
+    // everyone else's problem. Log it and carry on.
+    if (conn != null) {
+      System.err.println("[WS] WebSocket error on ${conn.getRemoteSocketAddress()}: ${ex.message}")
+      ex.printStackTrace()
+      return
+    }
+
+    // conn == null means the failure is server-level (typically BindException), and
+    // java-websocket has already torn down the server thread by the time we get here.
+    // Swallowing it leaves the app rendering and driving LEDs while unreachable from the
+    // UI, with nothing to signal it: systemd sees an active service, never restarts, and
+    // the installation silently stops answering its phone. Exit instead, so
+    // Restart=on-failure brings the process back with a working socket.
+    System.err.println("[WS] FATAL: websocket server failed: ${ex.message}")
     ex.printStackTrace()
+    System.exit(1)
   }
 
   @Override
