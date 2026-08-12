@@ -111,11 +111,17 @@ independently of whether the LED wiring is correct, so a dark array later means 
 wiring", not "something in the entire stack".
 
 Check the GPU before involving Java — one command, and it tells you whether OpenGL is even
-a concern. A Pi 4 (VideoCore VI / Mesa V3D) should report desktop **GL 2.1**:
+a concern. Measured on a Pi 4 (VideoCore VI / Mesa V3D) under Trixie: **OpenGL 3.1, direct
+rendering: Yes**. Anything reporting llvmpipe or software rendering means the GPU is not
+being used and performance will be unusable.
 
 ```bash
-sudo apt install mesa-utils && glxinfo -B | grep -i "OpenGL version"
+sudo apt install mesa-utils
+DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/1000 glxinfo -B | grep -iE "OpenGL version|renderer|direct"
 ```
+
+Measured throughput on that hardware: CUBOTRON's 27,000 nodes render at 30 fps with room to
+spare, and the real stages are far smaller — SCARED ~6,000, TESSERACT ~7,000.
 
 Two things commonly get in the way:
 
@@ -125,8 +131,17 @@ Two things commonly get in the way:
   it to render on, so pair it with `export DISPLAY=:0` to target the Pi's own screen, or
   run from the Pi's desktop session. Forcing `--headed` with no reachable display warns and
   then fails at window creation, which is the intended loud failure.
-- **Wayland.** Pi OS Bookworm defaults to it while LWJGL 3.3.3 ships an X11 GLFW. XWayland
-  usually bridges this; `raspi-config` can force an X11 session if not.
+- **Wayland.** Current Pi OS runs a Wayland session (compositor `labwc`) while LWJGL ships
+  an X11 GLFW, so rendering goes through XWayland. This works — confirmed on Trixie with
+  hardware acceleration intact — but an SSH session needs both variables, not just
+  `DISPLAY`:
+
+  ```bash
+  DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/1000 ./start-backend.sh --headed
+  ```
+
+  Check that XWayland is actually up with `ls /tmp/.X11-unix/` — an `X0` socket means
+  `DISPLAY=:0` is valid. `raspi-config` can force a true X11 session if needed.
 
 ## Run on boot
 
