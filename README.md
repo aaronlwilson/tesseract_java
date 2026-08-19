@@ -53,21 +53,26 @@ You can run `idea .` in the repo directory to open the project again (you can al
 Gradle allows us to easily define and resolve dependencies w/o storing them in the repo, and it will allow us to easily write tests if we ever get around to that. :)
 It also allows us to transparently integrate code written in other JVM languages, in addition to a bunch of other potentially useful stuff. Check out some of the features here: https://gradle.org/features/
 
+**IMPORTANT:** The UDP library jar is vendored in `lib/udp/`, so no extra dependency-download step is required — Gradle picks it up automatically.
+
 ### Creating the Launcher configuration to launch the application
 
-If you've created the project from scratch, you can create the 'run configuration' easily. This allows you to click the green 'play' button near the top right of the screen to launch the application.
-
-**IMPORTANT:** The UDP library jar is vendored in `lib/udp/`, so no extra dependency-download step is required — Gradle picks it up automatically.
+If you've created the project from scratch, you can create the 'run configuration' easily. This allows you to click the green 'play' (or 'debug') button near the top right of the screen to launch the application, with breakpoints working as normal.
 
 - Open the project
 - Open the file `TesseractLauncher.java` (in `src/main/app/`)
 - Find the 'main' method
-- Click the 'Play' symbol next to the method (the green left-facing triangle)
-- The application will launch
+- Click the 'Play' symbol next to the method (the green left-facing triangle) — this launches once and creates a temporary run configuration
+- **On macOS, this first launch will crash** with an LWJGL/GLFW error, because IntelliJ's native run configurations don't inherit the `-XstartOnFirstThread` JVM flag that `build.gradle` applies to Gradle-driven runs. Fix it once:
+  - Open the 'Run/Debug Configurations' dropdown at the top of the screen and choose 'Edit Configurations...'
+  - Select the 'TesseractLauncher' configuration
+  - In 'VM options', enter `-XstartOnFirstThread`
+  - Click 'OK'
+- Click the 'Play' (or 'Debug') button again — it will launch cleanly this time
 - Close the application
-- In the Run Configurations dropdown (to the left of the play/debug buttons at the top of the screen), choose 'Save TesseractLauncher'
+- In the Run Configurations dropdown (to the left of the play/debug buttons at the top of the screen), choose 'Save TesseractLauncher' if it's still listed as temporary
 
-Now every time you open the project, you can run it easily by pressing the 'play' button at the top of the screen.
+Now every time you open the project, you can run or debug it by pressing the 'play'/'debug' buttons at the top of the screen. This run configuration lives in `.idea/runConfigurations/`, which is gitignored, so each developer sets it up once locally — it isn't shared through the repo.
 
 ## Building a fat jar
 
