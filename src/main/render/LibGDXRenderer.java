@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import environment.Node;
 
+import java.util.Arrays;
+
 /**
  * LibGDX-based renderer for headed mode (desktop with display).
  * Replaces Processing's P3D renderer and JOGL dependency.
@@ -124,18 +126,68 @@ public class LibGDXRenderer implements IRenderer {
     public void drawNodes(Node[] nodes) {
         if (nodes == null) return;
 
-        // Billboard pass: project each node's true 3D (x,y,z) to screen space and
-        // draw a constant-size 2D circle there. This reproduces Processing's point():
-        // a flat sprite at the correct 3D position, so all X/Y/Z layers are visible.
+        // Billboard pass: project each node's true 3D (x,y,z) to screen space and draw a
+        // constant-size 2D circle there. This reproduces Processing's point(): a flat sprite at
+        // the correct 3D position, so all X/Y/Z layers are visible.
+        //
+        // GL_DEPTH_TEST stays off because these are flat screen-space circles, not real 3D
+        // geometry - the z-buffer can't sort them for us. So instead we sort back-to-front
+        // ourselves (painter's algorithm) using each node's projected depth, and draw in that
+        // order. Without this, nodes just painted in whatever order `nodes` happens to be in
+        // (e.g. cube-face build order), so a nearer face could get painted UNDER a farther one -
+        // visible as a "hollow"/Escher-looking cube once nodes are big/zoomed enough to notice.
+        int n = nodes.length;
+        ensureDepthBuffers(n);
+
+        for (int i = 0; i < n; i++) {
+            Node node = nodes[i];
+            tempVec.set(node.x, node.y, node.z);
+            tempVec.mul(transformMatrix);
+            camera.project(tempVec); // -> window coords, origin bottom-left, z = depth (0 near, 1 far)
+
+            screenXBuf[i] = tempVec.x;
+            screenYBuf[i] = tempVec.y;
+            depthBuf[i] = tempVec.z;
+
+            // Record projected position for clips (e.g. Perlin) in Processing's top-left convention.
+            node.screenX = tempVec.x;
+            node.screenY = height - tempVec.y;
+        }
+
+        // Farthest (largest depth) first, nearest (smallest depth) last so it ends up on top.
+        Arrays.sort(drawIndices, 0, n, (a, b) -> Float.compare(depthBuf[b], depthBuf[a]));
+
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         shapeRenderer.setProjectionMatrix(screenMatrix);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        for (Node node : nodes) {
-            drawNodeBillboard(node);
+        for (int i = 0; i < n; i++) {
+            int idx = drawIndices[i];
+            Node node = nodes[idx];
+            shapeRenderer.setColor(node.r / 255f, node.g / 255f, node.b / 255f, 1);
+            shapeRenderer.circle(screenXBuf[idx], screenYBuf[idx], nodeRadius);
         }
 
         shapeRenderer.end();
+    }
+
+    // Depth-sort scratch buffers for drawNodes(), reused/grown across frames to avoid per-frame
+    // allocation. drawIndices holds boxed 0..n-1 once; only their ORDER changes each frame (a
+    // re-sort of existing references), so steady-state draws allocate nothing here.
+    private Integer[] drawIndices = new Integer[0];
+    private float[] depthBuf = new float[0];
+    private float[] screenXBuf = new float[0];
+    private float[] screenYBuf = new float[0];
+
+    private void ensureDepthBuffers(int n) {
+        if (drawIndices.length < n) {
+            int old = drawIndices.length;
+            drawIndices = Arrays.copyOf(drawIndices, n);
+            for (int i = old; i < n; i++) drawIndices[i] = i;
+            depthBuf = new float[n];
+            screenXBuf = new float[n];
+            screenYBuf = new float[n];
+        }
     }
 
     // Projects a node to screen space and draws its dot. Must be called between
