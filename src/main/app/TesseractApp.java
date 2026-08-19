@@ -82,6 +82,25 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     private float yMove = 0;
     private boolean mousePressed = false;
 
+    // Camera zoom state (space + drag to zoom, shift+space to reset). Same start/committed/eased
+    // pattern as rotation above, but driven off vertical drag while spaceHeld is true instead of
+    // always-on horizontal/vertical drag.
+    private static final float ZOOM_SENSITIVITY = 0.005f;
+    private static final float MIN_ZOOM = 0.1f;
+    private static final float MAX_ZOOM = 4f;
+    private boolean spaceHeld = false;
+    private float zoom = 1f;
+    private float newZoom = 1f;
+    private float zoomStartY = 0;
+    private float zoomMove = 1f;
+
+    // Node dot size (Q/A keys) - a depth-perception aid: bigger dots make it easier to tell which
+    // face is front vs. back when zoomed into an orthographic projection.
+    private static final float NODE_RADIUS_MIN = 0.5f;
+    private static final float NODE_RADIUS_MAX = 12f;
+    private static final float NODE_RADIUS_STEP = 0.5f;
+    private float nodeRadius = 2f;
+
     public TesseractApp(boolean headless, int width, int height) {
         this.headless = headless;
         this.width = width;
@@ -109,6 +128,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
             Gdx.input.setInputProcessor(this);
         }
         renderer.init(width, height);
+        renderer.setNodeRadius(nodeRadius);
 
         // Initialize particles with default values
         particleX = new Particle(new Vec3(0, 0, 0), 0xFF0000, 100, 100, new Vec3(0, 0, 0), new Vec3(0, 0, 0));
@@ -263,9 +283,11 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
             return;
         }
 
-        // Update camera rotation with mouse
+        // Update camera rotation/zoom with mouse
         updateCameraRotation();
+        updateCameraZoom();
         renderer.setCameraRotation(xRot, yRot);
+        renderer.setCameraZoom(zoom);
 
         // Draw axes
         drawAxes(600);
@@ -299,7 +321,8 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     }
 
     private void updateCameraRotation() {
-        if (mousePressed) {
+        // While spaceHeld, drags drive zoom (see updateCameraZoom) instead of rotation.
+        if (mousePressed && !spaceHeld) {
             xDelta = xStart - renderer.getMouseX();
             yDelta = yStart - renderer.getMouseY();
         } else {
@@ -320,6 +343,36 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         if (Math.abs(diff) > 0.01) {
             yRot -= diff / 6.0;
         }
+    }
+
+    private void updateCameraZoom() {
+        if (mousePressed && spaceHeld) {
+            // Drag up (screen Y decreases) zooms in; drag down zooms out.
+            float dragDeltaY = renderer.getMouseY() - zoomStartY;
+            newZoom = zoomMove + dragDeltaY * ZOOM_SENSITIVITY;
+            newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+        }
+
+        // Easing, same pattern as rotation
+        float diff = zoom - newZoom;
+        if (Math.abs(diff) > 0.001) {
+            zoom -= diff / 6.0;
+        }
+    }
+
+    // Called when a space+drag zoom gesture starts (space pressed while already dragging, or a
+    // new drag starting while space is already held) so the drag baseline is captured fresh.
+    private void beginZoomDrag() {
+        zoomStartY = renderer.getMouseY();
+        zoomMove = newZoom;
+    }
+
+    private void resetZoom() {
+        zoom = 1f;
+        newZoom = 1f;
+        zoomMove = 1f;
+        zoomStartY = renderer.getMouseY();
+        System.out.println("Zoom reset to default");
     }
 
     private void drawAxes(float size) {
@@ -408,6 +461,38 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        // Space held while dragging zooms the viewport instead of rotating it; shift+space
+        // (either press order) resets zoom to default. See updateCameraZoom()/touchDown().
+        if (keycode == Input.Keys.SPACE) {
+            boolean shiftHeld = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
+            if (shiftHeld) {
+                resetZoom();
+            } else if (!spaceHeld) {
+                spaceHeld = true;
+                if (mousePressed) {
+                    // Switch an in-progress rotate-drag into a zoom-drag without jumping.
+                    xMove = xMove - xDelta;
+                    yMove = yMove - yDelta;
+                    beginZoomDrag();
+                }
+            }
+            return true;
+        } else if (keycode == Input.Keys.SHIFT_LEFT || keycode == Input.Keys.SHIFT_RIGHT) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                resetZoom();
+                return true;
+            }
+            return false;
+        } else if (keycode == Input.Keys.Q) {
+            nodeRadius = Math.min(NODE_RADIUS_MAX, nodeRadius + NODE_RADIUS_STEP);
+            renderer.setNodeRadius(nodeRadius);
+            return true;
+        } else if (keycode == Input.Keys.A) {
+            nodeRadius = Math.max(NODE_RADIUS_MIN, nodeRadius - NODE_RADIUS_STEP);
+            renderer.setNodeRadius(nodeRadius);
+            return true;
+        }
+
         // Arrow keys drive the mapping-tool selection (see StrandMapTest).
         // UP/DOWN cycle the controller (1..4), LEFT/RIGHT cycle the pin (1..8).
         if (keycode == Input.Keys.UP) {
@@ -436,6 +521,16 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.SPACE) {
+            spaceHeld = false;
+            if (mousePressed) {
+                // Switch back to a rotate-drag from the current mouse position, no jump.
+                zoomMove = newZoom;
+                xStart = renderer.getMouseX();
+                yStart = renderer.getMouseY();
+            }
+            return true;
+        }
         return false;
     }
 
@@ -454,16 +549,24 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         mousePressed = true;
-        xStart = screenX;
-        yStart = screenY;
+        if (spaceHeld) {
+            beginZoomDrag();
+        } else {
+            xStart = screenX;
+            yStart = screenY;
+        }
         return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         mousePressed = false;
-        xMove = xMove - xDelta;
-        yMove = yMove - yDelta;
+        if (spaceHeld) {
+            zoomMove = newZoom;
+        } else {
+            xMove = xMove - xDelta;
+            yMove = yMove - yDelta;
+        }
         return true;
     }
 

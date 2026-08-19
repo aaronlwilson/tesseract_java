@@ -68,6 +68,16 @@ public class HeadlessRenderer implements IRenderer {
     }
 
     @Override
+    public void setCameraZoom(float zoom) {
+        // No-op in headless mode
+    }
+
+    @Override
+    public void setNodeRadius(float radius) {
+        // No-op in headless mode
+    }
+
+    @Override
     public float getFrameRate() {
         return frameRate;
     }

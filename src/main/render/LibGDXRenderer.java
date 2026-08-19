@@ -20,7 +20,8 @@ public class LibGDXRenderer implements IRenderer {
 
     // On-screen radius (in pixels) of each LED dot. Nodes are billboarded, so
     // this is a constant screen size regardless of 3D depth (matches Processing's point()).
-    private static final float NODE_RADIUS = 2f;
+    // Adjustable at runtime (Q/A keys, see TesseractApp) as a depth-perception aid when zoomed in.
+    private float nodeRadius = 2f;
 
     private int width;
     private int height;
@@ -146,7 +147,7 @@ public class LibGDXRenderer implements IRenderer {
         camera.project(tempVec); // -> window coords, origin bottom-left, z = depth
 
         shapeRenderer.setColor(node.r / 255f, node.g / 255f, node.b / 255f, 1);
-        shapeRenderer.circle(tempVec.x, tempVec.y, NODE_RADIUS);
+        shapeRenderer.circle(tempVec.x, tempVec.y, nodeRadius);
 
         // Record projected position for clips (e.g. Perlin) in Processing's
         // top-left coordinate convention.
@@ -196,8 +197,11 @@ public class LibGDXRenderer implements IRenderer {
 
     @Override
     public void drawText(String text, float x, float y, int r, int g, int b) {
-        // Use screen coordinates for text (2D overlay)
-        spriteBatch.setProjectionMatrix(camera.combined);
+        // Fixed screen-space overlay: x/y are already literal pixel coordinates (e.g. "width -
+        // 60, 20" for the FPS readout), so this must NOT go through the 3D camera (camera.combined
+        // bakes in zoom/pan and made HUD text fly off-screen when zoomed). Use the same fixed
+        // 2D ortho projection the node billboards use instead.
+        spriteBatch.setProjectionMatrix(screenMatrix);
         spriteBatch.begin();
         font.setColor(r / 255f, g / 255f, b / 255f, 1);
         // Flip Y coordinate (LibGDX has Y=0 at bottom, Processing has Y=0 at top)
@@ -209,6 +213,16 @@ public class LibGDXRenderer implements IRenderer {
     public void setCameraRotation(float xRot, float yRot) {
         this.xRot = xRot;
         this.yRot = yRot;
+    }
+
+    @Override
+    public void setCameraZoom(float zoom) {
+        camera.zoom = zoom;
+    }
+
+    @Override
+    public void setNodeRadius(float radius) {
+        this.nodeRadius = radius;
     }
 
     @Override

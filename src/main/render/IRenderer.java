@@ -54,6 +54,16 @@ public interface IRenderer {
     void setCameraRotation(float xRot, float yRot);
 
     /**
+     * Set the camera zoom (OrthographicCamera.zoom convention: &lt;1 zooms in, &gt;1 zooms out).
+     */
+    void setCameraZoom(float zoom);
+
+    /**
+     * Set the on-screen radius (in pixels) of each LED node dot.
+     */
+    void setNodeRadius(float radius);
+
+    /**
      * Get the current frame rate.
      */
     float getFrameRate();
