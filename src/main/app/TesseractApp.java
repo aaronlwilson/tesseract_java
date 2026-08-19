@@ -46,7 +46,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     public Particle particleZ;
     public Particle particleSpin;
 
-    // Mapping-tool selection (used by TilesTestClip/ScaredGeometry; adjusted via arrow keys)
+    // Mapping-tool selection (used by StrandMapTest; adjusted via arrow keys)
     public int mapController = 1;
     public int mapPort = 1;
 
@@ -59,6 +59,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     public static final int PERLINNOISE = 5;
     public static final int LINESCLIP = 6;
     public static final int TILESTEST = 7;
+    public static final int STRANDMAPTEST = 8;
 
     // Core components
     public UDPModel udpModel;
@@ -407,7 +408,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        // Arrow keys drive the mapping-tool selection (see TilesTestClip / ScaredGeometry).
+        // Arrow keys drive the mapping-tool selection (see StrandMapTest).
         // UP/DOWN cycle the controller (1..4), LEFT/RIGHT cycle the pin (1..8).
         if (keycode == Input.Keys.UP) {
             mapPort = 1;

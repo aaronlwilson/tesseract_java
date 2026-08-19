@@ -152,6 +152,7 @@ public class Util {
                 perlin_noise : TesseractApp.PERLINNOISE,
                 lines_clip   : TesseractApp.LINESCLIP,
                 tiles_test_clip   : TesseractApp.TILESTEST,
+                strand_map_test   : TesseractApp.STRANDMAPTEST,
         ]
 
         Integer enumVal = clipIdMap[clipId]
@@ -277,6 +278,7 @@ public class Util {
                 new Scene(7, "PerlinNoise", TesseractApp.PERLINNOISE, [0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0] as float[]),
                 new Scene(8, "LinesClip", TesseractApp.LINESCLIP, [0.5f, 0.5f, 0.5f, 0.0f, 0.5f, 1, 1, 1] as float[]),
                 new Scene(9, "Tiles Test", TesseractApp.TILESTEST, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
+                new Scene(20, "Strand Map Test", TesseractApp.STRANDMAPTEST, [0, 0, 0, 0, 0, 0, 0, 0] as float[]),
         ]
 
         builtInScenes.each { Scene s ->

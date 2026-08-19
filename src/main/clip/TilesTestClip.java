@@ -1,18 +1,13 @@
 package clip;
 
-import hardware.Fixture;
-import hardware.Controller;
+import hardware.Tile;
 import environment.Node;
+import util.Util;
 
-// Repurposed as the ScaredGeometry mapping tool: every node lights dim red except the
-// strand whose controller id + pin match the current map selection (adjusted via arrow
-// keys -> TesseractApp.mapController/mapPort), which lights bright blue. Used to physically
-// identify which strip is wired to which teensy pin. The original Tile test-pattern logic
-// was replaced here; see git history for the Tile-based version.
-public class TilesTestClip  extends AbstractClip {
-
-    private int _mapController;
-    private int _mapPort;
+// Original tile-mapping tool: shows each tile's number (from data/tiles/pixel_number_<id>.gif)
+// in its controller's testColor against a black background. Used to verify that a panel's tiles
+// are wired up, oriented, and numbered correctly, and that panels are assembled in the right order.
+public class TilesTestClip extends AbstractClip {
 
     //constructor
     public TilesTestClip() {
@@ -23,32 +18,35 @@ public class TilesTestClip  extends AbstractClip {
         super.init();
     }
 
-    @Override
     public void run() {
-        _mapController = _myMain.mapController;
-        _mapPort = _myMain.mapPort;
+
     }
 
-    @Override
     public int[] drawNode(Node node) {
+
         int[] nodestate = new int[3];
 
-        nodestate[0] = 150;
-        nodestate[1] = 0;
-        nodestate[2] = 0;
+        try {
+            Tile t = (Tile) node.fixture;
 
-        Fixture f = node.fixture;
-        if (f == null) return nodestate;
+            int c = t.numberColorForNodeIndex(node.index);
 
-        Controller c = f.myController;
-        if (c == null) return nodestate;
+            //number glyph pixels light up in the panel's test color; background stays black
+            if (Util.getR(c) > 2) {
+                c = t.myController.testColor;
+            }
 
-        if (f.pinNum == _mapPort && c.id == _mapController) {
-            nodestate[0] = 0;
-            nodestate[1] = 0;
+            nodestate[0] = Util.getR(c);
+            nodestate[1] = Util.getG(c);
+            nodestate[2] = Util.getB(c);
+        } catch (NullPointerException e) {
+            System.out.println("NullPointerException Caught: TilesTestClip");
+            nodestate[0] = 255;
+            nodestate[1] = 255;
             nodestate[2] = 255;
         }
 
         return nodestate;
     }
+
 }

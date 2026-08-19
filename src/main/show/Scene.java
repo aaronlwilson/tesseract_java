@@ -120,6 +120,9 @@ public class Scene {
             case TesseractApp.TILESTEST:
                 newClip = new TilesTestClip();
                 break;
+            case TesseractApp.STRANDMAPTEST:
+                newClip = new StrandMapTest();
+                break;
 
             default:
                 throw new IllegalStateException("Unexpected value: " + clipClass);

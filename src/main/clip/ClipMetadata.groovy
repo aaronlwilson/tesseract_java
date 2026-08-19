@@ -102,6 +102,11 @@ class ClipMetadata {
                 ],
         ],
         [
+                displayName: 'Strand Map Test',
+                clipId     : 'strand_map_test',
+                controls   : [],
+        ],
+        [
             displayName: 'Video',
             clipId     : 'video',
             controls   : [

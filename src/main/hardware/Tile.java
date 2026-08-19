@@ -1,6 +1,9 @@
 package hardware;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import environment.Node;
+import util.Util;
 
 public class Tile extends Fixture {
   public static int numLEDperTile = 144;
@@ -25,15 +28,36 @@ public class Tile extends Fixture {
     super(theId);
     id = theId;
 
-    // Initialize empty number image array (tile numbering not used in headless mode)
-    // This was previously used for debug visualization with Processing images
     numberPImageArray = new int[12][12];
-    for (int j = 0; j < 12; j++) {
-      for (int i = 0; i < 12; i++) {
-        numberPImageArray[i][j] = 0;
-      }
-    }
+    loadNumberImage(theId);
   }//end constructor
+
+  // Loads data/tiles/pixel_number_<id>.gif into numberPImageArray, packed as 0xRRGGBB per pixel
+  // (matching Util.getR/G/B) so drawNode() can read it the same way the original Processing-based
+  // version did. Falls back to a blank (all-black) array if the file is missing, rather than
+  // failing tile construction.
+  private void loadNumberImage(int theId) {
+    String imagePath = Util.getRootDataDir() + "/tiles/pixel_number_" + theId + ".gif";
+
+    try {
+      Pixmap pixmap = new Pixmap(Gdx.files.absolute(imagePath));
+      try {
+        for (int j = 0; j < 12; j++) {
+          for (int i = 0; i < 12; i++) {
+            int rgba8888 = pixmap.getPixel(i, j);
+            int r = (rgba8888 >>> 24) & 0xFF;
+            int g = (rgba8888 >>> 16) & 0xFF;
+            int b = (rgba8888 >>> 8) & 0xFF;
+            numberPImageArray[i][j] = (r << 16) | (g << 8) | b;
+          }
+        }
+      } finally {
+        pixmap.dispose();
+      }
+    } catch (Exception e) {
+      System.out.println("Tile " + theId + ": could not load " + imagePath + " (" + e.getMessage() + ")");
+    }
+  }
 
 
   static void flipNodeMatrixHorizontal(Node mat[][]) {
