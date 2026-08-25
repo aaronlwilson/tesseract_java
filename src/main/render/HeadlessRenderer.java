@@ -48,6 +48,11 @@ public class HeadlessRenderer implements IRenderer {
     }
 
     @Override
+    public void drawParticle(Node node) {
+        // No-op in headless mode
+    }
+
+    @Override
     public void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b) {
         // No-op in headless mode
     }

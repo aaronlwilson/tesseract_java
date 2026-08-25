@@ -171,6 +171,24 @@ public class LibGDXRenderer implements IRenderer {
         shapeRenderer.end();
     }
 
+    @Override
+    public void drawParticle(Node node) {
+        // Real 3D cube (via the full rotation/zoom projection, like drawBox), so it reads as a
+        // solid marker distinct from the flat, constant-size node dot billboards.
+        float half = PARTICLE_CUBE_SIZE / 2f;
+
+        shapeRenderer.setProjectionMatrix(projectionMatrix);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(node.r / 255f, node.g / 255f, node.b / 255f, 1);
+        shapeRenderer.box(node.x - half, node.y - half, node.z + half, PARTICLE_CUBE_SIZE, PARTICLE_CUBE_SIZE, PARTICLE_CUBE_SIZE);
+        shapeRenderer.end();
+    }
+
+    // Cube edge length, in world units, for drawParticle() markers. Fixed rather than tied to
+    // nodeRadius: this cube is real 3D geometry (goes through the zoom/rotation projection), so
+    // it already grows/shrinks with zoom on its own, unlike the constant-screen-size node dots.
+    private static final float PARTICLE_CUBE_SIZE = 8f;
+
     // Depth-sort scratch buffers for drawNodes(), reused/grown across frames to avoid per-frame
     // allocation. drawIndices holds boxed 0..n-1 once; only their ORDER changes each frame (a
     // re-sort of existing references), so steady-state draws allocate nothing here.

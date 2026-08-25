@@ -34,6 +34,12 @@ public interface IRenderer {
     void drawNodes(Node[] nodes);
 
     /**
+     * Draw a particle marker as a small filled cube at the node's position (a bit bigger
+     * than a regular node dot), using the node's color.
+     */
+    void drawParticle(Node node);
+
+    /**
      * Draw a 3D line between two points.
      */
     void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b);

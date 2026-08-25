@@ -293,9 +293,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         drawAxes(600);
 
         // Draw particles
-        renderer.drawNode(createNodeFromParticle(particleX));
-        renderer.drawNode(createNodeFromParticle(particleY));
-        renderer.drawNode(createNodeFromParticle(particleZ));
+        renderer.drawParticle(createNodeFromParticle(particleX));
+        renderer.drawParticle(createNodeFromParticle(particleY));
+        renderer.drawParticle(createNodeFromParticle(particleZ));
 
         // Draw bounding box
         float boxX = stage.minX + (stage.maxW / 2);
