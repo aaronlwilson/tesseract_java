@@ -289,6 +289,12 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         renderer.setCameraRotation(xRot, yRot);
         renderer.setCameraZoom(zoom);
 
+        // TESSERACT rests spinning on one corner rather than sitting face-on; tilt the base pose
+        // to match. (stage.stageType is set async in buildStage(), hence the null-safe check.)
+        if ("TESSERACT".equals(stage.stageType)) {
+            renderer.setCornerTilt(45f, 0f, 35.3f);
+        }
+
         // Draw axes
         drawAxes(600);
 

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import environment.Node;
 
@@ -42,8 +43,18 @@ public class LibGDXRenderer implements IRenderer {
     private float xRot = 0;
     private float yRot = 0;
 
+    // Fixed base tilt (e.g. TESSERACT resting on one corner), applied before mouse-drag rotation.
+    // Identity (no tilt) by default. Composed as one quaternion in setCornerTilt() rather than
+    // three chained Matrix4.rotate() calls, since Matrix4.rotate() postmultiplies (same "sticks
+    // to the object" behavior as Processing's rotateX/Y/Z) - each call would rotate about axes
+    // already reoriented by the previous one instead of the fixed world axes.
+    private final Quaternion cornerTilt = new Quaternion();
+
     // For 3D to 2D projection
     private Matrix4 projectionMatrix;
+    // Untilted counterpart to projectionMatrix (translate + mouse-rotate only), used for the
+    // reference axes so they always show the true world frame regardless of cornerTilt.
+    private Matrix4 worldProjectionMatrix;
     private Matrix4 transformMatrix;
     private Vector3 tempVec = new Vector3();
 
@@ -68,6 +79,7 @@ public class LibGDXRenderer implements IRenderer {
 
         // Initialize matrices for 3D projection
         projectionMatrix = new Matrix4();
+        worldProjectionMatrix = new Matrix4();
         transformMatrix = new Matrix4();
 
         // 2D screen-space projection for billboarded node dots
@@ -102,7 +114,20 @@ public class LibGDXRenderer implements IRenderer {
         transformMatrix.rotate(1, 0, 0, xRotAngle);
         transformMatrix.rotate(0, 1, 0, yRotAngle);
 
-        // Combine with projection
+        // World matrix: translate + mouse-rotate only, no object tilt. Used for the reference
+        // axes, so world Y always reads as true vertical - the frame the motor-counter rotation
+        // will eventually spin - regardless of how the cube itself is tilted below.
+        worldProjectionMatrix.set(camera.combined);
+        worldProjectionMatrix.mul(transformMatrix);
+
+        // Object matrix: the fixed corner tilt (e.g. TESSERACT resting on one corner) goes on
+        // LAST, i.e. applied to each vertex FIRST (Matrix4.rotate() postmultiplies, so the last
+        // .rotate() call ends up closest to the vertex). This tilts the cube once in its own
+        // local frame, then lets mouse-drag spin the already-tilted cube as a rigid body around
+        // the true world axes - instead of the tilt itself getting dragged around, which is what
+        // tilted the axes/world along with it before. No-op when identity.
+        transformMatrix.rotate(cornerTilt);
+
         projectionMatrix.set(camera.combined);
         projectionMatrix.mul(transformMatrix);
     }
@@ -228,7 +253,8 @@ public class LibGDXRenderer implements IRenderer {
 
     @Override
     public void drawLine(float x1, float y1, float z1, float x2, float y2, float z2, int r, int g, int b) {
-        shapeRenderer.setProjectionMatrix(projectionMatrix);
+        // The only caller is the reference axes, which must stay in the untilted world frame.
+        shapeRenderer.setProjectionMatrix(worldProjectionMatrix);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(r / 255f, g / 255f, b / 255f, 1);
         shapeRenderer.line(x1, y1, z1, x2, y2, z2);
@@ -289,6 +315,16 @@ public class LibGDXRenderer implements IRenderer {
     @Override
     public void setCameraZoom(float zoom) {
         camera.zoom = zoom;
+    }
+
+    @Override
+    public void setCornerTilt(float xDeg, float yDeg, float zDeg) {
+        // Compose X, then Y, then Z as ONE quaternion (extrinsic/world-axis composition),
+        // instead of three chained Matrix4.rotate() calls which would each stick to the axes
+        // left behind by the previous one.
+        cornerTilt.set(Vector3.Z, zDeg)
+                .mul(new Quaternion(Vector3.Y, yDeg))
+                .mul(new Quaternion(Vector3.X, xDeg));
     }
 
     @Override

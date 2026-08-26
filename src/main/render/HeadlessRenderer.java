@@ -78,6 +78,11 @@ public class HeadlessRenderer implements IRenderer {
     }
 
     @Override
+    public void setCornerTilt(float xDeg, float yDeg, float zDeg) {
+        // No-op in headless mode
+    }
+
+    @Override
     public void setNodeRadius(float radius) {
         // No-op in headless mode
     }

@@ -65,6 +65,16 @@ public interface IRenderer {
     void setCameraZoom(float zoom);
 
     /**
+     * Set a fixed base tilt (in degrees, about the world X/Y/Z axes) applied before mouse-drag
+     * rotation. Composed as a single rotation rather than chained per-axis calls, so all three
+     * angles are measured against the fixed world axes instead of each other (avoids the classic
+     * "rotation sticks to the object" gotcha of calling rotateX/rotateY/rotateZ in sequence).
+     * Used to rest stages like TESSERACT tilted onto one corner instead of face-on. Pass all
+     * zeros to clear it back to no tilt.
+     */
+    void setCornerTilt(float xDeg, float yDeg, float zDeg);
+
+    /**
      * Set the on-screen radius (in pixels) of each LED node dot.
      */
     void setNodeRadius(float radius);
