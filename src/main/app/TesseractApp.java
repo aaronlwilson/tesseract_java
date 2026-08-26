@@ -17,6 +17,7 @@ import render.ProcessingCompat;
 import show.Playlist;
 import show.PlaylistManager;
 import stores.ConfigStore;
+import stores.MasterBrightnessStore;
 import stores.PlaylistStore;
 import stores.SceneStore;
 import util.Util;
@@ -67,6 +68,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     public Stage stage;
     public Channel channel1;
     public RotaryEncoderInput rotaryEncoderInput;
+    public MasterBrightnessStore masterBrightnessStore;
     public Boolean setupComplete = false;
     public Boolean drawing = true;
     public Boolean sending = true;
@@ -171,6 +173,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         // Open the rotary encoder's serial port, if configured
         rotaryEncoderInput = new RotaryEncoderInput(ConfigStore.get().getString("rotaryEncoderPort"));
 
+        // Master R/G/B brightness filter, live-adjustable from the WebUI
+        masterBrightnessStore = MasterBrightnessStore.get();
+
         // Initialize the StateManager now so its inbound handlers (requestInitialState,
         // stateUpdate) are registered before any client connects — not lazily on first play/stop.
         state.StateManager.get();
@@ -228,9 +233,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
             int[] rgb = renderNode(n);
 
             // Store color on the node for UDP output
-            n.r = rgb[0]/2;
-            n.g = rgb[1]/2;
-            n.b = rgb[2]/2;
+            n.r = rgb[0];
+            n.g = rgb[1];
+            n.b = rgb[2];
 
             nextNodes[i] = n;
         }
@@ -404,10 +409,10 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     private int[] renderNode(Node node) {
         int[] rgb1 = channel1.drawNode(node);
 
-        // Apply channel brightness
-        rgb1[0] = (int) Math.round(rgb1[0] * 0.9);
-        rgb1[1] = (int) Math.round(rgb1[1] * 0.9);
-        rgb1[2] = (int) Math.round(rgb1[2] * 0.9);
+        // Apply the master per-channel brightness filter
+        rgb1[0] = (int) Math.round(rgb1[0] * masterBrightnessStore.getR());
+        rgb1[1] = (int) Math.round(rgb1[1] * masterBrightnessStore.getG());
+        rgb1[2] = (int) Math.round(rgb1[2] * masterBrightnessStore.getB());
 
         return rgb1;
     }

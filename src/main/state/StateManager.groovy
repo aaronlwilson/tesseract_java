@@ -7,6 +7,7 @@ import org.java_websocket.WebSocketImpl
 import show.Playlist
 import show.Scene
 import stores.ConfigStore
+import stores.MasterBrightnessStore
 import stores.MediaStore
 import stores.PlaylistStore
 import stores.SceneStore
@@ -116,6 +117,9 @@ class StateManager {
             // Immutable for the process lifetime (set once from config at boot), so it's sent
             // here rather than in activeState, which gets rebroadcast on every mutation.
             stageType   : ConfigStore.get().getString("stageType"),
+            // Global (non-clip-scoped) master brightness filter, current values for hydration.
+            // Live updates come separately via a 'masterBrightness' stateUpdate broadcast.
+            masterBrightness: MasterBrightnessStore.get().asJsonObj(),
     ]
 
     ws.sendMessage(conn, 'sendInitialState', data);
@@ -171,6 +175,8 @@ class StateManager {
       this.handleRestoreDefaults();
     } else if (key == "playState") {
       this.handlePlayStateUpdate(inData.value);
+    } else if (key == "masterBrightness") {
+      this.handleMasterBrightnessUpdate(inData.value);
     } else {
       // Don't throw — a malformed/unknown message from a client must not take down the WS thread.
       System.err.println("[StateManager] Ignoring stateUpdate with unknown key '${key}'")
@@ -201,6 +207,19 @@ class StateManager {
     clip."${fieldName}" = newValue
 
 //    println "Set clip field '${fieldName}' to value '${newValue}'"
+  }
+
+  // Handle an update to the global master brightness filter (not tied to any clip/scene).
+  // Broadcasts the full {r,g,b} triple back out so every connected client (e.g. phone + another
+  // open tab) stays in sync, rather than just the one channel that changed.
+  public void handleMasterBrightnessUpdate(Map inData) {
+    String channel = inData.channel
+    double newValue = inData.newValue
+
+    MasterBrightnessStore.get().setChannel(channel, newValue)
+    MasterBrightnessStore.get().saveDataToDisk()
+
+    this.sendStateUpdate("masterBrightness", MasterBrightnessStore.get().asJsonObj())
   }
 
   // Create a new playlist object and shove it into the store, then write data to disk
