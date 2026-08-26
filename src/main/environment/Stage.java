@@ -134,48 +134,55 @@ public class Stage {
 
     private void buildTesseractStageCube() {
         int counter = 0;
-
         _myMain.udpModel.rabbits = new Rabbit[6];
 
-        //one rabbit per 9 tiles
+/* DAS ENERGY 2022 for reference
         _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.104", 1, "", 0x00ff00); //Green -up
         _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.151", 2, "", 0xffcc11); //Grey-Yellow
         _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.105", 3, "", 0xff0000); //Red -up
         _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.196", 4, "", 0xff00ff); //Purple
         _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.103", 5, "", 0x0000ff); //Blue -up
         _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.102", 6, "", 0xffffff); //White
+*/
 
-        // old order 103, 100, 102, 104, 101, 105 - does not mean shit, those mappings were lost on the old router
-        // new order 100, 101, 102, 103, 104, 105 ?
-        int ctr = 108;
+//one rabbit per 9 tiles
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.196", 1, "00-90-C2-F1-30-1E", 0xffffff); //White :1 UP
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.206", 6, "00-90-C2-FA-58-FF", 0x00ff00); //Green :6
+        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.205", 5, "00-90-C2-F1-2F-7D", 0x0000ff); //Blue :5 UP
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.203", 3, "00-90-C2-FA-59-2C", 0xff0000); //Red :3
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.204", 4, "00-90-C2-FA-58-ED", 0xff00ff); //Purple :4 UP
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.151", 2, "00-90-C2-F1-2F-EE", 0x442206); //Brown:2
 
-        //front //purple //needs hack //up
+
+        int ctr = 112;
+
+        //front //white //needs hack //up
         PixelPlane plane = new PixelPlane();
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, ctr, 1, 0, true, true, false);
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, ctr, 1, 0, true, false, false);
 
-        //back //gray-yellow
+        //back //green //needs channel swap
         plane = new PixelPlane();
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, -ctr, 3, 0, false, true, false);
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, -ctr, 0, 0, false, false, true);
         nodes = concatNodes(nodes, planeNodes);
 
-        //top //red //up
+        //top //blue //up
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr, 0, 1, true, true, true);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr, 0, 1, false, true, false);
         nodes = concatNodes(nodes, planeNodes);
 
-        //bottom //green
+        //bottom //red
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr, 1, 1, true, false, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr, 0, 1, false, false, false);
         nodes = concatNodes(nodes, planeNodes);
 
-        //left //blue //up
+        //left //purple //up
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr, 0, 2, false, false, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr, 0, 2, false, true, false);
         nodes = concatNodes(nodes, planeNodes);
 
-        //right //white
+        //right //brown
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, false, true, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, true, true, false);
         nodes = concatNodes(nodes, planeNodes);
 
     }

@@ -288,10 +288,10 @@ public class PixelPlane {
                 tile.orientation = orientation;
 
                 //HACK
-                if (rabbit.ip != "192.168.50.104") {
+              //  if (rabbit.ip != "192.168.50.104") {
                     tile.flipHorizontal = flipHorizontal;
                     tile.flipVertical = flipVertical;
-                }
+              //  }
 
                 //hack for the old school pixel plane panel (REV2) that has 8 of 9 tiles with rgb channels swapped
                 if (tileId != 1)

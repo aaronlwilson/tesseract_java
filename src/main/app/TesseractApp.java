@@ -223,9 +223,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
             int[] rgb = renderNode(n);
 
             // Store color on the node for UDP output
-            n.r = rgb[0];
-            n.g = rgb[1];
-            n.b = rgb[2];
+            n.r = rgb[0]/2;
+            n.g = rgb[1]/2;
+            n.b = rgb[2]/2;
 
             nextNodes[i] = n;
         }
