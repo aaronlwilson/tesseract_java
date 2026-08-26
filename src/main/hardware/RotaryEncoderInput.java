@@ -29,11 +29,24 @@ public class RotaryEncoderInput {
             return;
         }
 
-        port = SerialPort.getCommPort(portName);
-        port.setBaudRate(BAUD_RATE);
+        // getCommPort()/openPort() can throw (e.g. jSerialComm's SerialPortInvalidPortException)
+        // rather than just returning false when the device path doesn't exist - such as when the
+        // encoder is unplugged. This runs on TesseractApp's completeConfiguration thread, which has
+        // no exception handling of its own, so an uncaught throw here silently kills the rest of
+        // app startup (StateManager, stage build, initial playlist). Catch broadly and degrade to
+        // "not connected" instead.
+        try {
+            port = SerialPort.getCommPort(portName);
+            port.setBaudRate(BAUD_RATE);
 
-        if (!port.openPort()) {
-            System.err.println("[RotaryEncoderInput] Failed to open serial port '" + portName + "'");
+            if (!port.openPort()) {
+                System.err.println("[RotaryEncoderInput] Failed to open serial port '" + portName + "'");
+                port = null;
+                return;
+            }
+        } catch (Exception e) {
+            System.err.println("[RotaryEncoderInput] Rotary encoder port '" + portName
+                    + "' unavailable (" + e.getMessage() + "), continuing without it.");
             port = null;
             return;
         }
