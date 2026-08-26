@@ -95,7 +95,8 @@ public class LibGDXRenderer implements IRenderer {
 
         // Apply camera rotation from mouse control
         // Map rotation similar to Processing's approach
-        float xRotAngle = map(yRot, 0, height, 180, -180) + 180;
+        // Natural-scroll feel: the view moves with the drag, both axes matched to each other.
+        float xRotAngle = map(yRot, 0, height, -180, 180) + 180;
         float yRotAngle = map(xRot, 0, width, -180, 180) + 180;
 
         transformMatrix.rotate(1, 0, 0, xRotAngle);
