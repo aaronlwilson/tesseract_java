@@ -47,6 +47,11 @@ class ConfigStore extends BaseStore {
       numTeensies       : [
           defaultValue     : 0,
       ],
+      // Serial port the rotary encoder's Arduino is connected on (e.g. '/dev/tty.usbmodemXXXX' on
+      // macOS, 'COM3' on Windows). Empty means no rotary encoder is connected - skipped entirely.
+      rotaryEncoderPort: [
+          defaultValue     : '',
+      ],
   ]
 
   // Singleton

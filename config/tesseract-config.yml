@@ -17,3 +17,6 @@ stageType: TESSERACT #SCARED
 #   ...
 numRabbits: 0
 numTeensies: 5
+
+# Serial port the rotary encoder's Arduino Mega is on. Empty/omitted disables the encoder.
+rotaryEncoderPort: /dev/cu.usbmodem101

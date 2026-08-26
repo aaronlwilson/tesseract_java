@@ -83,6 +83,11 @@ public class HeadlessRenderer implements IRenderer {
     }
 
     @Override
+    public void setWorldYRotation(float yDeg) {
+        // No-op in headless mode
+    }
+
+    @Override
     public void setNodeRadius(float radius) {
         // No-op in headless mode
     }

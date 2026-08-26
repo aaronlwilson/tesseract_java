@@ -78,6 +78,10 @@ dependencies {
   // YAML parser used for reading config files
   implementation 'org.yaml:snakeyaml:2.5'
 
+  // Serial port library for the rotary encoder input (replaces Processing's serial library).
+  // Pure Java, no native driver install required.
+  implementation 'com.fazecast:jSerialComm:2.11.0'
+
   // Include specific jars from lib directory (PixelPusher and UDP libraries)
   implementation fileTree(dir: 'lib', include: ['PixelPusher/**/*.jar', 'udp/**/*.jar'])
 

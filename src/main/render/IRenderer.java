@@ -75,6 +75,15 @@ public interface IRenderer {
     void setCornerTilt(float xDeg, float yDeg, float zDeg);
 
     /**
+     * Set a rotation (in degrees) about the true world Y axis, composed with the mouse-drag
+     * rotation and applied to both the nodes and the reference axes (unlike {@link #setCornerTilt},
+     * which only tilts the object). Intended to drive the on-screen world with the live rotary
+     * encoder reading, spinning the preview to counteract the physical motor's spin on stages like
+     * TESSERACT. Pass 0 to clear it back to no spin.
+     */
+    void setWorldYRotation(float yDeg);
+
+    /**
      * Set the on-screen radius (in pixels) of each LED node dot.
      */
     void setNodeRadius(float radius);

@@ -50,6 +50,11 @@ public class LibGDXRenderer implements IRenderer {
     // already reoriented by the previous one instead of the fixed world axes.
     private final Quaternion cornerTilt = new Quaternion();
 
+    // Live rotation about the true world Y axis, driven by the rotary encoder to counteract the
+    // physical motor's spin. Unlike cornerTilt, this is composed into the mouse-rotate frame
+    // itself (see beginFrame()), so it affects the reference axes too - the whole world spins.
+    private float worldYRotationDeg = 0f;
+
     // For 3D to 2D projection
     private Matrix4 projectionMatrix;
     // Untilted counterpart to projectionMatrix (translate + mouse-rotate only), used for the
@@ -113,10 +118,11 @@ public class LibGDXRenderer implements IRenderer {
 
         transformMatrix.rotate(1, 0, 0, xRotAngle);
         transformMatrix.rotate(0, 1, 0, yRotAngle);
+        transformMatrix.rotate(0, 1, 0, worldYRotationDeg);
 
-        // World matrix: translate + mouse-rotate only, no object tilt. Used for the reference
-        // axes, so world Y always reads as true vertical - the frame the motor-counter rotation
-        // will eventually spin - regardless of how the cube itself is tilted below.
+        // World matrix: translate + mouse-rotate + encoder counter-rotation, no object tilt. Used
+        // for the reference axes, so world Y always reads as true vertical regardless of how the
+        // cube itself is tilted below.
         worldProjectionMatrix.set(camera.combined);
         worldProjectionMatrix.mul(transformMatrix);
 
@@ -325,6 +331,11 @@ public class LibGDXRenderer implements IRenderer {
         cornerTilt.set(Vector3.Z, zDeg)
                 .mul(new Quaternion(Vector3.Y, yDeg))
                 .mul(new Quaternion(Vector3.X, xDeg));
+    }
+
+    @Override
+    public void setWorldYRotation(float yDeg) {
+        this.worldYRotationDeg = yDeg;
     }
 
     @Override

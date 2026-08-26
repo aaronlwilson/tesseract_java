@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputProcessor;
 
 import environment.Node;
 import environment.Stage;
+import hardware.RotaryEncoderInput;
 import model.Channel;
 import output.UDPModel;
 import render.IRenderer;
@@ -65,6 +66,7 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
     public UDPModel udpModel;
     public Stage stage;
     public Channel channel1;
+    public RotaryEncoderInput rotaryEncoderInput;
     public Boolean setupComplete = false;
     public Boolean drawing = true;
     public Boolean sending = true;
@@ -165,6 +167,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
         // Initialize websocket connection
         WebsocketInterface.get();
+
+        // Open the rotary encoder's serial port, if configured
+        rotaryEncoderInput = new RotaryEncoderInput(ConfigStore.get().getString("rotaryEncoderPort"));
 
         // Initialize the StateManager now so its inbound handlers (requestInitialState,
         // stateUpdate) are registered before any client connects — not lazily on first play/stop.
@@ -293,6 +298,12 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
         // to match. (stage.stageType is set async in buildStage(), hence the null-safe check.)
         if ("TESSERACT".equals(stage.stageType)) {
             renderer.setCornerTilt(45f, 0f, 35.3f);
+        }
+
+        // Spin the on-screen world to counteract the physical motor's spin, per the live rotary
+        // encoder reading. No-op (0 deg) when no encoder is connected.
+        if (rotaryEncoderInput != null) {
+            renderer.setWorldYRotation(rotaryEncoderInput.getAngleDegrees());
         }
 
         // Draw axes
@@ -458,6 +469,9 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     @Override
     public void dispose() {
+        if (rotaryEncoderInput != null) {
+            rotaryEncoderInput.dispose();
+        }
         if (renderer != null) {
             renderer.dispose();
         }
