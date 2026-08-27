@@ -12,6 +12,8 @@ class MasterBrightnessStore {
   private double r = 1.0
   private double g = 1.0
   private double b = 1.0
+  // Degrees, 0-360, wraps rather than clamps. 0 (== 360) means no shift.
+  private double hue = 0.0
 
   public MasterBrightnessStore() {
     Map data = this.loadDataFromDisk()
@@ -19,6 +21,9 @@ class MasterBrightnessStore {
       this.r = clamp(data.r)
       this.g = clamp(data.g)
       this.b = clamp(data.b)
+      if (data.hue != null) {
+        this.hue = wrapHue(data.hue)
+      }
     }
   }
 
@@ -34,19 +39,21 @@ class MasterBrightnessStore {
   public double getR() { this.r }
   public double getG() { this.g }
   public double getB() { this.b }
+  public double getHue() { this.hue }
 
-  // Set one channel by name ('r', 'g', or 'b'), clamping to the valid 0.0-1.0 range. This is the
-  // one place taking untrusted network input (a client-sent value), unlike the internal
-  // renderNode() multiply, so it clamps defensively rather than trusting the caller.
+  // Set one channel by name ('r', 'g', 'b', or 'hue'). This is the one place taking untrusted
+  // network input (a client-sent value), unlike the internal renderNode() math, so it
+  // clamps/wraps defensively rather than trusting the caller.
   public void setChannel(String channel, double value) {
-    double clamped = clamp(value)
-
     if (channel == 'r') {
-      this.r = clamped
+      this.r = clamp(value)
     } else if (channel == 'g') {
-      this.g = clamped
+      this.g = clamp(value)
     } else if (channel == 'b') {
-      this.b = clamped
+      this.b = clamp(value)
+    } else if (channel == 'hue') {
+      // Hue wraps rather than clamps: 370 degrees is 10 degrees, not 360.
+      this.hue = wrapHue(value)
     } else {
       System.err.println("[MasterBrightnessStore] Ignoring unknown channel '${channel}'")
     }
@@ -55,6 +62,11 @@ class MasterBrightnessStore {
   private static double clamp(value) {
     double d = value as double
     Math.max(0.0, Math.min(1.0, d))
+  }
+
+  private static double wrapHue(value) {
+    double d = value as double
+    ((d % 360.0) + 360.0) % 360.0
   }
 
   // Load the JSON data from disk and parse it. Returns null if no file exists yet (first run).
@@ -80,6 +92,6 @@ class MasterBrightnessStore {
 
   // Get the store data as JSON, either for persisting or sending to the front end
   public Map asJsonObj() {
-    [r: this.r, g: this.g, b: this.b]
+    [r: this.r, g: this.g, b: this.b, hue: this.hue]
   }
 }

@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
+import java.awt.Color;
+
 import environment.Node;
 import environment.Stage;
 import hardware.RotaryEncoderInput;
@@ -408,6 +410,15 @@ public class TesseractApp implements ApplicationListener, InputProcessor {
 
     private int[] renderNode(Node node) {
         int[] rgb1 = channel1.drawNode(node);
+
+        // Apply the master hue shift, rotating around the color wheel while leaving saturation
+        // and brightness untouched, before the per-channel brightness filter below.
+        float[] hsb = Color.RGBtoHSB(rgb1[0], rgb1[1], rgb1[2], null);
+        hsb[0] = (float) (((hsb[0] + masterBrightnessStore.getHue() / 360.0) % 1.0 + 1.0) % 1.0);
+        int shifted = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+        rgb1[0] = (shifted >> 16) & 0xFF;
+        rgb1[1] = (shifted >> 8) & 0xFF;
+        rgb1[2] = shifted & 0xFF;
 
         // Apply the master per-channel brightness filter
         rgb1[0] = (int) Math.round(rgb1[0] * masterBrightnessStore.getR());
