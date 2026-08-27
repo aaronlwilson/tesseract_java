@@ -24,6 +24,10 @@ public class LinesClip  extends AbstractClip {
     private float _speed;
     private boolean _spinWallMode = true; // true = full-height wall, false = 3D segment spoke
 
+    // How far past the stage bounding box the spinner's tip is allowed to reach, so it visibly
+    // sticks out rather than stopping exactly at the box edge.
+    private static final float SPINNER_OVERSHOOT = 100.0f;
+
     //constructor
     public LinesClip() {
     }
@@ -78,8 +82,8 @@ public class LinesClip  extends AbstractClip {
         _myMain.particleZ.position = new Vec3(0.0f, 0.0f, z);
         //------
 
-        float spinX = (float) ((_myMain.stage.maxW/2) * Math.sin(radians(_speed)));
-        float spinY = (float) ((_myMain.stage.maxH/2) * Math.cos(radians(_speed)));
+        float spinX = (float) ((_myMain.stage.maxW/2 + SPINNER_OVERSHOOT) * Math.sin(radians(_speed)));
+        float spinY = (float) ((_myMain.stage.maxH/2 + SPINNER_OVERSHOOT) * Math.cos(radians(_speed)));
         _myMain.particleSpin.position = new Vec3(spinX, spinY, 0.0f);
     }
 
