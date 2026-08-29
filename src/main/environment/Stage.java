@@ -146,43 +146,86 @@ public class Stage {
 */
 
 //one rabbit per 9 tiles
-        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.196", 1, "00-90-C2-F1-30-1E", 0xffffff); //White :1 UP
-        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.206", 6, "00-90-C2-FA-58-FF", 0x00ff00); //Green :6
+//        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.196", 1, "00-90-C2-F1-30-1E", 0xffffff); //White :1 DOWN
+//        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.206", 6, "00-90-C2-FA-58-FF", 0x00ff00); //Green :6
+//        _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.205", 5, "00-90-C2-F1-2F-7D", 0x0000ff); //Blue :5 UP
+//        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.203", 3, "00-90-C2-FA-59-2C", 0xff0000); //Red :3
+//        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.204", 4, "00-90-C2-FA-58-ED", 0xff00ff); //Purple :4 UP
+//        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.151", 2, "00-90-C2-F1-2F-EE", 0x442206); //Brown:2
+
+        _myMain.udpModel.rabbits[0] = new Rabbit("192.168.50.204", 4, "00-90-C2-FA-58-ED", 0xff00ff); //Purple :4 UP
+        _myMain.udpModel.rabbits[1] = new Rabbit("192.168.50.203", 3, "00-90-C2-FA-59-2C", 0x111111); //gray :3
+
         _myMain.udpModel.rabbits[2] = new Rabbit("192.168.50.205", 5, "00-90-C2-F1-2F-7D", 0x0000ff); //Blue :5 UP
-        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.203", 3, "00-90-C2-FA-59-2C", 0xff0000); //Red :3
-        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.204", 4, "00-90-C2-FA-58-ED", 0xff00ff); //Purple :4 UP
-        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.151", 2, "00-90-C2-F1-2F-EE", 0x442206); //Brown:2
+        _myMain.udpModel.rabbits[3] = new Rabbit("192.168.50.196", 1, "00-90-C2-F1-30-1E", 0xffffff); //White :1
+
+        _myMain.udpModel.rabbits[4] = new Rabbit("192.168.50.206", 6, "00-90-C2-FA-58-FF", 0x00ff00); //Green :6 UP
+        _myMain.udpModel.rabbits[5] = new Rabbit("192.168.50.151", 2, "00-90-C2-F1-2F-EE", 0xff0000); //red:2
 
 
         int ctr = 112;
 
-        //front //white //needs hack //up
+        //front //needs hack //up
         PixelPlane plane = new PixelPlane();
-        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, ctr, 1, 0, true, false, false);
+        nodes = plane.buildPanel(_myMain.udpModel.rabbits[0], counter, -ctr, -ctr, ctr, 2, 0, false, true, false);
 
-        //back //green //needs channel swap
+        //back //needs channel swap
         plane = new PixelPlane();
-        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, -ctr, 0, 0, false, false, true);
+        Node[] planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[1], counter, -ctr, -ctr, -ctr, 2, 0, false, false, false);
         nodes = concatNodes(nodes, planeNodes);
 
-        //top //blue //up
+        //top  //up
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr, 0, 1, false, true, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[2], counter, -ctr, -ctr, -ctr, 3, 1, true, false, false);
         nodes = concatNodes(nodes, planeNodes);
 
-        //bottom //red
+        //bottom
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr, 0, 1, false, false, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[3], counter, -ctr, -ctr, ctr, 2, 1, true, true, false);
         nodes = concatNodes(nodes, planeNodes);
 
-        //left //purple //up
+        //left //up
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr, 0, 2, false, true, false);
+        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[4], counter, -ctr, -ctr, -ctr, 3, 2, false, true, true);
         nodes = concatNodes(nodes, planeNodes);
 
-        //right //brown
+        //right
         plane = new PixelPlane();
-        planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, true, true, false);
+        // FESTIVAL HACK (Boulder Roots 2026): rabbits[5]'s panel (reused unit, previously "Brown")
+        // doesn't match the tileId -> wiring-direction assumption the other 5 panels' tiles use.
+        // Confirmed live on-site: every tile except 5 (center) needed its wiring-direction
+        // overridden - backs up the theory that this specific panel has different internal wiring,
+        // though (as it turns out) that doesn't matter since every tile is just a 12x12 square each
+        // override can independently correct for. Each tileId below can be tuned without affecting
+        // the other 5 (correctly-wired) panels; 5 is listed explicitly (same as its own default)
+        // purely so every tile 1-9 has a visible entry here.
+        java.util.Map<Integer, Integer> rightPanelTileRotationOverrides = java.util.Map.of(
+            1, 0, 2, 0, 3, 0,
+            4, 2, 5, 2, 6, 2,
+            7, 0, 8, 0, 9, 0
+        );
+        planeNodes = plane.buildPanelWithTileRotationOverrides(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 3, 2, false, false, false, rightPanelTileRotationOverrides);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, true, false, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, false, true, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 0, 2, true, true, false);
+
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 1, 2, false, false, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 1, 2, true, false, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 1, 2, false, true, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 1, 2, true, true, false);
+
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 2, 2, false, false, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 2, 2, true, false, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 2, 2, false, true, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 2, 2, true, true, false);
+
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 3, 2, false, false, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 3, 2, true, false, false);
+//         planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 3, 2, false, true, false);
+
+        // this was correct but outer panels flipped in wiring
+        // planeNodes = plane.buildPanel(_myMain.udpModel.rabbits[5], counter, -ctr, -ctr, ctr, 3, 2, true, true, false);
+
         nodes = concatNodes(nodes, planeNodes);
 
     }

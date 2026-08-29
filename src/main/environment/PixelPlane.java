@@ -3,6 +3,7 @@ package environment;
 
 import hardware.*;
 import java.util.Arrays;
+import java.util.Map;
 
 public class PixelPlane {
 
@@ -287,11 +288,78 @@ public class PixelPlane {
                 tile.panelRotation = panelRotation;
                 tile.orientation = orientation;
 
-                //HACK
-              //  if (rabbit.ip != "192.168.50.104") {
-                    tile.flipHorizontal = flipHorizontal;
-                    tile.flipVertical = flipVertical;
-              //  }
+                tile.flipHorizontal = flipHorizontal;
+                tile.flipVertical = flipVertical;
+
+                //hack for the old school pixel plane panel (REV2) that has 8 of 9 tiles with rgb channels swapped
+                if (tileId != 1)
+                    tile.channelSwap = channelSwap;
+
+                rabbit.tileArray[tileId - 1] = tile;
+
+                Node[] tileNodes = tile.getNodeLayout(xTilePos, yTilePos, startZ);
+                planeNodes = concatNodes(planeNodes, tileNodes);
+
+                pixelPlanePanelTileArray[i][j] = tile;
+            }
+        }
+        return planeNodes;
+    }
+
+    // FESTIVAL HACK (Boulder Roots 2026): isolated copy of buildPanel(), used only for the
+    // rabbits[5] ("right" face / 00-90-C2-F1-2F-EE) call site. That panel is a reused unit
+    // (previously "Brown") and doesn't match the tileId -> wiring-direction assumption baked into
+    // buildPanel()'s "middle row (4,5,6) is mounted upside-down" hardcode below - every rigid
+    // panelRotation/flip combination was tried against that assumption and none matched the
+    // physical hardware. This lets specific tileIds override just that one assumption
+    // (tileRotationOverrides), while panelRotation/flip stay fully coupled (macro layout and
+    // per-tile content still rotate together, in lockstep - a genuine rigid whole-panel rotation),
+    // exactly like buildPanel() - so it's not a workaround for the rotation math, only for this
+    // rabbit's actual physical wiring. Does not touch buildPanel() itself, so the other 5
+    // (correctly-wired) panels can't regress.
+    public Node[] buildPanelWithTileRotationOverrides(Rabbit rabbit, int startIndex, int startX, int startY, int startZ, int panelRotation, int orientation, boolean flipHorizontal, boolean flipVertical, boolean channelSwap, Map<Integer, Integer> tileRotationOverrides) {
+
+        Node[] planeNodes = new Node[0];
+
+        int gap = Tile.xSpacing * 12; //spacing 6 x 12 nodes
+
+        //adjust the layoutMatrix prior to layout
+        int layoutMatrix[][] =
+            {
+                {9, 4, 3},
+                {8, 5, 2},
+                {7, 6, 1}
+            };
+
+        if (flipHorizontal)
+            flipMatrixHorizontal(layoutMatrix);
+
+        if (flipVertical)
+            flipMatrixVertical(layoutMatrix);
+
+        if (panelRotation > 0) {
+            for (int r = 0; r < panelRotation; r++) {
+                layoutMatrix = rotateMatrixClockwise(layoutMatrix);
+            }
+
+        } else {
+            //layoutMatrix = rotateMatrixCounterClockwise(layoutMatrix);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int xTilePos = startX + (gap * j);
+                int yTilePos = startY + (gap * i);
+
+                int tileId = layoutMatrix[j][i];
+                int tileRot = tileRotationOverrides.getOrDefault(tileId, (tileId > 3 && tileId < 7) ? 2 : 0);
+
+                TilePP tile = new TilePP(rabbit, tileId);
+                tile.rotation = tileRot;
+                tile.panelRotation = panelRotation;
+                tile.orientation = orientation;
+                tile.flipHorizontal = flipHorizontal;
+                tile.flipVertical = flipVertical;
 
                 //hack for the old school pixel plane panel (REV2) that has 8 of 9 tiles with rgb channels swapped
                 if (tileId != 1)

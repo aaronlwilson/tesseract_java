@@ -92,11 +92,8 @@ public class TilePP extends Tile {
 
         //apply matrix transformations at the tile level
         if (this.flipVertical) {
-            //HACK
-            //if(parentRabbit.ip != "192.168.0.108") {
             flipNodeMatrixVertical(tileNodeArray);
             flipImageMatrixVertical(numberPImageArray);
-            //}
         }
 
         if (this.flipHorizontal) {
