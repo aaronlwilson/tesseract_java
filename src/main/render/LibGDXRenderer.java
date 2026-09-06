@@ -335,7 +335,7 @@ public class LibGDXRenderer implements IRenderer {
 
     @Override
     public void setWorldYRotation(float yDeg) {
-        this.worldYRotationDeg = yDeg;
+        this.worldYRotationDeg = -yDeg;
     }
 
     @Override
