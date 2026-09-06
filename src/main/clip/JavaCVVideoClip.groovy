@@ -30,6 +30,11 @@ import java.nio.file.Paths;
  */
 public class JavaCVVideoClip extends AbstractClip {
 
+    // Video-scene filenames are looked up by bare filename only (no folder indicator), so every
+    // known video source folder is checked in order — e.g. the built-in data/videos library plus
+    // data/OCEAN_VIDEOS (a second, separately-managed video library).
+    private static final List<String> VIDEO_MEDIA_TYPES = ["videos", "OCEAN_VIDEOS"];
+
     // Threshold for black level (same as the original VideoClip)
     private float _pThreshold;
 
@@ -73,7 +78,7 @@ public class JavaCVVideoClip extends AbstractClip {
     // record the desired file here — run() actually (re)starts decoding, so inactive scenes whose
     // run() is never called don't spin up a decoder.
     public void setFilename(String filename) {
-        if (!MediaStore.get().containsMedia("videos", filename)) {
+        if (!VIDEO_MEDIA_TYPES.any { type -> MediaStore.get().containsMedia(type, filename) }) {
             System.out.println("[JavaCVVideoClip] Warning: Tried to set non-existent mediafile of type 'video' and filename '" + filename + "'");
             return;
         }
@@ -133,7 +138,9 @@ public class JavaCVVideoClip extends AbstractClip {
         try {
             // Resolve against the same root MediaStore lists from (see Util.getRootDataDir), so a
             // packaged app that stores media under ~/Library/Application Support/Tesseract works too.
-            String videoPath = Paths.get(Util.getRootDataDir(), "videos", name).toString();
+            // Check each known video folder in turn, since a filename carries no folder indicator.
+            String mediaType = VIDEO_MEDIA_TYPES.find { type -> MediaStore.get().containsMedia(type, name) } ?: "videos";
+            String videoPath = Paths.get(Util.getRootDataDir(), mediaType, name).toString();
             grabber = new FFmpegFrameGrabber(videoPath);
             grabber.start();
 

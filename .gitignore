@@ -124,6 +124,7 @@ data/default/*.json
 
 # ignore video content, its too big
 data/videos
+data/OCEAN_VIDEOS
 
 # JVM crash logs
 hs_err_pid*.log

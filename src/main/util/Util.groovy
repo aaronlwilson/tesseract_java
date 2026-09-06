@@ -202,7 +202,8 @@ public class Util {
     // force=false (default, startup): seed-if-absent — add a built-in playlist only if its id isn't
     //   already present, so persisted UI edits to built-ins survive a restart.
     // force=true (Restore to Defaults): overwrite the built-in playlists back to these code defaults.
-    // The "All Videos" playlist (id 3) mirrors the media folder and is ALWAYS regenerated in both modes.
+    // The "All Videos" (id 3) and "OCEAN VIDEOS" (id 4) playlists mirror their media folders and
+    // are ALWAYS regenerated in both modes.
     public static void createBuiltInPlaylists(boolean force = false) {
         // Arrays.asList makes an immutable list, creating a new LinkedList with those items will make it mutable which we need
         List<PlaylistItem> playlist1Items = new LinkedList<>(Arrays.asList(
@@ -243,8 +244,12 @@ public class Util {
         }
 
         // Determine if there are any videos loaded.  If so, create a playlist containing them all.  If not, delete the playlist if it exists
+        // Sorted by id (not left to SceneStore's incidental internal order, which isn't stable
+        // across restarts once scenes are loaded-then-upserted) so the regular library (ids 10+)
+        // always lists before OCEAN_VIDEOS (ids 100000+), deterministically.
         List<Scene> allVideoScenes = SceneStore.get().getItems()
                 .findAll { scene -> scene.clip.clipId == 'video' }
+                .sort { it.id }
 
         if (allVideoScenes.size() > 0) {
             // Create playlist of all videos
@@ -258,6 +263,21 @@ public class Util {
             PlaylistStore.get().getItems().remove(videoPlaylist)
         }
 
+        // Same idea, scoped to just the OCEAN_VIDEOS library (id range 100000+, see createBuiltInScenes)
+        List<Scene> oceanVideoScenes = SceneStore.get().getItems()
+                .findAll { scene -> scene.clip.clipId == 'video' && scene.id >= 100000 }
+                .sort { it.id }
+
+        if (oceanVideoScenes.size() > 0) {
+            List<PlaylistItem> playlist4Items = oceanVideoScenes
+                    .collect { scene -> new PlaylistItem(UUID.randomUUID().toString(), scene.getDisplayName(), 60 * 1) }
+
+            PlaylistStore.get().addOrUpdate(new Playlist(4, "OCEAN VIDEOS", 60 * 1, playlist4Items))
+        } else {
+            Playlist oceanPlaylist = PlaylistStore.get().find('displayName', 'OCEAN VIDEOS')
+            PlaylistStore.get().getItems().remove(oceanPlaylist)
+        }
+
 
         // Save the created data to disk so we persist our manually created scenes/playlists
         // This also has the effect of resetting any changes we make to them in the UI once we start the backend
@@ -266,7 +286,8 @@ public class Util {
     // force=false (default, startup): seed-if-absent — add a built-in scene only if its id isn't
     //   already present, so persisted UI edits to built-ins survive a restart.
     // force=true (Restore to Defaults): overwrite the built-in scenes back to these code defaults.
-    // Video scenes (ids 10+) mirror the media folder and are ALWAYS regenerated in both modes.
+    // Video scenes (ids 10+ for data/videos, 100000+ for data/OCEAN_VIDEOS) mirror their media
+    // folders and are ALWAYS regenerated in both modes.
     public static void createBuiltInScenes(boolean force = false) {
         List<Scene> builtInScenes = [
                 new Scene(1, "Yellow", TesseractApp.SOLID, [0, 0, 0, 1, 1, 0, 0, 0] as float[]),
@@ -301,6 +322,22 @@ public class Util {
             // remove all video scenes
             SceneStore.get().getItems()
                     .findAll { scene -> scene.clip.clipId == 'video' }
+                    .each { scene -> SceneStore.get().remove(scene) }
+        }
+
+        // OCEAN_VIDEOS mirrors its own folder the same way, on a well-separated id range (100000+)
+        // so it can never collide with the main video library's ids (10+) no matter how that grows.
+        List<String> oceanVideos = MediaStore.get().getMediaOfType('OCEAN_VIDEOS')
+        if (oceanVideos.size() > 0) {
+            int nextIdx = 100000
+            oceanVideos.each { String videoPath ->
+                Scene s = new Scene(nextIdx, videoPath, TesseractApp.VIDEO, [0, 0, 0, 0, 0, 0, 0, 0] as float[], videoPath)
+                SceneStore.get().addOrUpdate(s)
+                nextIdx++
+            }
+        } else {
+            SceneStore.get().getItems()
+                    .findAll { scene -> scene.id >= 100000 }
                     .each { scene -> SceneStore.get().remove(scene) }
         }
     }

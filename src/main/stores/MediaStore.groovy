@@ -11,6 +11,7 @@ class MediaStore {
 
   public MediaStore() {
     this.items['videos'] = Util.getMediaFileList('videos')
+    this.items['OCEAN_VIDEOS'] = Util.getMediaFileList('OCEAN_VIDEOS')
   }
 
   // Singleton
